@@ -33,13 +33,30 @@ export class ManningService {
       setenta: manning.setenta,
       ochenta: manning.ochenta,
       noventa: manning.noventa,
+      area: manning.area,
+      parameter: manning.parameter,
+      parameterValue: manning.parameterValue
     });
 
     return this.ManningRepository.save(newInfo);
   }
 
 
-  getSpecificInfoManning(id: number) {}
+  getInfoParameter(manning:ManningDto) {
+    if(manning.hotels.kind){
+      const result = this.ManningRepository.findBy({
+        hotel: manning.hotels.value,
+      })
+      if(!result){
+        throw error(("Information not found"))
+      }
+      return result;
+      }
+
+      else{
+        return this.ManningRepository.find();
+      }
+    } 
 
 
   getAllInfoManning(manning: ManningDto) {
@@ -52,7 +69,6 @@ export class ManningService {
       if(!result){
         throw error(("Information not found"))
       }
-      console.log("hotels and regions")
       return result
     }
 

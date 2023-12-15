@@ -9,7 +9,7 @@ import ProtectedEmail from './routes/protectedEmail';
 import Admin from './pages/admin';
 import Manning from './pages/manning';
 import ParameterValue from './components/manning.components/parameterValue';
-import RatiosCriteria from './components/manning.components/ratiosCriteria';
+import RatiosCriteria from './components/manning.components/ratiosCriteria';  
 
 
 function App() {
@@ -20,17 +20,17 @@ function App() {
 
       <Route path="/" element={<Login />} />
 
-      <Route element={<ProtectedEmail/>}>
+      {/* <Route element={<ProtectedEmail/>}> */}
       <Route path="/email" element={<Email/>} />
-      </Route>
+      {/* </Route> */}
 
-      <Route element={<ProtectedPrivateRoutes/>}>
+      {/* <Route element={<ProtectedPrivateRoutes/>}> */}
           <Route path="/dashboard" element={<Dashboard /> } />
           <Route path="/admin" element={<Admin /> } />
-          <Route path="/manning" element={<Manning enviarDatoAlPadre={(data) => console.log()}/> } />           
-          <Route path="/parameter" element={<ParameterValue/> } />   
+          <Route path="/manning" element={<Manning/>} />           
+          {/* <Route path="/parameter" element={<ParameterValue/> } />    */}
           <Route path="/ratios" element={<RatiosCriteria/> } />                   
-      </Route>
+      {/* </Route> */}
 
       <Route path="/*" element={"NOT FOUND"} />
 

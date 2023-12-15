@@ -43,5 +43,13 @@ export class ManningDto {
         kind: string,
         value: string
     };
+
+    hotelPrueba: string;
+
+    area: string;
+
+    parameter: string;
+
+    parameterValue: string;
     
 } 

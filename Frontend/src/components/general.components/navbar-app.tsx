@@ -1,20 +1,20 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 import {ArrowPathIcon, Bars3Icon, ChartPieIcon, CursorArrowRaysIcon, FingerPrintIcon, SquaresPlusIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import { Avatar } from "@material-tailwind/react";
-import Logo2 from '../assets/img/logo2.png'
-import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import { resetUser } from '../redux/slices/user'
+import Logo2 from '../../assets/img/logo2.png'
+import { useAppSelector, useAppDispatch } from '../../redux/hooks'
+import { resetUser } from '../../redux/slices/user'
 import { useNavigate } from 'react-router-dom'
+import { createRoute } from "../../redux/slices/routes";
 
 
 const NavbarApp = (props:any) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
 
   const logOut = () =>{
     dispatch(resetUser());
@@ -23,6 +23,12 @@ const NavbarApp = (props:any) => {
   const handleClick = () => {
     const nuevoEstado = !props.estado;
     props.actualizarEstado(nuevoEstado);
+  };
+
+  const redirect = () => {
+    const component = "DashboardCards";
+    dispatch(createRoute(component))
+    props.enviarDatoAlPadre(1);
   };
 
   return (
@@ -74,6 +80,7 @@ const NavbarApp = (props:any) => {
           <div className="hidden lg:flex lg:gap-x-4 lg:justify-end items-center">
             <a className="-m-1.5 p-1.5">
               <button
+                onClick={redirect}
                 type="button"
                 className="text-colorRoyalton bg-gray-50 focus:outline-none font-semibold
            border border-transparent hover:border-colorRoyalton focus:ring-4 focus:ring-gray-200 font-medium rounded-2xl text-sm px-5 py-2.5 

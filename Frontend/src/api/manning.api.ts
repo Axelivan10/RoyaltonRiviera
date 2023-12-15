@@ -7,7 +7,7 @@ const BASE_URL = 'http://localhost:3000';
 export const getAllInfoManning = async (hotels:object, region:object) => {
   // const token = localStorage.getItem("token")
   try {
-    const response = await axios.get(`${BASE_URL}/manning`, {
+    const response = await axios.get(`${BASE_URL}/manning/`, {
       params: {
         hotels: hotels,
         regions: region,
@@ -15,6 +15,22 @@ export const getAllInfoManning = async (hotels:object, region:object) => {
       // headers: {
       //   Authorization: `Bearer ${token}`,
       // 
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Login Fail');
+  }
+}
+
+export const getInfoParameter = async (hotels:object) => {
+
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/parameter`, {
+      params: {
+        hotels: hotels,
+      },
     });
     
     return response;

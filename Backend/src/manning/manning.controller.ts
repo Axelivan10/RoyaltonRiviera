@@ -15,11 +15,11 @@ export class ManningController {
     createInfoManning(@Body() info: ManningDto){
         return this.manningService.createInfoManning(info);
     }
-    @Public()
 
-    @Get(':id')
-    GetOneInfoManning(@Param('id', ParseIntPipe) id: number){
-        return this.manningService.getSpecificInfoManning(id);
+    @Public()
+    @Get('parameter')
+    GetInfoParameter(@Query() manningDto: ManningDto): Promise <Manning[]>{
+        return this.manningService.getInfoParameter(manningDto);
     }
 
     @Public()

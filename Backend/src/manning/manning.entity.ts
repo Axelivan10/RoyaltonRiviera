@@ -37,5 +37,5 @@ export class Manning{
     parameter: string;
 
     @Column({nullable: true})
-    parameter_value: string;
+    parameterValue: string;
 }

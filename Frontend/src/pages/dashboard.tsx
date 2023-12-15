@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react'
-import NavbarApp from '../components/navbar-app'
+import NavbarApp from '../components/general.components/navbar-app'
 import { Dialog, Transition } from '@headlessui/react'
 import { CalendarIcon, HomeIcon, MapIcon, UserGroupIcon} from '@heroicons/react/24/outline'
 import DashboardCards from '../components/dashboard.components/dashboard.cards'
@@ -10,7 +10,7 @@ import Admin from '../pages/admin'
 import Manning from './manning'
 import Parstock from './parstock'
 import { createRoute } from "../redux/slices/routes";
-import Inventario from './inventary'
+import Inventary from './inventary'
 import ParameterValue from '../components/manning.components/parameterValue'
 import { Spinner } from '@material-tailwind/react'
 
@@ -35,14 +35,13 @@ const dashboard = () => {
     { name: 'Admin', to: "Admin", icon: MapIcon, current: (active == 2 ? true :  false) },
     { name: 'Manning', to: "Manning", icon: UserGroupIcon, current: (active == 3 ? true :  false) },
     { name: 'Parstock', to: "Parstock", icon: CalendarIcon, current: (active == 4 ? true :  false) },
-    { name: 'Inventario', to: "Inventario", icon: CalendarIcon, current: (active == 5 ? true :  false) },
+    { name: 'Inventary', to: "Inventary", icon: CalendarIcon, current: (active == 5 ? true :  false) },
   ]
 
 
 
   useEffect(() => {
     const route = localStorage.getItem("route");
-    
     //if(checker == 1){
     switch (route) {
       case 'DashboardCards':
@@ -61,12 +60,12 @@ const dashboard = () => {
         setCurrentComponent(<Parstock/>)
         setActive(4)
         break;
-      case 'Inventario':
-        setCurrentComponent(<Inventario/>)
+      case 'Inventary':
+        setCurrentComponent(<Inventary/>)
         setActive(5)
         break;
       case 'Parameter':
-        setCurrentComponent(<ParameterValue/>)
+        setCurrentComponent(<ParameterValue enviarDatoAlPadre={recibirDatoDelHijo}/>)
         break;
     }
     setChecker(0)
@@ -102,7 +101,7 @@ const dashboard = () => {
   return (
     <>
       <div className="bg-gray-50 dark:bg-gray-900 ">
-        <NavbarApp estado={sidebarOpen} actualizarEstado={actualizarEstado} />
+        <NavbarApp estado={sidebarOpen} actualizarEstado={actualizarEstado} enviarDatoAlPadre={recibirDatoDelHijo} />
 
         <div className="flex h-screen overflow-hidden">
           {/* Sidebar for mobiles */}
@@ -238,7 +237,7 @@ const dashboard = () => {
                     </p>
                   </div>
                   <nav className="mt-5 flex-1" aria-label="Sidebar">
-                    <div className="px-2 space-y-1">
+                    <div className="px-2 space-y-1 cursor-pointer">
                       {navigation.map((item) => (
                         <a
                           key={item.name}

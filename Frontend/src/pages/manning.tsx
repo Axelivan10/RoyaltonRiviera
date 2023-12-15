@@ -6,7 +6,10 @@ import { createRoute } from "../redux/slices/routes";
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import ManningInterface from '../interfaces/api/api.interface';
 import { getAllInfoManning } from "../api/manning.api";
-import { throwError } from "rxjs";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import PDF from '../components/general.components/pdf';
+
+
 
 const TABLE_HEAD = ["Position", "50-60", "60-70", "70-80", "80-90", "90-100"];
 const data = [
@@ -62,7 +65,7 @@ const TABLE_ROWS2 = [
   },
 ];
 
-const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void }) => {
+const manning = (props:any) => {
   //FILTERS AND RENDER
   const [listar, setListar] = useState([]);
   const [hotel, setHotel] = useState({ kind: "", value:"" });
@@ -81,14 +84,22 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
   const indexOfFirst = indexOfLast - usersPerPage;
   const currentData = listar.slice(indexOfFirst, indexOfLast); 
   const totalPages = Math.ceil(listar.length / usersPerPage);
+  const [sheetData, setSheetData] = useState(null);
 
-  //SUMA DE TODOS LOS VALORES FINALES
+  //SUM ALL THE FINAL VALUES
   const sumCincuenta = listar.reduce((sum, { cincuenta }) => sum + (cincuenta || 0), 0);
   const sumSesenta = listar.reduce((sum, { sesenta }) => sum + (sesenta || 0), 0);
   const sumSetenta= listar.reduce((sum, { setenta }) => sum + (setenta || 0), 0);
   const sumOchenta = listar.reduce((sum, { ochenta }) => sum + (ochenta || 0), 0);
   const SumNoventa = listar.reduce((sum, { noventa }) => sum + (noventa || 0), 0);
 
+  const sumTotal = {
+    cincuenta: sumCincuenta,
+    sesenta: sumSesenta,
+    setenta: sumSesenta,
+    ochenta: sumOchenta,
+    noventa: SumNoventa
+  }
 
   useEffect(()=>{
     handleList() 
@@ -97,7 +108,7 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
   const redirect = () => {
     const component = "Parameter";
     dispatch(createRoute(component))
-    enviarDatoAlPadre(1);
+    props.enviarDatoAlPadre(1);
   };
   // const redirect = () => {
   //   const component = {
@@ -177,27 +188,50 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
       setSearchValue( (e.target.value).toLowerCase() );
   };
 
+  // const handleExportExcel = () => {
+  //   const  wb =   XLSX.utils.book_new(),
+  //   ws = XLSX.utils.json_to_sheet(listar);
+  //   XLSX.utils.book_append_sheet(wb, ws, "MySheet");
+  //   XLSX.writeFile(wb, "MyExcel.xlsx");
+  // };
+
   return (
     <>
-      <div className="h-full w-full pt-10 lg:p-0 xl:p-6 sm:p-4">
-        <div className="flex justify-end lg:pr-8 pr-4 pb-8">
-          <div className="space-y-1">
+      <div className="h-full w-full pt-10 lg:p-0 xl:p-8 sm:p-4 lg:pt-4">
+        
+        <div className="flex justify-between  p-4">
+          <div className="flex space-x-6 justify-end pr-4 pt-2 pb-4 gap-x-2">
+            <PDFDownloadLink document={<PDF state={listar} state2={sumTotal}/>} fileName="ManningData.pdf">
+            <p className="cursor-pointer text-colorRoyalton font-semibold hover:text-colorHover"
+            >
+              {/* {true? true: (false)} */}
+              PDF
+            </p>
+            </PDFDownloadLink>
+           
+            <p
+              className="cursor-pointer text-colorRoyalton font-semibold hover:text-colorHover" //onClick={handleExportExcel}
+            >
+              Excel
+            </p>
+          </div>
+          <div className="flex space-x-6 justify-end pr-4 pt-2 pb-4">
             <p
               onClick={redirect}
-              className="hover:text-colorRoyalton hover:font-semibold"
+              className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
             >
               Parameter Value
             </p>
             <p
               onClick={redirect2}
-              className="hover:text-colorRoyalton hover:font-semibold"
+              className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
             >
               Ratio Criteria
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 p-2 lg:gap-0 xl:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-2 lg:gap-2 xl:gap-4">
           <div>
             <Select
               label="Select Hotel"
@@ -258,8 +292,7 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
         </div>
 
         <div className="pt-8">
-          <Card className="overflow-scroll">
-            {/*overflow-scroll*/}
+          <Card className="overflow-scroll md:overflow-hidden">
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -316,7 +349,11 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
                       },
                       index
                     ) => {
-                      
+                      const positionString = position as string;
+                      const positionCapitalized =
+                        positionString.charAt(0).toUpperCase() +
+                        positionString.slice(1);
+
                       const isLast = index === listar.length - 1;
                       const classes = isLast
                         ? "p-4 w-1/6"
@@ -330,7 +367,7 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {position}
+                              {positionCapitalized}
                             </Typography>
                           </td>
                           <td className={classes}>
@@ -339,7 +376,6 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
                               color="blue-gray"
                               className="font-normal"
                             >
-
                               {(occupancy === "50-60" || occupancy === "") &&
                                 cincuenta}
                             </Typography>
@@ -396,13 +432,26 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
                 color="blue-gray"
                 className="font-normal text-colorRoyalton"
               >
-               Pagina {currentPage} of {totalPages}
+                {totalPages === 0
+                  ? `Page ${currentPage} of 1`
+                  : `Page ${currentPage} of ${totalPages}`}
               </Typography>
               <div className="flex gap-2">
-                <Button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="bg-colorRoyalton text-white border:bg-colorRoyalton" variant="outlined" size="sm">
+                <Button
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="bg-colorRoyalton text-white border:bg-colorRoyalton"
+                  variant="outlined"
+                  size="sm"
+                >
                   Previous
                 </Button>
-                <Button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}  variant="outlined" size="sm">
+                <Button
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  variant="outlined"
+                  size="sm"
+                >
                   Next
                 </Button>
               </div>
@@ -411,87 +460,80 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
         </div>
 
         <div className="pt-6">
-          <Card className="">
-            {" "}
-            {/*overflow-scroll*/}
+          <Card className="overflow-scroll md:overflow-hidden">
             <table className="w-full min-w-max table-auto text-left">
               <tbody className="">
-                {TABLE_ROWS2.map(
-                  (
-                    { position, cincuenta, sesenta, setenta, ochenta, noventa },
-                    index
-                  ) => {
-                    const isLast = index === TABLE_ROWS2.length - 1;
-                    const classes = isLast
-                      ? "p-4 w-1/6"
-                      : "p-4 border-b border-blue-gray-50 w-1/6";
+                {TABLE_ROWS2.map(({ position }, index) => {
+                  const isLast = index === TABLE_ROWS2.length - 1;
+                  const classes = isLast
+                    ? "p-4 w-1/6"
+                    : "p-4 border-b border-blue-gray-50 w-1/6";
 
-                    return (
-                      <tr key={position}>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {position}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {sumCincuenta}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {sumSesenta}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {sumSetenta}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {sumOchenta}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {SumNoventa}
-                          </Typography>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
+                  return (
+                    <tr key={position}>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {position}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {sumCincuenta}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {sumSesenta}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {sumSetenta}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {sumOchenta}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {SumNoventa}
+                        </Typography>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </Card>
         </div>
 
-        {/* <div className="md:col-span-5 text-right mt-8 lg:mr-4">
+        {/* <div className="md:col-span-5 text-left mt-8 lg:mr-4">
           <div className="inline-flex mr-1">
             <Button
               variant="outlined"
@@ -508,6 +550,7 @@ const manning = ({ enviarDatoAlPadre }: { enviarDatoAlPadre: (data: any) => void
             </Button>
           </div>
         </div> */}
+
       </div>
     </>
   );

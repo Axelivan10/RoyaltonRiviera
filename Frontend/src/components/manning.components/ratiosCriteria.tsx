@@ -1,5 +1,5 @@
 import React, {Fragment, useState} from 'react'
-import NavbarApp from '../navbar-app'
+import NavbarApp from '../general.components/navbar-app'
 import { Dialog, Transition } from '@headlessui/react'
 import { CalendarIcon, HomeIcon, MapIcon, UserGroupIcon} from '@heroicons/react/24/outline'
 import DashboardCards from '../dashboard.components/dashboard.cards'
