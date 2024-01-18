@@ -13,6 +13,7 @@ import { createRoute } from "../redux/slices/routes";
 import Inventary from './inventary'
 import ParameterValue from '../components/manning.components/parameterValue'
 import { Spinner } from '@material-tailwind/react'
+import Location from '../components/manningConfig.components/location'
 
 
 function classNames(...classes:any) {
@@ -41,6 +42,7 @@ const dashboard = () => {
 
 
   useEffect(() => {
+    // console.log(routeData)
     const route = localStorage.getItem("route");
     //if(checker == 1){
     switch (route) {
@@ -100,10 +102,9 @@ const dashboard = () => {
 
   return (
     <>
-      <div className="bg-gray-50 dark:bg-gray-900 ">
-        <NavbarApp estado={sidebarOpen} actualizarEstado={actualizarEstado} enviarDatoAlPadre={recibirDatoDelHijo} />
-
-        <div className="flex h-screen overflow-hidden">
+      <div className="bg-gray-50 dark:bg-gray-900">
+        <NavbarApp className="" estado={sidebarOpen} actualizarEstado={actualizarEstado} enviarDatoAlPadre={recibirDatoDelHijo} />
+        <div className="flex"> {/* h-screen pt-24 mt-1 */}
           {/* Sidebar for mobiles */}
           <Transition.Root show={sidebarOpen} as={Fragment}>
             <Dialog
@@ -227,13 +228,14 @@ const dashboard = () => {
 
           {/* Static sidebar for desktop */}
           <div className="hidden lg:flex lg:flex-shrink-0">
+            
             <div className="flex flex-col w-64">
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex flex-1 min-h-0 border-r border-gray-200 bg-gray-100">
                 <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                   <div className="flex items-center flex-shrink-0 px-4">
                     <p className="font-semibold text-color-black">
-                      Main modules
+                      Main modules 
                     </p>
                   </div>
                   <nav className="mt-5 flex-1" aria-label="Sidebar">
@@ -266,12 +268,13 @@ const dashboard = () => {
                 </div>
               </div>
             </div>
+            
           </div>
 
           {/* Renderizado de los componentes y si existe una recarga de navegador suelta el sppiner*/}
           {loading ? (
-            <div className="flex items-center justify-center flex-1 mb-40">
-              <Spinner className="h-12 w-12 text-gray-900/50" />
+            <div className="flex items-center justify-center flex-1 h-screen">
+              <Spinner className="h-12 w-12 text-gray-900/50 mb-40" />
             </div>
           ) : (
             <React.Fragment>{currentComponent}</React.Fragment>

@@ -34,7 +34,8 @@ export const routeSlice = createSlice({    //ESTAS SON MIS REDUCERS
     initialState: EmptyUserState,
     reducers: {
         createRoute: (state, action) =>{
-            return persistLocalStorageRoute(action.payload);
+            persistLocalStorageRoute(action.payload)   //SE RESOLVIO EL PEDO QUE TENIA, PARA QUE SE GUARDE EN MI ESTADO HAY QUE RETORNAR SOLO EL PAYLOAD
+            return action.payload;                      //NO LA FUNCION O OTRA COSA
         },
 
         // childrenRoute: (state, action) =>{        

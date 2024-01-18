@@ -1,17 +1,17 @@
 import {IsString, IsNotEmpty, MinLength} from 'class-validator'
 
-export class parameterDto {
+export class dimDepartmentDto {
 
     @IsString()
-    position: string
+    divBis: string
 
     @IsString()
-    area: string;
+    divBisCode: string;
 
     @IsString()
-    parameter: string;
+    deptmBis: string;
     
     @IsString()
-    parameter_value: string;
+    deptmBisCode: string;
         
 } 

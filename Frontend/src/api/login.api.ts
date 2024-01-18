@@ -51,3 +51,18 @@ export const checkCode = async (id:number, expiration:string, codes:string) => {
 
 }
 
+export const userData = async (id:number) => {                      //API DE FOTO Y LA IMAGENEN DEL NAVBAR
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/${id}`, {
+      id
+    });
+    
+    return response;
+
+  } catch (error) {
+     throw new Error('Fail to get your users');
+  }
+}
+
+
+

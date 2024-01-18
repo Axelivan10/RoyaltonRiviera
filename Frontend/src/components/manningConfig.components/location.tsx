@@ -1,0 +1,294 @@
+import React, { useEffect, useRef, useState } from "react";
+import { Card, Typography } from "@material-tailwind/react";
+import { createRoute } from "../../redux/slices/routes";
+import { useDispatch } from "react-redux";
+import Swal from "sweetalert2";
+import { getDepartment, getDivision, getLocation } from "../../api/manning.api";
+import { setActive } from "@material-tailwind/react/components/Tabs/TabsContext";
+import { useNavigate } from "react-router-dom";
+import Form_location from "../general.components/form_location";
+
+interface InputValues {
+  [key: string]: string;
+}
+
+function location(props: any) {
+  // const dispatch = useDispatch()
+  const [inputValues, setInputValues] = useState<InputValues>({});
+  const [originalInputValues, setOriginalInputValues] = useState<InputValues>({});
+  const [formDialog, setFormDialog] = useState(false);
+
+  const navigate = useNavigate();
+  const [isActive, setIsActive] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [division, setDivision] = useState("Admin");
+  const [divisionFilter, SetDivisionFilter] = useState([]);
+  const [allModifiedData, setAllModifiedData] = useState<InputValues[]>([]);
+  const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
+  const [cancelClicked, setCancelClicked] = useState(false);
+  // const [originalSessionValues, setOriginalSessionValues] = useState<InputValues>({});
+
+
+
+  // const redirect = () => {
+  //   const component = "Location";
+  //   dispatch(createRoute(component))
+  //   props.enviarDatoAlPadre(1);
+  // };
+  
+  useEffect(()=>{ 
+    renderList()
+  },[])
+
+  useEffect(() => {
+    const originalValues: InputValues = {};
+    locations.forEach(({ id: locationId }) => {
+      departments.forEach(({ id: departmentId }) => {
+        const key = `${locationId}-${departmentId}`;
+        originalValues[key] = inputValues[key] || '';
+      });
+    });
+    
+    if (!cancelClicked) {
+      setOriginalInputValues(originalValues);
+    }
+  }, [isActive, cancelClicked]);
+
+
+  useEffect(() => {
+  const newModifiedPositions = Object.keys(inputValues).filter(
+    key => inputValues[key] !== originalInputValues[key]
+  );
+  console.log(newModifiedPositions);
+  setModifiedCurrentPositions(newModifiedPositions);
+
+  // Guardar todas las modificaciones en el historial
+  setAllModifiedData(prevData => [...prevData, inputValues]);
+  }, [inputValues, originalInputValues]);
+
+  const handleCancelClicked = () => {
+    setCancelClicked(true);
+
+    // Revert to the original values of the current session
+    setInputValues(originalInputValues);
+  };
+
+  useEffect(() => {
+      // Lógica para mostrar la alerta y manejar las posiciones modificadas cuando isActive cambia a false
+      if (!isActive && modifiedCurrentPositions.length > 0) {
+        console.log(allModifiedData)
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Save changes",
+        }).then(result => {
+          if (result.isConfirmed) {
+            // Lógica para manejar la confirmación
+            Swal.fire({
+              title: "You make a new request",
+              text: "Your request will be checked by an administrator.",
+              icon: "success",
+            });
+            // Set original values for the next session
+            setOriginalInputValues(inputValues);
+          } else {
+            handleCancelClicked();
+          }
+        });
+      } else {
+        // Lógica para manejar cuando no hay posiciones modificadas o isActive está activado
+        console.log("No hay posiciones modificadas o isActive está activado");
+      }
+  }, [isActive]);
+
+
+
+  const renderList = async () => {
+    try{
+      const responseDepartment = await getDepartment();
+      setDepartments(responseDepartment.data) 
+      // console.log(responseDepartment.data)
+      const responseLocation = await getLocation();
+      setLocations(responseLocation.data) 
+      // console.log(responseLocation.data)
+      const divisionResponse = await getDivision();
+      SetDivisionFilter(divisionResponse.data)
+    }catch{
+      throw new Error('Render Fail');
+    }
+  }
+
+  const activeInputs = () => {
+    setIsActive(!isActive)
+  }
+
+  const handleInputChange = ( locationId: never, departmentId: never, value: string ) => {
+    if (value.toLowerCase() === "x" || value.toLowerCase() === "") {
+      const key = `${locationId}-${departmentId}`;
+      setInputValues((prevValues) => ({ ...prevValues, [key]: value }));
+    }
+  };
+
+  const handleDivisionChance = (e:any) => {
+    const selectedDivision = (e.target.value);
+    if(e.target.value == ""){
+      setDivision("");
+    } else{
+      setDivision(selectedDivision);
+    }
+  }
+
+  const filteredDepartments = departments.filter(({ divBis }) => divBis === division || division === "");
+
+
+  return (
+    <div className="h-screen lg:w-10/12 xl:w-11/12 w-full pr-4 pt-10 pl-10">
+      {" "}
+      {/*  style={{ maxHeight: '810px' }} */}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 p-2 pb-8">
+        <div className=" lg:w-4/6 sm:w-full">
+          <select
+            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
+            onChange={handleDivisionChance}
+            value={division}
+          >
+            <option value="">All Divisions</option>
+            {divisionFilter.map(({ id, divBis }) => (
+              <option key={id} value={divBis}>
+                {divBis}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5">
+          <div>
+              <Form_location state={formDialog}/>
+          </div>
+          <div>
+            {isActive ? (
+              <p
+                onClick={activeInputs}
+                className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
+              >
+                Guardar cambios
+              </p>
+            ) : (
+              <p
+                onClick={activeInputs}
+                className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
+              >
+                Habilitar campos
+              </p>
+            )}
+          </div>
+        </div>
+
+      </div>
+      
+      <Card
+        className="h-full w-full overflow-scroll"
+        style={{ maxHeight: "650px" }}
+      >
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                >
+                  Location
+                </Typography>
+              </th>
+              {filteredDepartments.map(({ id, deptmBis }) => (
+                <th
+                  key={id}
+                  className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                >
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                  >
+                    {deptmBis}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {locations.map(({ id: locationId, area }) => (
+              <tr key={locationId}>
+                <td className="p-4 border-b border-blue-gray-50">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {area}
+                  </Typography>
+                </td>
+                {filteredDepartments.map(({ id: departmentId }) => (
+                  <td
+                    key={departmentId}
+                    className="p-4 border-b border-blue-gray-50"
+                  >
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={inputValues[`${locationId}-${departmentId}`] || ""}
+                      onChange={(e) =>
+                        handleInputChange(
+                          locationId,
+                          departmentId,
+                          e.target.value
+                        )
+                      }
+                      disabled={!isActive}
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
+export default location;
+
+
+
+// if(isActive){
+//   Swal.fire({
+//     title: "Are you sure?",
+//     text: "You won't be able to revert this!",
+//     icon: "warning",
+//     showCancelButton: true,
+//     confirmButtonColor: "#3085d6",
+//     cancelButtonColor: "#d33", //AQUI ES DONDE SE VA A COPIAR LA LISTA VIEJA A LA NUEVA PA QUE QUEDE COMO ANTES
+//     confirmButtonText: "Save changes",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       Swal.fire({
+//         title: "You make a new request",
+//         text: "Your request will be checked by an administrator.",
+//         icon: "success",
+//       });
+//     } else {
+//       setInputValues(originalInputValues);
+//     }
+//   });
+  
+// }

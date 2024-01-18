@@ -4,13 +4,14 @@ import ManningInterface from '../interfaces/api/api.interface';
 const BASE_URL = 'http://localhost:3000';
 
 
-export const getAllInfoManning = async (hotels:object, region:object) => {
+export const getAllInfoManning = async (hotel:string, region:string, country:string) => {
   // const token = localStorage.getItem("token")
   try {
     const response = await axios.get(`${BASE_URL}/manning/`, {
       params: {
-        hotels: hotels,
-        regions: region,
+        hotel: hotel,
+        region: region,
+        country:country,
       },
       // headers: {
       //   Authorization: `Bearer ${token}`,
@@ -24,12 +25,12 @@ export const getAllInfoManning = async (hotels:object, region:object) => {
   }
 }
 
-export const getInfoParameter = async (hotels:object) => {
+export const getInfoParameter = async (hotel:string) => {
 
   try {
     const response = await axios.get(`${BASE_URL}/manning/parameter`, {
       params: {
-        hotels: hotels,
+        hotel: hotel,
       },
     });
     
@@ -37,6 +38,59 @@ export const getInfoParameter = async (hotels:object) => {
 
   } catch (error) {
     throw new Error('Login Fail');
+  }
+}
+
+export const getHotels = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/hotels`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Hotels Fail');
+  }
+}
+
+export const getDivision = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/division`, {
+      // params: {
+      //   division: division,
+      // },
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Division Fail');
+  }
+}
+
+// API FOR ALL THE ARRAYS 
+
+export const getDepartment = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/department`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Departments Fails');
+  }
+}
+
+export const getLocation = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/location`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Locations Fail');
   }
 }
 

@@ -14,7 +14,7 @@ const TABLE_HEAD = ["Area", "Parameter", "Parameter value",];
 
 function parameterValue(props:any) {
   const [listar, setListar] = useState([]);
-  const [hotel, setHotel] = useState({ kind: "", value:"" });
+  const [hotel, setHotel] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const dispatch = useDispatch()
   const navigate = useNavigate();
@@ -49,24 +49,11 @@ function parameterValue(props:any) {
 
   const handleHotelChange = (e: any) => {
     const selectedHotel = (e);
-
-    if(e == "off"){
-
-      setHotel(prevHotels => ({
-        ...prevHotels,
-        kind:'',
-        value: ''
-      }));
-
+    if(e == ""){
+      setHotel("");
     } else{
-      setHotel(prevHotels => ({
-        ...prevHotels,
-        kind:'hotel',
-        value: selectedHotel
-      }));
-      
+      setHotel(selectedHotel);
     }
-
   };
 
   const redirect = () => {
@@ -89,10 +76,10 @@ function parameterValue(props:any) {
           <div className="">
             <Select
               label="Select Hotel"
-              value="off"
+              value=""
               onChange={handleHotelChange}
             >
-              <Option value="off">None</Option>
+              <Option value="">All</Option>
               <Option value="RRC">Royalton Riviera Cancún</Option>
               <Option value="RSC">Royalton Splash Cancún</Option>
               <Option value="RCC">Royalton Chic Cancún</Option>

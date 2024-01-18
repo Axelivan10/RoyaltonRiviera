@@ -28,21 +28,16 @@ export class ManningDto {
     noventa?: number;
 
 
-    hotels: {
-        kind: string,
-        value: string
-    };
+    // hotels: {
+    //     kind: string,
+    //     value: string
+    // };
 
     // @IsString()
-    regions: {
-        kind: string,
-        value: string
-    };
-
-    occupancy: {
-        kind: string,
-        value: string
-    };
+    // regions: {
+    //     kind: string,
+    //     value: string
+    // };
 
     hotelPrueba: string;
 
@@ -52,4 +47,5 @@ export class ManningDto {
 
     parameterValue: string;
     
+    country:string;
 } 

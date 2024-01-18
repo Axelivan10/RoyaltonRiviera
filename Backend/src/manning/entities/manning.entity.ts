@@ -11,7 +11,17 @@ export class Manning{
 
     @Column({nullable: true})   //YO PIENSO QUE ESTO SERÁ UN CATALOGO
     region: string;
-                                //{unique:true}
+
+    @Column({nullable: true})
+    country: string;
+
+    @Column({nullable: true})
+    division: string;
+    
+    @Column({nullable: true})
+    department: string;
+
+    //{unique:true}
     @Column({nullable: true}) // PREGUNTAR SI ES NECESARIO HACER UN QUERY PARA QUE NO SE CREE UNA POSICION YA EXISTENTE EN UN HOTEL, PERO QUE SI SE PUEDA CREAR CUANDO NO EXISTE EN UN HOTEL
     position: string
 

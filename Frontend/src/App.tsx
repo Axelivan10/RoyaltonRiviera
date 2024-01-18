@@ -10,6 +10,7 @@ import Admin from './pages/admin';
 import Manning from './pages/manning';
 import ParameterValue from './components/manning.components/parameterValue';
 import RatiosCriteria from './components/manning.components/ratiosCriteria';  
+import ManningConfig from './pages/manningConfig';
 
 
 function App() {
@@ -27,7 +28,8 @@ function App() {
       {/* <Route element={<ProtectedPrivateRoutes/>}> */}
           <Route path="/dashboard" element={<Dashboard /> } />
           <Route path="/admin" element={<Admin /> } />
-          <Route path="/manning" element={<Manning/>} />           
+          <Route path="/manning" element={<Manning/>} />
+          <Route path="/manningConfiguration" element={<ManningConfig/>} />           
           {/* <Route path="/parameter" element={<ParameterValue/> } />    */}
           <Route path="/ratios" element={<RatiosCriteria/> } />                   
       {/* </Route> */}

@@ -7,12 +7,13 @@ import { ChevronDownIcon, PhoneIcon, PlayCircleIcon,
 import { Avatar } from "@material-tailwind/react";
 import Logo2 from '../../assets/img/logo2.png'
 import { useAppSelector, useAppDispatch } from '../../redux/hooks'
-import { resetUser } from '../../redux/slices/user'
+import user, { resetUser } from '../../redux/slices/user'
 import { useNavigate } from 'react-router-dom'
 import { createRoute } from "../../redux/slices/routes";
-
+import {userData} from "../../api/login.api"
 
 const NavbarApp = (props:any) => {
+  const [user, setUser] = useState(0)
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -26,14 +27,28 @@ const NavbarApp = (props:any) => {
   };
 
   const redirect = () => {
-    const component = "DashboardCards";
-    dispatch(createRoute(component))
-    props.enviarDatoAlPadre(1);
+    try {
+      const component = "DashboardCards";
+      dispatch(createRoute(component));
+      props.enviarDatoAlPadre(1);
+    } catch {
+      navigate("/dashboard")
+    }
   };
+
+  const handleUserData = async ()  =>{              //AQUI VA EL API PARA EL NAVBAR CON EL NOMBRE Y LA FOTO
+    try {  
+      const response = await userData(1); 
+     
+    } catch (error) {
+        throw new Error('Login Fail');
+    }
+  }
 
   return (
     <>
-      <div className="border-b border-gray-300">
+    {/* <div className="fixed top-0 left-0 w-full bg-white z-10"> */}
+   <div className="border-b border-gray-300">
         <nav
           className="flex items-center justify-between p-2 lg:px-32 sm:px-20"
           aria-label="Global"
@@ -118,7 +133,9 @@ const NavbarApp = (props:any) => {
           </div>
         </nav>
 
-      </div>
+      {/* </div> */}
+    </div>
+   
     </>
   );
 }
