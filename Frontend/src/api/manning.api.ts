@@ -94,8 +94,136 @@ export const getLocation = async () => {
   }
 }
 
+export const getRelationsDepartment = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/testLocationConfigDepartment`, {
+    });
+    
+    return response;
 
-  
+  } catch (error) {
+    throw new Error('Get Department Relation Fail');
+  }
+}
+
+export const getRelationsLocation = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/testLocationConfigLocation`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Department Relation Fail');
+  }
+}
+
+export const relationsLocationConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsLocationConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const relationsPlantConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsPlantConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const updateHotelInfo = async (editValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update Hotels Fail');
+  }
+}
+
+export const getLocationConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/locationConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Locations Fail');
+  }
+}
+
+export const getPlantConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/plantConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Locations Fail');
+  }
+}
+
+export const updateLocationConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateLocationsConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update LocationConfig Fail');
+  }
+}
+
+export const updatePlantConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updatePlantConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update LocationConfig Fail');
+  }
+}
+
+export const createLocation = async (areaCode: string ) => {
+  console.log(areaCode)
+  try {
+    const response = await axios.post(`${BASE_URL}/manning/createLocation`, {
+      areaCode,
+    });
+    return response;
+
+  } catch (error) {
+    throw new Error('Create Location Fail');
+  }
+}
+
+export const createPlant = async (country:string, plantId: number, plantCode:string, plantDescription:string, rooms:number ) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/manning/createPlant`, {
+      country,
+      plantId,
+      plantCode,
+      plantDescription,
+      rooms
+    });
+    return response;
+
+  } catch (error) {
+    throw new Error('Create Location Fail');
+  }
+}
 
 
 
@@ -107,16 +235,3 @@ export const getLocation = async () => {
 
 
 
-
-// id: manning.id,
-// hotel: manning.hotel,
-// region: manning.region,
-// position: manning.position,
-// cincuenta: manning.cincuenta,
-// sesenta: manning.sesenta,
-// setenta: manning.sesenta,
-// ochenta: manning.ochenta,
-// noventa: manning.noventa,
-// area: manning.area,
-// parameter: manning.parameter,
-// parameter_value: manning.parameter_value

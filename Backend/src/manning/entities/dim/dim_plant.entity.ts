@@ -1,4 +1,5 @@
-import{Entity, Column, PrimaryGeneratedColumn} from 'typeorm'
+import{Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm'
+import { plantConfig } from '../configuration/plant_config.entity';
 
 @Entity()
 export class dimPlant{
@@ -44,4 +45,7 @@ export class dimPlant{
 
     @Column({nullable: true})
     countryRank: number;
+
+    @OneToMany(() => plantConfig, (location) => location.deparment)
+    plantConfigPlant: plantConfig[];
 }

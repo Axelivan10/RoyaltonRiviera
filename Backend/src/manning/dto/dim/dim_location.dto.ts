@@ -2,24 +2,24 @@ import {IsString, IsNotEmpty, MinLength} from 'class-validator'
 
 export class dimLocationDto {
 
-    @IsString()
+    // @IsString()
     sectorCode: string
 
-    @IsString()
+    // @IsString()
     sector: string;
 
-    @IsString()
+    // @IsString()
     zoneCode: string;
     
-    @IsString()
+    // @IsString()
     zone: string;
         
-    @IsString()
+    // @IsString()
     areaCode: string;
 
-    @IsString()
+    // @IsString()
     area: string;
     
-    @IsString()
+    // @IsString()
     capacity: string;
 } 

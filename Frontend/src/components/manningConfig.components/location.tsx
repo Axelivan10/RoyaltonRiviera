@@ -3,7 +3,7 @@ import { Card, Typography } from "@material-tailwind/react";
 import { createRoute } from "../../redux/slices/routes";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { getDepartment, getDivision, getLocation } from "../../api/manning.api";
+import { getDepartment, getDivision, getLocation, getLocationConfig, updateLocationConfig } from "../../api/manning.api";
 import { setActive } from "@material-tailwind/react/components/Tabs/TabsContext";
 import { useNavigate } from "react-router-dom";
 import Form_location from "../general.components/form_location";
@@ -12,11 +12,19 @@ interface InputValues {
   [key: string]: string;
 }
 
+interface InputValue {
+  id: number;
+  position: string;
+  xSymbol: string;
+  // locationId: number;
+  // deparmentId: number;
+}
+
+
 function location(props: any) {
   // const dispatch = useDispatch()
   const [inputValues, setInputValues] = useState<InputValues>({});
-  const [originalInputValues, setOriginalInputValues] = useState<InputValues>({});
-  const [formDialog, setFormDialog] = useState(false);
+  const [valuesToSend, setValuesToSend] = useState<InputValue[]>([]);
 
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
@@ -24,12 +32,10 @@ function location(props: any) {
   const [locations, setLocations] = useState([]);
   const [division, setDivision] = useState("Admin");
   const [divisionFilter, SetDivisionFilter] = useState([]);
-  const [allModifiedData, setAllModifiedData] = useState<InputValues[]>([]);
+  let autoIncrementId = 1;
+  const [initialValues, setinitialValues] = useState<InputValues>({});
   const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
-  const [cancelClicked, setCancelClicked] = useState(false);
-  // const [originalSessionValues, setOriginalSessionValues] = useState<InputValues>({});
-
-
+  const [check, setCheck] = useState(0);
 
   // const redirect = () => {
   //   const component = "Location";
@@ -37,76 +43,70 @@ function location(props: any) {
   //   props.enviarDatoAlPadre(1);
   // };
   
-  useEffect(()=>{ 
-    renderList()
-  },[])
-
-  useEffect(() => {
-    const originalValues: InputValues = {};
-    locations.forEach(({ id: locationId }) => {
-      departments.forEach(({ id: departmentId }) => {
-        const key = `${locationId}-${departmentId}`;
-        originalValues[key] = inputValues[key] || '';
-      });
-    });
-    
-    if (!cancelClicked) {
-      setOriginalInputValues(originalValues);
-    }
-  }, [isActive, cancelClicked]);
-
-
-  useEffect(() => {
-  const newModifiedPositions = Object.keys(inputValues).filter(
-    key => inputValues[key] !== originalInputValues[key]
-  );
-  console.log(newModifiedPositions);
-  setModifiedCurrentPositions(newModifiedPositions);
-
-  // Guardar todas las modificaciones en el historial
-  setAllModifiedData(prevData => [...prevData, inputValues]);
-  }, [inputValues, originalInputValues]);
-
-  const handleCancelClicked = () => {
-    setCancelClicked(true);
-
-    // Revert to the original values of the current session
-    setInputValues(originalInputValues);
+  const generateAutoIncrementId = () => {
+    return autoIncrementId++;
   };
 
+  useEffect(()=>{
+    renderList()
+    renderInputs() 
+  },[])
+
+  // useEffect(()=>{
+  //   renderInputs() 
+  // },[])
+
   useEffect(() => {
-      // Lógica para mostrar la alerta y manejar las posiciones modificadas cuando isActive cambia a false
-      if (!isActive && modifiedCurrentPositions.length > 0) {
-        console.log(allModifiedData)
-        Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Save changes",
-        }).then(result => {
-          if (result.isConfirmed) {
-            // Lógica para manejar la confirmación
-            Swal.fire({
-              title: "You make a new request",
-              text: "Your request will be checked by an administrator.",
-              icon: "success",
-            });
-            // Set original values for the next session
-            setOriginalInputValues(inputValues);
-          } else {
-            handleCancelClicked();
-          }
-        });
-      } else {
-        // Lógica para manejar cuando no hay posiciones modificadas o isActive está activado
-        console.log("No hay posiciones modificadas o isActive está activado");
-      }
-  }, [isActive]);
+    setValuesToSend(sendInputValues.inputValues);
+  }, [inputValues]);
 
+  useEffect(() => {
+    const newModifiedPositions = Object.keys(inputValues).filter(
+      key => inputValues[key] !== initialValues[key]
+    );
+    setModifiedCurrentPositions(newModifiedPositions)
+    // console.log(newModifiedPositions)
+  }, [inputValues]);
 
+  useEffect(() => {
+    if (!isActive && modifiedCurrentPositions.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Save changes",
+      }).then(result => {
+        if (result.isConfirmed) {
+          // Lógica para manejar la confirmación
+          Swal.fire({
+            title: "You make a new request",
+            text: "Your request will be checked by an administrator.",
+            icon: "success",
+          });
+          updateData()
+          setinitialValues(inputValues)
+        } else {
+          setInputValues(initialValues)
+        }
+      });
+    } else {
+      // Lógica para manejar cuando no hay posiciones modificadas o isActive está activado
+      console.log("No hay posiciones modificadas o isActive está activado");
+    }
+  }, [isActive, ]);
+
+  const updateData = () => {
+  try {
+    updateLocationConfig(valuesToSend)
+    // console.log(valuesToSend)
+} catch (error) {
+  throw new Error("Send Information Fail");
+}
+setCheck(generateAutoIncrementId)
+  }
 
   const renderList = async () => {
     try{
@@ -123,6 +123,20 @@ function location(props: any) {
     }
   }
 
+  const renderInputs = async ()  =>{
+    const locatationConfig = await getLocationConfig();
+    // console.log(locatationConfig.data)
+
+    locatationConfig.data.forEach((config:any) => {
+      if (config.xSymbol) {
+        initialValues[config.position] = config.xSymbol;
+      }
+    });
+    
+    // Establecer los valores iniciales en el estado
+    setInputValues(initialValues);
+  }
+
   const activeInputs = () => {
     setIsActive(!isActive)
   }
@@ -134,6 +148,20 @@ function location(props: any) {
     }
   };
 
+  const sendInputValues = {
+      inputValues: Object.entries(inputValues).map(([position, xSymbol]) => {
+      const [DepartmentId, locationId] = position.split('-').map(Number);
+      
+      return {
+        id: generateAutoIncrementId(),
+        position,
+        xSymbol,
+        // locationId: DepartmentId,
+        // deparmentId: locationId,
+      };
+    }),
+  };
+
   const handleDivisionChance = (e:any) => {
     const selectedDivision = (e.target.value);
     if(e.target.value == ""){
@@ -143,14 +171,12 @@ function location(props: any) {
     }
   }
 
-  const filteredDepartments = departments.filter(({ divBis }) => divBis === division || division === "");
+  const filteredDivision = departments.filter(({ divBis }) => divBis === division || division === "");
 
 
   return (
-    <div className="h-screen lg:w-10/12 xl:w-11/12 w-full pr-4 pt-10 pl-10">
-      {" "}
-      {/*  style={{ maxHeight: '810px' }} */}
-
+    
+    <div className="h-screen xl:w-10/12 w-full xl:pl-16 pt-10 pl-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 p-2 pb-8">
         <div className=" lg:w-4/6 sm:w-full">
           <select
@@ -169,8 +195,9 @@ function location(props: any) {
 
         <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5">
           <div>
-              <Form_location state={formDialog}/>
+            <Form_location />
           </div>
+
           <div>
             {isActive ? (
               <p
@@ -188,18 +215,19 @@ function location(props: any) {
               </p>
             )}
           </div>
-        </div>
 
+        </div>
+        
       </div>
-      
+
       <Card
         className="h-full w-full overflow-scroll"
         style={{ maxHeight: "650px" }}
       >
         <table className="w-full min-w-max table-auto text-left">
-          <thead>
+          <thead className="bg-white">
             <tr>
-              <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+              <th className="sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
                 <Typography
                   variant="small"
                   color="blue-gray"
@@ -208,10 +236,10 @@ function location(props: any) {
                   Location
                 </Typography>
               </th>
-              {filteredDepartments.map(({ id, deptmBis }) => (
+              {filteredDivision.map(({ id, deptmBis }) => (
                 <th
                   key={id}
-                  className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                  className="sticky top-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
                 >
                   <Typography
                     variant="small"
@@ -225,18 +253,18 @@ function location(props: any) {
             </tr>
           </thead>
           <tbody>
-            {locations.map(({ id: locationId, area }) => (
+            {locations.map(({ id: locationId, areaCode }) => (
               <tr key={locationId}>
-                <td className="p-4 border-b border-blue-gray-50">
+                <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
                   <Typography
                     variant="small"
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {area}
+                    {areaCode}
                   </Typography>
                 </td>
-                {filteredDepartments.map(({ id: departmentId }) => (
+                {filteredDivision.map(({ id: departmentId }) => (
                   <td
                     key={departmentId}
                     className="p-4 border-b border-blue-gray-50"
@@ -261,8 +289,11 @@ function location(props: any) {
             ))}
           </tbody>
         </table>
+
       </Card>
+
     </div>
+    
   );
 }
 

@@ -9,6 +9,7 @@ import NavbarApp from '../components/general.components/navbar-app';
 import { Dialog, Transition } from '@headlessui/react';
 import  Location  from '../components/manningConfig.components/location';
 import Plant from '../components/manningConfig.components/plant';
+import Shift from '../components/manningConfig.components/shift';
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
 }
@@ -24,6 +25,8 @@ function manningConfig() {
 const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Location', to: <Location/>, icon: HomeIcon, value:1, current: (active == 1 ? true :  false) },
   { name: 'Plant', to: <Plant/>, icon: HomeIcon, value:2, current: (active == 2 ? true :  false) },
+  { name: 'Shift', to: <Shift/>, icon: HomeIcon, value:3, current: (active == 3 ? true :  false) },
+
 ]
 
   const logOut = () =>{

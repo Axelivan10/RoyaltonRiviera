@@ -1,5 +1,7 @@
 import{Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn} from 'typeorm'
 import { dimPosition } from './dim_position.entity';
+import { locationConfig } from '../configuration/location_config.entity';
+import { plantConfig } from '../configuration/plant_config.entity';
 
 @Entity()
 export class dimDepartment{
@@ -21,4 +23,10 @@ export class dimDepartment{
 
     @OneToMany(() => dimPosition, (position) => position.deptmBis)
     positionDepartment: dimPosition[];
+
+    @OneToMany(() => locationConfig, (location) => location.deparment)
+    locationConfigDepartment: locationConfig[];
+
+    @OneToMany(() => plantConfig, (location) => location.deparment)
+    plantConfigDepartment: plantConfig[];
 }
