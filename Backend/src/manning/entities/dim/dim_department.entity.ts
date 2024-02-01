@@ -2,6 +2,8 @@ import{Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn} from 'type
 import { dimPosition } from './dim_position.entity';
 import { locationConfig } from '../configuration/location_config.entity';
 import { plantConfig } from '../configuration/plant_config.entity';
+import { shiftConfig } from '../configuration/shift_config.entity';
+import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 
 @Entity()
 export class dimDepartment{
@@ -27,6 +29,12 @@ export class dimDepartment{
     @OneToMany(() => locationConfig, (location) => location.deparment)
     locationConfigDepartment: locationConfig[];
 
-    @OneToMany(() => plantConfig, (location) => location.deparment)
+    @OneToMany(() => plantConfig, (plant) => plant.deparment)
     plantConfigDepartment: plantConfig[];
+
+    @OneToMany(() => shiftConfig, (shift) => shift.deparment)
+    shiftConfigDepartment: shiftConfig[];
+
+    @OneToMany(() => serviceTypeConfig, (serviceType) => serviceType.deparment)
+    serviceTypeConfigDepartment: serviceTypeConfig[];
 }

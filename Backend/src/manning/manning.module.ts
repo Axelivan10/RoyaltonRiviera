@@ -15,10 +15,12 @@ import { dimLocation } from './entities/dim/dim_location.entity';
 import { dimDivision } from './entities/dim/dim_division.entity';
 import { locationConfig } from './entities/configuration/location_config.entity';
 import { plantConfig } from './entities/configuration/plant_config.entity';
+import { shiftConfig } from './entities/configuration/shift_config.entity';
+import { serviceTypeConfig } from './entities/configuration/serviceType_config.entity';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Manning, dimShift, dimServiceType, dimSalary, dimPosition, dimPlant, dimParameter, 
-    dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig])],
+    dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig])],
   providers: [ManningService],
   controllers: [ManningController]
 })

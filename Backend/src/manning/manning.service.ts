@@ -11,6 +11,10 @@ import { dimPlant } from './entities/dim/dim_plant.entity';
 import { dimLocation } from './entities/dim/dim_location.entity';
 import { locationConfig } from './entities/configuration/location_config.entity';
 import { plantConfig } from './entities/configuration/plant_config.entity';
+import { shiftConfig } from './entities/configuration/shift_config.entity';
+import { dimShift } from './entities/dim/dim_shift.entity';
+import { serviceTypeConfig } from './entities/configuration/serviceType_config.entity';
+import { dimServiceType } from './entities/dim/dim_service_type.entity';
 
 @Injectable()
 export class ManningService {
@@ -22,6 +26,8 @@ export class ManningService {
     private divisionRepository: Repository<dimDivision>,
     @InjectRepository(dimDepartment)
     private departmentRepository: Repository<dimDepartment>,
+    @InjectRepository(dimShift)
+    private ShiftRepository: Repository<dimShift>,
     @InjectRepository(dimPlant)
     private plantRepository: Repository<dimPlant>,
     @InjectRepository(dimLocation)
@@ -30,9 +36,14 @@ export class ManningService {
     private locationConfigRepository: Repository<locationConfig>,
     @InjectRepository(plantConfig)
     private plantConfigRepository: Repository<plantConfig>,
+    @InjectRepository(shiftConfig)
+    private shiftConfigRepository: Repository<shiftConfig>,
+    @InjectRepository(dimServiceType)
+    private dimServiceTypeRepository: Repository<dimServiceType>,
+    @InjectRepository(serviceTypeConfig)
+    private serviceTypeConfigRepository: Repository<serviceTypeConfig>,
   ) {}
 
-  
   async createInfoManning(manning: ManningDto) {
     const dataFound = await this.ManningRepository.findOne({
       where: {
@@ -148,8 +159,6 @@ export class ManningService {
 
   deleteInfoManning(id: number) {}
 
-
-
   async testDivision(): Promise<dimDivision[]> {
     return this.divisionRepository.find({ relations: ['positionsDivision'] });
   }
@@ -178,6 +187,14 @@ export class ManningService {
 
   async relationsPlantConfig(): Promise<plantConfig[]> {
     return this.plantConfigRepository.find({ relations: ['location', 'deparment', 'plant'] });
+  }
+  
+  async relationsShiftConfig(): Promise<shiftConfig[]> {
+    return this.shiftConfigRepository.find({ relations: ['location', 'deparment', 'plant', 'shift'] });
+  }
+
+  async relationsServiceTypeConfig(): Promise<serviceTypeConfig[]> {
+    return this.serviceTypeConfigRepository.find({ relations: ['location', 'deparment', 'plant', 'shift',"serviceType"] });
   }
   
   async getHotels() {
@@ -212,6 +229,14 @@ export class ManningService {
     return this.divisionRepository.find();
   }
 
+  async getShift() {
+    return this.ShiftRepository.find();
+  }
+
+  async getServiceType() {
+    return this.dimServiceTypeRepository.find();
+  }
+
   getDepartment() {
     return this.departmentRepository.find();
   }
@@ -226,6 +251,14 @@ export class ManningService {
 
   plantConfig() {
     return this.plantConfigRepository.find();
+  }
+
+  shiftConfig() {
+    return this.shiftConfigRepository.find();
+  }
+
+  serviceTypeConfig() {
+    return this.serviceTypeConfigRepository.find();
   }
 
   async updateLocationsConfig(editInputs) {
@@ -271,8 +304,60 @@ export class ManningService {
     }
 
     return editInputs;
-}
+  }
 
+  async updateShiftConfig(editInputs) {
+    const updatedRecords = [];
+    for (const record of editInputs) {
+      const { position, xSymbol } = record;
+      try {
+
+        // Suponiendo que PlantService.update es asíncrono
+        const updatedRecord = await this.shiftConfigRepository.update(
+          { position },
+          { xSymbol },
+        );
+
+        updatedRecords.push(updatedRecord);
+
+      } catch (error) {
+        Error(`Error updating record with ${position}: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateServiceTypeConfig(editInputs) {
+    const updatedRecords = [];
+  
+    for (const record of editInputs) {
+      const { locationId, selectId } = record;
+  
+      try {
+        const existingRecord = await this.serviceTypeConfigRepository.findOne({ 
+          where:{
+          id: locationId
+          }
+       });
+        
+        if (existingRecord) {
+          existingRecord.serviceType = selectId;
+          
+          const updatedRecord = await this.serviceTypeConfigRepository.save(existingRecord);
+          updatedRecords.push(updatedRecord);
+        } else {
+          console.error(`Record with locationId ${locationId} not found.`);
+        }
+  
+      } catch (error) {
+        console.error(`Error updating record with ${locationId}: ${error.message}`);
+      }
+    }
+  
+    return updatedRecords;
+  }
+  
   async createLocation(areaCode){
           const location = await this.locationRepository.findOne({ where:{
             areaCode: areaCode.areaCode,

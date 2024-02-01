@@ -94,6 +94,30 @@ export const getLocation = async () => {
   }
 }
 
+export const getShift = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/shift`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Shift Fail');
+  }
+}
+
+export const getServiceType = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/serviceType`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Shift Fail');
+  }
+}
+
 export const getRelationsDepartment = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/manning/testLocationConfigDepartment`, {
@@ -142,6 +166,30 @@ export const relationsPlantConfig = async () => {
   }
 }
 
+export const relationsShiftConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsShiftConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const relationsServiceTypeConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsServiceTypeConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -176,6 +224,30 @@ export const getPlantConfig = async () => {
   }
 }
 
+export const getShiftConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/shiftConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Locations Fail');
+  }
+}
+
+export const getServiceTypeConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/serviceTypeConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Locations Fail');
+  }
+}
+
 export const updateLocationConfig = async (inputValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateLocationsConfig`, inputValues);
@@ -192,7 +264,27 @@ export const updatePlantConfig = async (inputValues: {}) => {
     return response;
 
   } catch (error) {
-    throw new Error('Update LocationConfig Fail');
+    throw new Error('Update PlantConfig Fail');
+  }
+}
+
+export const updateShiftConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateShiftConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update ShiftConfig Fail');
+  }
+}
+
+export const updateServiceTypeConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateServiceTypeConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update ServiceTypeConfig Fail');
   }
 }
 

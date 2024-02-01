@@ -3,13 +3,15 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import MasterRatios from '../components/manning.components/masterRatios';
 import TableSTD from '../components/manning.components/tableSTD';
-import { HomeIcon, MapIcon, ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
+import { BuildingOfficeIcon, MapPinIcon, ClockIcon, TruckIcon, HomeIcon } from '@heroicons/react/20/solid';
 import { resetUser } from '../redux/slices/user';
 import NavbarApp from '../components/general.components/navbar-app';
 import { Dialog, Transition } from '@headlessui/react';
 import  Location  from '../components/manningConfig.components/location';
 import Plant from '../components/manningConfig.components/plant';
 import Shift from '../components/manningConfig.components/shift';
+import ServiceType from '../components/manningConfig.components/serviceType';
+
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
 }
@@ -23,15 +25,16 @@ function manningConfig() {
   const navigate = useNavigate();
  
 const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
-  { name: 'Location', to: <Location/>, icon: HomeIcon, value:1, current: (active == 1 ? true :  false) },
-  { name: 'Plant', to: <Plant/>, icon: HomeIcon, value:2, current: (active == 2 ? true :  false) },
-  { name: 'Shift', to: <Shift/>, icon: HomeIcon, value:3, current: (active == 3 ? true :  false) },
-
+  { name: 'Location', to: <Location/>, icon: MapPinIcon, value:1, current: (active == 1 ? true :  false) },
+  { name: 'Plant', to: <Plant/>, icon: BuildingOfficeIcon, value:2, current: (active == 2 ? true :  false) },
+  { name: 'Shift', to: <Shift/>, icon: ClockIcon, value:3, current: (active == 3 ? true :  false) },
+  { name: 'ServiceType', to: <ServiceType/>, icon: TruckIcon, value:4, current: (active == 4 ? true :  false) },
 ]
 
   const logOut = () =>{
     dispatch(resetUser());
-    navigate('/login')  }
+    navigate('/login')  
+  }
 
   const actualizarEstado = (nuevoEstado:boolean) => {
     setSidebarOpen(nuevoEstado);
@@ -41,7 +44,6 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
     setCurrentComponent(component);
     setActive(value)
   };
-
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 "> 
@@ -213,6 +215,7 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
 
   </div>
   )
+
 }
 
 export default manningConfig

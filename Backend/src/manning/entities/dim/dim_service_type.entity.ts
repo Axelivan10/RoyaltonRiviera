@@ -1,4 +1,5 @@
-import{Entity, Column, PrimaryGeneratedColumn} from 'typeorm'
+import{Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm'
+import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 
 @Entity()
 export class dimServiceType{
@@ -17,4 +18,8 @@ export class dimServiceType{
     
     @Column({nullable: true})
     serviceTypeDescription: string;
+
+    @OneToMany(() => serviceTypeConfig, (serviceType) => serviceType.serviceType)
+    serviceTypeConfigServiceType: serviceTypeConfig[];
+
 }

@@ -12,7 +12,6 @@ import {
 import { TableCellsIcon } from "@heroicons/react/20/solid";
 import { getHotels, updateHotelInfo } from "../../api/manning.api";
 import Swal from "sweetalert2";
-import { setActive } from "@material-tailwind/react/components/Tabs/TabsContext";
 
 const TABLE_HEAD = [
   "Company",
@@ -28,34 +27,6 @@ const TABLE_HEAD = [
   "Size Rank",
   "Country Rank",
   ""
-];
-
-const TABLE_ROWS = [
-  {
-    name: "John Michael",
-    job: "Manager",
-    date: "23/04/18",
-  },
-  {
-    name: "Alexa Liras",
-    job: "Developer",
-    date: "23/04/18",
-  },
-  {
-    name: "Laurent Perrier",
-    job: "Executive",
-    date: "19/09/17",
-  },
-  {
-    name: "Michael Levi",
-    job: "Developer",
-    date: "24/12/08",
-  },
-  {
-    name: "Richard Gran",
-    job: "Manager",
-    date: "04/10/21",
-  },
 ];
 
 interface EditValue {
@@ -98,10 +69,10 @@ function tableCurrentPlant() {
   }, [list]);
 
   const renderTablePlant = async () => {
-    const list2:[] = [];
+    // const list2:[] = [];
     try {  
       const response = await getHotels();
-      setList(list2);
+      // setList(list2);
       setList(response.data);
     } catch (error) {
         throw new Error('Hotel Table Fail');
@@ -127,7 +98,7 @@ function tableCurrentPlant() {
   };
 
   const saveAllChanges = () => {
-    const list2:[] = [];
+      // const list2:[] = [];
     try {
       handleOpen()
       Swal.fire({
@@ -224,7 +195,7 @@ function tableCurrentPlant() {
                     },
                     index
                   ) => {
-                    const isLast = index === TABLE_ROWS.length - 1;
+                    const isLast = index === editValues.length - 1;
                     const classes = isLast
                       ? "p-4"
                       : "p-4 border-b border-blue-gray-50";
@@ -431,147 +402,3 @@ function tableCurrentPlant() {
 }
 
 export default tableCurrentPlant;
-
-
-
-// <td className={classes}>
-// <Typography
-//   variant="small"
-//   color="blue-gray"
-//   className="font-normal"
-// >
-//   {company}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {region}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {countryCode}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {country}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {brand}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {brandCode}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {plantCode}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {plantDescription}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {rooms}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {size}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {sizeRank}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   {countryRank}
-// </Typography>
-// </td>
-// <td className={classes}>
-// <Typography
-//   as="a"
-//   href="#"
-//   variant="small"
-//   color="blue-gray"
-//   className="font-medium"
-// >
-//   Edit
-// </Typography>
-// </td>

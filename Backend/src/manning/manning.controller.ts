@@ -86,6 +86,18 @@ export class ManningController {
         return this.manningService.relationsPlantConfig();
     }
 
+    @Public()
+    @Get('relationsShiftConfig')
+    relationsShiftConfig(){
+        return this.manningService.relationsShiftConfig();
+    }
+
+    @Public()
+    @Get('relationsServiceTypeConfig')
+    relationsServiceTypeConfig(){
+        return this.manningService.relationsServiceTypeConfig();
+    }
+
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
     @Public()
     @Get('hotels')
@@ -103,6 +115,18 @@ export class ManningController {
     @Get('division')
     getDivision(){
         return this.manningService.getDivision();
+    }
+
+    @Public()
+    @Get('shift')
+    getShift(){
+        return this.manningService.getShift();
+    }
+
+    @Public()
+    @Get('serviceType')
+    getServiceType(){
+        return this.manningService.getServiceType();
     }
 
     //NEXT PART IS FOR ALL THE ARRAYS
@@ -131,6 +155,18 @@ export class ManningController {
         return this.manningService.plantConfig();
     }
 
+    @Public()
+    @Get('shiftConfig')
+    shiftConfig(){
+        return this.manningService.shiftConfig();
+    }
+
+    @Public()
+    @Get('serviceTypeConfig')
+    serviceTypeConfig(){
+        return this.manningService.serviceTypeConfig();
+    }
+
     
     @Public()
     @Put('updateLocationsConfig')
@@ -142,6 +178,19 @@ export class ManningController {
     @Put('updatePlantConfig')
     updatePlantConfig(@Body() editInputs: {}){
         return this.manningService.updatePlantConfig(editInputs);
+    }
+
+    @Public()
+    @Put('updateShiftConfig')
+    updateShiftConfig(@Body() editInputs: {}){
+        return this.manningService.updateShiftConfig(editInputs);
+    }
+
+    @Public()
+    @Put('updateServiceTypeConfig')
+    updateServiceTypeConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateServiceTypeConfig(editInputs);
     }
 
     @Public()
