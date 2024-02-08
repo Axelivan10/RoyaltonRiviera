@@ -175,10 +175,11 @@ setCheck(generateAutoIncrementId)
 
 
   return (
-    
-    <div className="h-screen xl:w-10/12 w-full xl:pl-16 pt-10 pl-10">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 p-2 pb-8">
-        <div className=" lg:w-4/6 sm:w-full">
+    <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20">
+      {/* w-full xl:pl-16 pt-10 pl-10 */}
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2 pb-8">
+        <div className="lg:w-4/6 sm:w-full">
           <select
             className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
             onChange={handleDivisionChance}
@@ -215,16 +216,14 @@ setCheck(generateAutoIncrementId)
               </p>
             )}
           </div>
-
         </div>
-        
       </div>
 
       <Card
         className="h-full w-full overflow-scroll"
-        style={{ maxHeight: "650px" }}
+        style={{ maxHeight: "650px"}}
       >
-        <table className="w-full min-w-max table-auto text-left">
+        <table className="w-full min-w-max table-auto text-left overflow-x-auto">
           <thead className="bg-white">
             <tr>
               <th className="sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
@@ -289,11 +288,9 @@ setCheck(generateAutoIncrementId)
             ))}
           </tbody>
         </table>
-
       </Card>
 
     </div>
-    
   );
 }
 

@@ -7,20 +7,26 @@ import { createPlant } from '../../api/manning.api';
 function form_plant() {
     const [open, setOpen] = useState(false);
     const handleOpen = () =>  setOpen(!open);
-    const [plantId, setPlantId] = useState(0);
+    const [plantId, setPlantId] = useState("");
     const [plantCode, setPlantCode] = useState("");
     const [country, setCountry] = useState("");
     const [plantDescription, setPlantDescription] = useState("");
-    const [rooms, setRooms] = useState(0);
+    const [rooms, setRooms] = useState("");
 
-    const handlePlantIdChange = (e:any) => { 
-      const selectedPlantId = (e.target.value);
-      setPlantId(selectedPlantId);
-     }
+    const handlePlantIdChange = (e: any) => {
+      const numericRegex = /^[0-9]*$/;
+      const selectedPlantId = e.target.value;
 
-     const handlePlantCodeChange = (e:any) => { 
+      if (numericRegex.test(selectedPlantId)) {
+        setPlantId(selectedPlantId);
+      }
+      
+    };
+
+     const handlePlantCodeChange = (e:any) => {    
       const selectedPlantCode = (e.target.value);
-      setPlantCode(selectedPlantCode);
+      const mayusSelectedPlantCode = selectedPlantCode.toUpperCase();
+      setPlantCode(mayusSelectedPlantCode);
      }
 
      const handleCountryChange = (e:any) => { 
@@ -34,14 +40,18 @@ function form_plant() {
      }
 
      const handleRoomsChange = (e:any) => { 
+      const numericRegex = /^[0-9]*$/;
       const selectedRoom = (e.target.value);
-      setRooms(selectedRoom);
-     }
+      if (numericRegex.test(selectedRoom)) {
+        setRooms(selectedRoom);
+      }
+    }
 
      const CreateData = () => {
       handleOpen()
       try {
         if(country && plantId && plantCode && plantDescription && rooms){
+          
           Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -50,7 +60,7 @@ function form_plant() {
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
             confirmButtonText: "Save changes",
-          }).then(result => {
+          }).then(async result => {
             if (result.isConfirmed) {
               // Lógica para manejar la confirmación
               Swal.fire({
@@ -58,12 +68,22 @@ function form_plant() {
                 text: "Your request will be checked by an administrator.",
                 icon: "success",
               });
-              createPlant(country, plantId, plantCode, plantDescription, rooms)
-              setCountry("") 
-              setPlantId(0)
-              setPlantCode("")
-              setPlantDescription("")
-              setRooms(0)
+
+              try {
+                await createPlant(country, plantId, plantCode, plantDescription, rooms)
+                setCountry("") 
+                setPlantId("")
+                setPlantCode("")
+                setPlantDescription("")
+                setRooms("")
+              } catch (error) {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Something went wrong! Try again",
+                });
+              }
+
             }
           });
         } else{
@@ -81,7 +101,7 @@ function form_plant() {
       throw new Error("Send Information Fail");
     }
       }
-      
+
   return (
     <>
       <p
@@ -106,13 +126,16 @@ function form_plant() {
             <div className="flex pb-6 gap-2">
               <div className="w-1/3">
                 <p className='pb-2'>SAP Code:</p>
+                
                 <input
-                  type="number"
+                  type="text"
                   className="border border-gray-400 rounded-lg pl-2 w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none 
                   [&::-webkit-inner-spin-button]:appearance-none"
                   onChange={handlePlantIdChange}
-                  value={(plantId === 0 ? "": plantId)}
+                  value={(plantId)}
+                  maxLength={4}
                 />
+                
               </div>
               <div className="w-1/3">
                 <p className='pb-2'>Plant Code:</p>
@@ -121,6 +144,7 @@ function form_plant() {
                   className="border border-gray-400 rounded-lg pl-2 w-full"
                   onChange={handlePlantCodeChange}
                   value={plantCode}
+                  maxLength={4}
                 />
               </div>
               <div className="w-1/3">
@@ -130,6 +154,7 @@ function form_plant() {
                   className="w-full border border-gray-400 rounded-lg pl-2 w-full"
                   onChange={handleCountryChange}
                   value={country}
+                  maxLength={30}
                 />
               </div>
             </div>
@@ -145,6 +170,7 @@ function form_plant() {
                     className="w-full border border-gray-400 rounded-lg pl-2"
                     onChange={handlePlantDescriptionChange}
                     value={plantDescription}
+                    maxLength={25}
                   />
                 </div>
               </div>
@@ -156,8 +182,10 @@ function form_plant() {
                   <p>Rooms:</p>
                 </div>
                 <div className="w-2/3">
-                <input type="number"   onChange={handleRoomsChange}
-                    value={(rooms == 0? "": rooms)} className=' w-full border border-gray-400 rounded-lg pl-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none 
+                <input type="text"   
+                onChange={handleRoomsChange}
+                maxLength={4}
+                    value={(rooms)} className=' w-full border border-gray-400 rounded-lg pl-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none 
                     [&::-webkit-inner-spin-button]:appearance-none'/>
                 </div>
               </div>

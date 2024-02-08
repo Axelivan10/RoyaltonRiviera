@@ -190,6 +190,18 @@ export const relationsServiceTypeConfig = async () => {
   }
 }
 
+export const getRelationsPositionConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsPositionConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -278,6 +290,16 @@ export const updateShiftConfig = async (inputValues: {}) => {
   }
 }
 
+export const updatePositionConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updatePositionConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update PositionConfig Fail');
+  }
+}
+
 export const updateServiceTypeConfig = async (inputValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateServiceTypeConfig`, inputValues);
@@ -288,11 +310,10 @@ export const updateServiceTypeConfig = async (inputValues: {}) => {
   }
 }
 
-export const createLocation = async (areaCode: string ) => {
-  console.log(areaCode)
+export const createLocation = async (dataLocation: {} ) => {
   try {
     const response = await axios.post(`${BASE_URL}/manning/createLocation`, {
-      areaCode,
+      dataLocation,
     });
     return response;
 
@@ -301,7 +322,8 @@ export const createLocation = async (areaCode: string ) => {
   }
 }
 
-export const createPlant = async (country:string, plantId: number, plantCode:string, plantDescription:string, rooms:number ) => {
+export const createPlant = async (country:string, plantId: string, plantCode:string, plantDescription:string, rooms:string ) => {
+  
   try {
     const response = await axios.post(`${BASE_URL}/manning/createPlant`, {
       country,
@@ -315,6 +337,7 @@ export const createPlant = async (country:string, plantId: number, plantCode:str
   } catch (error) {
     throw new Error('Create Location Fail');
   }
+
 }
 
 

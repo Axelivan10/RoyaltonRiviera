@@ -184,7 +184,7 @@ function serviceType() {
       .filter(({ countryCode }) => !country || countryCode === country);
 
   return (
-    <div className="h-screen xl:w-10/12 w-full xl:pl-16 pt-8 pl-10 ">
+    <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
       
       <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
         <div>
@@ -269,7 +269,8 @@ function serviceType() {
               {TABLE_HEAD.map((head) => (
                 <th
                   key={head}
-                  className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                  className={head === "Locations" ? "sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100" : "sticky top-0 left-0 border-b border-blue-gray-100 bg-blue-gray-50 p-4"}
+
                 >
                   <Typography
                     variant="small"
@@ -286,7 +287,7 @@ function serviceType() {
             {filteredData.map(
               ({ id: locationId, deparment, location, plant, shift, serviceType }) => (
                 <tr key={locationId}>
-                  <td className="p-4 border-b border-blue-gray-50 w-1/5">
+                  <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50 w-1/5">
                     <Typography
                       variant="small"
                       color="blue-gray"

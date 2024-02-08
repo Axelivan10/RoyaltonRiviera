@@ -84,7 +84,8 @@ const dashboard = () => {
 
   const logOut = () =>{
     dispatch(resetUser());
-    navigate('/login')  }
+    navigate('/')  
+  }
 
   const actualizarEstado = (nuevoEstado:boolean) => {
     setSidebarOpen(nuevoEstado);
@@ -98,6 +99,17 @@ const dashboard = () => {
 
   const recibirDatoDelHijo = (dato: number) => {
     setChecker(dato);
+  };
+
+  const redirect = () => {
+    try {
+      const component = "DashboardCards";
+      dispatch(createRoute(component));
+      setChecker(1)
+      setActive(1)
+    } catch {
+      navigate("/dashboard")
+    }
   };
 
   return (
@@ -167,7 +179,7 @@ const dashboard = () => {
                         {navigation.map((item) => (
                           <a
                             key={item.name}
-                            // to={item.to}
+                            onClick={() => handleComponentChange(item.to)}
                             className={classNames(
                               item.current
                                 ? "bg-gray-200 text-colorRoyalton font-semibold"
@@ -195,6 +207,7 @@ const dashboard = () => {
                       <a
                         className="text-colorRoyalton font-semibold border border-transparent
                       font-medium text-sm px-5 py-2.5 block w-full active:bg-gray-200"
+                      onClick={redirect}
                       >
                         Home
                       </a>
@@ -210,7 +223,7 @@ const dashboard = () => {
                     </nav>
                     <nav aria-label="Sidebar" className="space-y-1 flex">
                       <a
-                        onChange={logOut}
+                        onClick={logOut}
                         className="text-colorRoyalton font-semibold border border-transparent
                       font-medium text-sm px-5 py-2.5 block w-full active:bg-gray-200"
                       >

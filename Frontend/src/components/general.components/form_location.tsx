@@ -7,16 +7,26 @@ function form_location() {
     const [open, setOpen] = React.useState(false);
     const [departments, setDepartments] = React.useState([]);
     const [department, setDepartment] = React.useState("");
-    const [idDept, setIdDept] = React.useState("");
+    const [dataToSend, setDataToSend] = React.useState({});
     const [location, setLocation] = React.useState("");
 
   useEffect( () => {
     renderList()
   },[])
 
-  useEffect( () => {
-    // console.log(departments)
-  },[departments])
+  useEffect(() => {
+    console.log(department);
+    console.log(location);
+  
+    if (department !== "" && location !== "") {
+        const dataLocation = {
+          location: location,
+          departmentId: Number(department)
+        }
+      console.log(dataLocation);
+      setDataToSend(dataLocation);
+    }
+  }, [location, department]);
 
     const handleOpen = () =>  setOpen(!open);
 
@@ -31,8 +41,6 @@ function form_location() {
 
     const handleDepartmentChange = (e:any) => { 
      const selectedDepartment = (e.target.value); 
-      //   const selectedDepartment = departments.find((deptmBis) => deptmBis === department);
-      // if(selectedDepartment) {const idDept = selectedDepartment.id;}
       if(e.target.value == ""){
         setDepartment("");
       } else{
@@ -44,6 +52,7 @@ function form_location() {
       const selectedLocation = (e.target.value);
         setLocation(selectedLocation);
      }
+
 
     const CreateData = () => {
       handleOpen()
@@ -65,7 +74,7 @@ function form_location() {
                 text: "Your request will be checked by an administrator.",
                 icon: "success",
               });
-              createLocation(location /* department, idDept*/)
+              createLocation(dataToSend)
             }
           });
           setLocation("")
@@ -84,56 +93,50 @@ function form_location() {
     }
       }
 
+      return (
+        <>
+          <p
+            onClick={handleOpen}
+            className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
+          >
+            Add Location
+          </p>
 
+          <Dialog
+            open={open}
+            handler={handleOpen}
+            animate={{
+              mount: { scale: 1, y: 0 },
+              unmount: { scale: 0.9, y: -100 },
+            }}
+          >
+            <DialogHeader className="">Add Location Form </DialogHeader>
 
-
-  return (
-    <>
-      <p
-        onClick={handleOpen}
-        className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
-      >
-        Add Location
-      </p>
-
-      <Dialog
-        open={open}
-        handler={handleOpen}
-        animate={{
-          mount: { scale: 1, y: 0 },
-          unmount: { scale: 0.9, y: -100 },
-        }}
-      >
-        <DialogHeader className="">Add Location Form </DialogHeader>
-
-        <DialogBody className=''>
-          <div className="bg-gray-50 p-4 rounded-md shadow-md pb-14">
-            <div className="flex gap-x-6">
-             
-              <div className="w-1/3">
-                <p className="text-lg text-center font-semibold pb-14 mb-1.5">
-                  Name Location
-                </p>
-                <div className="text-center">
-                  <input
-                    type="text"
-                    onChange={handleLocationChange}
-                    value={location}
-                    placeholder='Type your new Location'
-                    className="border border-gray-400 focus:border-gray-300 focus:ring-gray-300 rounded-lg pl-4 pr-2 w-full h-10 placeholder-gray-900 "
-                    style={{ fontSize: '0.9em',  }}
-                    />
-                </div>
-              </div>
-
-              <div className="w-1/3">
-                <p className="text-lg text-center font-semibold pb-14 mb-1 ">
-                  Select Department
-                </p>
-                <table className="min-w-full bg-gray-50">
+            <DialogBody className="">
+              <div className="bg-gray-50 p-4 rounded-md shadow-md pb-14">
+                <table className="min-w-full">
                   <tbody>
-                    <tr className="text-center ">
-                      <td className="py-0.5 flex justify-center">
+                    <tr className="flex flex-col sm:flex-row gap-6">
+                      <td className="w-full sm:w-1/3 mb-4 sm:mb-0">
+                        <p className="text-lg text-center font-semibold p-2 md:pb-14 md:mb-0.5">
+                          Location
+                        </p>
+                        <div className="text-center">
+                          <input
+                            type="text"
+                            onChange={handleLocationChange}
+                            value={location}
+                            placeholder="Type your new Location"
+                            className="border border-gray-400 focus:border-gray-300 focus:ring-gray-300 rounded-lg pl-4 pr-2 w-full h-10 placeholder-gray-900 text-sm"
+                            maxLength={25}
+                          />
+                        </div>
+                      </td>
+
+                      <td className="w-full sm:w-1/3 mb-4 sm:mb-0">
+                        <p className="text-lg text-center font-semibold p-2 md:pb-14">
+                          Department
+                        </p>
                         <select
                           className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-300 focus:border-gray-300 block w-full h-10 p-2.5"
                           onChange={handleDepartmentChange}
@@ -147,43 +150,44 @@ function form_location() {
                           ))}
                         </select>
                       </td>
+
+                      <td className="w-full sm:w-1/3">
+                        <p className="text-lg font-semibold text-center pb-4">
+                          Approval
+                        </p>
+                        <table className="min-w-full bg-gray-50 border-b border-gray-300">
+                          <thead>
+                            <tr>
+                              <th className="py-2 px-4">Direct Boss</th>
+                              <th className="py-2 px-4">Admin</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr className="text-center border-t border-b border-gray-300">
+                              <td className="py-2 px-4">x</td>
+                              <td className="py-2 px-4"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+            </DialogBody>
 
-              <div className="w-1/3">
-                <p className="text-lg font-semibold text-center pb-4">
-                  Aproval
-                </p>
-                <table className="min-w-full bg-gray-50 border-b border-gray-300">
-                  <thead>
-                    <tr>
-                      <th className="py-2 px-4 ">Direct Boss</th>
-                      <th className="py-2 px-4 ">Admin</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr className="text-center border-t border-b border-gray-300">
-                      <td className="py-2 px-4 ">x</td>
-                      <td className="py-2 px-4"></td>
-                    </tr>
-                  </tbody>
-                </table>
+            <DialogFooter>
+              <div className="pr-8 mb-1">
+                <Button className="bg-colorRoyalton" onClick={CreateData}>
+                  Add Location
+                </Button>
               </div>
-            </div>
-          </div>
-        </DialogBody>
-
-        <DialogFooter>
-          <div className="pr-8 mb-1">
-            <Button className='bg-colorRoyalton' onClick={CreateData}>Add Location</Button>
-          </div>
-        </DialogFooter>
-      </Dialog>
-    </>
-  );
+            </DialogFooter>
+          </Dialog>
+        </>
+      );
+      
 }
 
 export default form_location

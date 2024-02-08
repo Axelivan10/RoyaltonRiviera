@@ -21,18 +21,18 @@ function App() {
 
       <Route path="/" element={<Login />} />
 
-      {/* <Route element={<ProtectedEmail/>}> */}
+      <Route element={<ProtectedEmail/>}>
       <Route path="/email" element={<Email/>} />
-      {/* </Route> */}
+      </Route>
 
-      {/* <Route element={<ProtectedPrivateRoutes/>}> */}
+      <Route element={<ProtectedPrivateRoutes/>}>
           <Route path="/dashboard" element={<Dashboard /> } />
           <Route path="/admin" element={<Admin /> } />
           <Route path="/manning" element={<Manning/>} />
           <Route path="/manningConfiguration" element={<ManningConfig/>} />           
-          {/* <Route path="/parameter" element={<ParameterValue/> } />    */}
+          <Route path="/parameter" element={<ParameterValue/> } />   
           <Route path="/ratios" element={<RatiosCriteria/> } />                   
-      {/* </Route> */}
+      </Route>
 
       <Route path="/*" element={"NOT FOUND"} />
 

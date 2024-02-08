@@ -98,6 +98,12 @@ export class ManningController {
         return this.manningService.relationsServiceTypeConfig();
     }
 
+    @Public()
+    @Get('relationsPositionConfig')
+    relationsPositionConfig(){
+        return this.manningService.relationsPositionConfig();
+    }
+
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
     @Public()
     @Get('hotels')
@@ -194,9 +200,16 @@ export class ManningController {
     }
 
     @Public()
+    @Put('updatePositionConfig')
+    updatePositionConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updatePositionConfig(editInputs);
+    }
+
+    @Public()
     @Post('createLocation')
-    createLocation(@Body() areaCode: dimLocationDto ) {
-    return this.manningService.createLocation(areaCode);
+    createLocation(@Body() dataLocation: dimLocationDto ) {
+    return this.manningService.createLocation(dataLocation);
   }
 
     @Public()

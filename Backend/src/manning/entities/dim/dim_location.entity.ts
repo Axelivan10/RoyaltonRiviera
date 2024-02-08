@@ -3,6 +3,7 @@ import { locationConfig } from '../configuration/location_config.entity';
 import { plantConfig } from '../configuration/plant_config.entity';
 import { shiftConfig } from '../configuration/shift_config.entity';
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
+import { positionConfig } from '../configuration/position_config.entity';
 
 @Entity()
 export class dimLocation{
@@ -42,4 +43,7 @@ export class dimLocation{
 
     @OneToMany(() => serviceTypeConfig, (serviceType) => serviceType.location)
     serviceTypeConfigLocation: serviceTypeConfig[];
+
+    @OneToMany(() => positionConfig, (position) => position.position)
+    positionConfig: positionConfig[];
 }

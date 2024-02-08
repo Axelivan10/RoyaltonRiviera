@@ -15,6 +15,7 @@ import { shiftConfig } from './entities/configuration/shift_config.entity';
 import { dimShift } from './entities/dim/dim_shift.entity';
 import { serviceTypeConfig } from './entities/configuration/serviceType_config.entity';
 import { dimServiceType } from './entities/dim/dim_service_type.entity';
+import { positionConfig } from './entities/configuration/position_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -42,6 +43,8 @@ export class ManningService {
     private dimServiceTypeRepository: Repository<dimServiceType>,
     @InjectRepository(serviceTypeConfig)
     private serviceTypeConfigRepository: Repository<serviceTypeConfig>,
+    @InjectRepository(positionConfig)
+    private positionConfigRepository: Repository<positionConfig>,
   ) {}
 
   async createInfoManning(manning: ManningDto) {
@@ -169,7 +172,7 @@ export class ManningService {
     });
   }
 
- async testLocationConfigDepartment(): Promise<dimDepartment[]> {
+  async testLocationConfigDepartment(): Promise<dimDepartment[]> {
     return this.departmentRepository.find({
       relations: ['locationConfigDepartment'],
     });
@@ -182,47 +185,60 @@ export class ManningService {
   }
 
   async relationsLocationConfig(): Promise<locationConfig[]> {
-    return this.locationConfigRepository.find({ relations: ['location', 'deparment'] });
+    return this.locationConfigRepository.find({
+      relations: ['location', 'deparment'],
+    });
   }
 
   async relationsPlantConfig(): Promise<plantConfig[]> {
-    return this.plantConfigRepository.find({ relations: ['location', 'deparment', 'plant'] });
+    return this.plantConfigRepository.find({
+      relations: ['location', 'deparment', 'plant'],
+    });
   }
-  
+
   async relationsShiftConfig(): Promise<shiftConfig[]> {
-    return this.shiftConfigRepository.find({ relations: ['location', 'deparment', 'plant', 'shift'] });
+    return this.shiftConfigRepository.find({
+      relations: ['location', 'deparment', 'plant', 'shift'],
+    });
   }
 
   async relationsServiceTypeConfig(): Promise<serviceTypeConfig[]> {
-    return this.serviceTypeConfigRepository.find({ relations: ['location', 'deparment', 'plant', 'shift',"serviceType"] });
+    return this.serviceTypeConfigRepository.find({
+      relations: ['location', 'deparment', 'plant', 'shift', 'serviceType'],
+    });
   }
-  
+
+  async relationsPositionConfig(): Promise<positionConfig[]> {
+    return this.positionConfigRepository.find({
+      relations: ['positiondim', 'location', 'deparment', 'plant'],
+    });
+  }
+
   async getHotels() {
     return this.plantRepository.find();
   }
-  
+
   async updateHotels(editValues) {
-      const updatedRecords = [];
+    const updatedRecords = [];
 
-      for (const record of editValues) {
-        const { id, ...restOfValues } = record;
-        try {
-          const numericId = Number(id);
+    for (const record of editValues) {
+      const { id, ...restOfValues } = record;
+      try {
+        const numericId = Number(id);
 
-          // Suponiendo que PlantService.update es asíncrono
-          const updatedRecord = await this.plantRepository.update(
-            numericId,
-            restOfValues,
-          );
+        // Suponiendo que PlantService.update es asíncrono
+        const updatedRecord = await this.plantRepository.update(
+          numericId,
+          restOfValues,
+        );
 
-          updatedRecords.push(updatedRecord);
-
-        } catch (error) {
-          console.error(`Error updating record with id ${id}: ${error.message}`);
-        }
+        updatedRecords.push(updatedRecord);
+      } catch (error) {
+        console.error(`Error updating record with id ${id}: ${error.message}`);
       }
+    }
 
-      return updatedRecords;
+    return updatedRecords;
   }
 
   async getDivision() {
@@ -262,25 +278,23 @@ export class ManningService {
   }
 
   async updateLocationsConfig(editInputs) {
-      const updatedRecords = [];
-      // console.log(editInputs)
-      for (const record of editInputs) {
-        const { position, xSymbol } = record;
-        try {
+    const updatedRecords = [];
+    // console.log(editInputs)
+    for (const record of editInputs) {
+      const { position, xSymbol } = record;
+      try {
+        const updatedRecord = await this.locationConfigRepository.update(
+          { position },
+          { xSymbol },
+        );
 
-          const updatedRecord = await this.locationConfigRepository.update(
-            { position },
-            { xSymbol },
-          );
-
-          updatedRecords.push(updatedRecord);
-
-        } catch (error) {
-          Error(`Error updating record with ${position}: ${error.message}`);
-        }
+        updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record with ${position}: ${error.message}`);
       }
+    }
 
-      return editInputs;
+    return editInputs;
   }
 
   async updatePlantConfig(editInputs) {
@@ -289,7 +303,6 @@ export class ManningService {
     for (const record of editInputs) {
       const { position, xSymbol } = record;
       try {
-
         // Suponiendo que PlantService.update es asíncrono
         const updatedRecord = await this.plantConfigRepository.update(
           { position },
@@ -297,7 +310,6 @@ export class ManningService {
         );
 
         updatedRecords.push(updatedRecord);
-
       } catch (error) {
         Error(`Error updating record with ${position}: ${error.message}`);
       }
@@ -311,7 +323,6 @@ export class ManningService {
     for (const record of editInputs) {
       const { position, xSymbol } = record;
       try {
-
         // Suponiendo que PlantService.update es asíncrono
         const updatedRecord = await this.shiftConfigRepository.update(
           { position },
@@ -319,7 +330,6 @@ export class ManningService {
         );
 
         updatedRecords.push(updatedRecord);
-
       } catch (error) {
         Error(`Error updating record with ${position}: ${error.message}`);
       }
@@ -330,74 +340,109 @@ export class ManningService {
 
   async updateServiceTypeConfig(editInputs) {
     const updatedRecords = [];
-  
+
     for (const record of editInputs) {
       const { locationId, selectId } = record;
-  
+
       try {
-        const existingRecord = await this.serviceTypeConfigRepository.findOne({ 
-          where:{
-          id: locationId
-          }
-       });
-        
+        const existingRecord = await this.serviceTypeConfigRepository.findOne({
+          where: {
+            id: locationId,
+          },
+        });
+
         if (existingRecord) {
           existingRecord.serviceType = selectId;
-          
-          const updatedRecord = await this.serviceTypeConfigRepository.save(existingRecord);
+
+          const updatedRecord =
+            await this.serviceTypeConfigRepository.save(existingRecord);
           updatedRecords.push(updatedRecord);
         } else {
           console.error(`Record with locationId ${locationId} not found.`);
         }
-  
       } catch (error) {
-        console.error(`Error updating record with ${locationId}: ${error.message}`);
+        console.error(
+          `Error updating record with ${locationId}: ${error.message}`,
+        );
       }
     }
-  
+
     return updatedRecords;
   }
+
+  async updatePositionConfig(editInputs) {
+    const updatedRecords = [];
+    for (const record of editInputs) {
+      const { position, xSymbol } = record;
+      try {
+        // Suponiendo que PlantService.update es asíncrono
+        const updatedRecord = await this.positionConfigRepository.update(
+          { position },
+          { xSymbol },
+        );
+
+        updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record with ${position}: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
   
-  async createLocation(areaCode){
-          const location = await this.locationRepository.findOne({ where:{
-            areaCode: areaCode.areaCode,
-          }})
-          
-          console.log(location)
-          if (location) {
-              throw new HttpException('Location already Exist', HttpStatus.BAD_REQUEST);
-          }
-        
-          const newLocation = this.locationRepository.create({
-            areaCode: areaCode.areaCode,
-        })
-        
-        return this.locationRepository.save(newLocation)
+  async createLocation(dataLocation) {
+
+    const location = await this.locationRepository.findOne({
+      where: {
+        areaCode: dataLocation.dataLocation.location,
+      },
+    });
+
+    if (location) {
+      throw new HttpException('Location already Exist', HttpStatus.BAD_REQUEST);
+    } 
+
+    const newLocation = this.locationRepository.create({
+      areaCode: dataLocation.dataLocation.location,
+    });
+    
+    const {id} = await this.locationRepository.save(newLocation);
+    const stringPosition = String(id) +"-"+ String(dataLocation.dataLocation.departmentId)
+   
+    const saveDepartment = this.locationConfigRepository.create({
+    position:stringPosition,
+    xSymbol: "x",  
+    location: newLocation,
+    deparment: dataLocation.dataLocation.departmentId,
+    });
+
+    return this.locationConfigRepository.save(saveDepartment);
   }
 
-  async createPlant(dataPlant){
-          const plant = await this.plantRepository.findOne({ where:{
-            plantCode: dataPlant.plantCode,
-            plantId: dataPlant.plantId
-          }})
-          console.log(plant)
-          if (plant) {
-              throw new HttpException('Location already Exist', HttpStatus.BAD_REQUEST);
-          }
-        
-          const newLocation = this.plantRepository.create({
-            country: dataPlant.country,
-            plantId: dataPlant.plantId,
-            plantCode: dataPlant.plantCode,
-            plantDescription: dataPlant.plantDescription,
-            rooms: dataPlant.rooms,
-            
-        })
-        
-        return this.plantRepository.save(newLocation)
-  }
+  async createPlant(dataPlant) {
+    
+    const plant = await this.plantRepository.findOne({
+      where: [
+        { plantCode: dataPlant.plantCode },
+        { plantId: dataPlant.plantId },
+      ],
+    });
 
-  
+    console.log(plant);
+    if (plant) {
+      throw new HttpException('Location already Exist', HttpStatus.BAD_REQUEST);
+    }
+
+    const newLocation = this.plantRepository.create({
+      country: dataPlant.country,
+      plantId: dataPlant.plantId,
+      plantCode: dataPlant.plantCode,
+      plantDescription: dataPlant.plantDescription,
+      rooms: dataPlant.rooms,
+    });
+
+    return this.plantRepository.save(newLocation);
+  }
 }
 
 

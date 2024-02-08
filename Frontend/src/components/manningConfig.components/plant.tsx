@@ -220,7 +220,7 @@ function plant() {
 
 
   return (
-    <div className="h-screen xl:w-10/12 w-full xl:pl-16 pt-8 pl-10 ">
+    <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
       <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
         <div>
           <Form_plant />

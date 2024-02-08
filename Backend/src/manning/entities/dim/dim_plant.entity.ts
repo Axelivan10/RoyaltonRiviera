@@ -2,6 +2,7 @@ import{Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm'
 import { plantConfig } from '../configuration/plant_config.entity';
 import { shiftConfig } from '../configuration/shift_config.entity';
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
+import { positionConfig } from '../configuration/position_config.entity';
 
 @Entity()
 export class dimPlant{
@@ -56,4 +57,9 @@ export class dimPlant{
 
     @OneToMany(() => serviceTypeConfig, (serviceType) => serviceType.plant)
     serviceTypeConfigPlant: serviceTypeConfig[];
+
+    @OneToMany(() => positionConfig, (position) => position.plant)
+    positionConfigPlant: positionConfig[];
+
+    
 }

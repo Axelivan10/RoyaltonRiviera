@@ -1,6 +1,7 @@
 import{Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm'
 import {dimDivision} from './dim_division.entity'
 import { dimDepartment } from './dim_department.entity';
+import { positionConfig } from '../configuration/position_config.entity';
 
 @Entity()
 export class dimPosition{
@@ -19,6 +20,9 @@ export class dimPosition{
 
     @ManyToOne(() => dimDepartment, department => department.positionDepartment) 
     deptmBis: dimDepartment;
+
+    @ManyToOne(() => positionConfig, position => position.positiondim) 
+    positionConfig: positionConfig;
 
     @Column({nullable: true})
     divisionId: string;

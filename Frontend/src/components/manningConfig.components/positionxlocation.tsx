@@ -36,7 +36,7 @@ import Swal from 'sweetalert2';
     xSymbol: string;
   }
 
-function shift() {
+function positionxlocation() {
     const [inputValues, setInputValues] = useState<InputValues>({});
     const [valuesToSend, setValuesToSend] = useState<InputValue[]>([]);
 
@@ -212,199 +212,198 @@ function shift() {
       
       const filteredHotels = plants
       .filter(({ countryCode }) => !country || countryCode === country);
-
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
   
-  <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
-
-        <div>
-          {isActive ? (
-            <p
-              onClick={activeInputs}
-              className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
-            >
-              Guardar cambios
-            </p>
-          ) : (
-            <p
-              onClick={activeInputs}
-              className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
-            >
-              Habilitar campos
-            </p>
-          )}
+    <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
+  
+          <div>
+            {isActive ? (
+              <p
+                onClick={activeInputs}
+                className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
+              >
+                Guardar cambios
+              </p>
+            ) : (
+              <p
+                onClick={activeInputs}
+                className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
+              >
+                Habilitar campos
+              </p>
+            )}
+          </div>
+      </div>
+  
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 px-2 lg:gap-2 xl:gap-4 pb-8 pt-2">
+        <div className="w-full">
+          <select
+            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
+            onChange={handleDivisionChange}
+            value={division}
+          >
+            <option value="">All Divisions</option>
+            {divisions.map(({ id, divBis }) => (
+              <option key={id} value={divBis}>
+                {divBis}
+              </option>
+            ))}
+          </select>
         </div>
-    </div>
-
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 px-2 lg:gap-2 xl:gap-4 pb-8 pt-2">
-      <div className="w-full">
-        <select
-          className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-          onChange={handleDivisionChange}
-          value={division}
-        >
-          <option value="">All Divisions</option>
-          {divisions.map(({ id, divBis }) => (
-            <option key={id} value={divBis}>
-              {divBis}
-            </option>
-          ))}
-        </select>
+  
+        <div className="w-full">
+          <select
+            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
+            onChange={handleDepartmentChange}
+            value={departmentt}
+          >
+            <option value="">All Departments</option>
+            {filteredDepartments.map(({ id, deptmBis }) => (
+              <option key={id} value={deptmBis}>
+                {deptmBis}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="w-full">
+          <select
+            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
+            onChange={handleCountryChange}
+            value={country}
+          >
+            <option value="">All Countries</option>
+            <option value="MEX">Mexico</option>
+            <option value="CRI">Costa Rica</option>
+            <option value="DOM">Dominican Republic</option>
+            <option value="GRD">Granade</option>
+            <option value="ATG">Antigua</option>
+            <option value="JAM">Jamaica</option>
+          </select>
+        </div>
+        <div className="w-full">
+          <select
+            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
+            onChange={handleHotelChange}
+            value={plantt}
+          >
+            <option value="">All Hotels</option>
+            {filteredHotels.map(({ id, plantCode, plantDescription }) => (
+              <option key={id} value={plantCode}>
+                {plantDescription}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-
-      <div className="w-full">
-        <select
-          className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-          onChange={handleDepartmentChange}
-          value={departmentt}
-        >
-          <option value="">All Departments</option>
-          {filteredDepartments.map(({ id, deptmBis }) => (
-            <option key={id} value={deptmBis}>
-              {deptmBis}
-            </option>
-          ))}
-        </select>
-      </div>
-      
-      <div className="w-full">
-        <select
-          className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-          onChange={handleCountryChange}
-          value={country}
-        >
-          <option value="">All Countries</option>
-          <option value="MEX">Mexico</option>
-          <option value="CRI">Costa Rica</option>
-          <option value="DOM">Dominican Republic</option>
-          <option value="GRD">Granade</option>
-          <option value="ATG">Antigua</option>
-          <option value="JAM">Jamaica</option>
-        </select>
-      </div>
-      <div className="w-full">
-        <select
-          className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-          onChange={handleHotelChange}
-          value={plantt}
-        >
-          <option value="">All Hotels</option>
-          {filteredHotels.map(({ id, plantCode, plantDescription }) => (
-            <option key={id} value={plantCode}>
-              {plantDescription}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-
-    <Card
-      className="h-full w-full overflow-scroll"
-      style={{ maxHeight: "650px" }}
-    >
-      <table className="w-full min-w-max table-auto text-left ">
-        <thead className="bg-white">
-          <tr>
-            <th className="sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal leading-none opacity-70"
-              >
-                Location
-              </Typography>
-            </th>
-            <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal leading-none opacity-70"
-              >
-                Department
-              </Typography>
-            </th>
-            <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="font-normal leading-none opacity-70"
-              >
-                Plant
-              </Typography>
-            </th>
-            {shifts.map(({ id, shift }) => (
-              <th
-                key={id}
-                className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100 text-center"
-              >
+  
+      <Card
+        className="h-full w-full overflow-scroll"
+        style={{ maxHeight: "650px" }}
+      >
+        <table className="w-full min-w-max table-auto text-left ">
+          <thead className="bg-white">
+            <tr>
+              <th className="sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
                 <Typography
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
                 >
-                  {shift}
+                  Location
                 </Typography>
               </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.map(
-            ({ id: locationId, deparment, location, plant, position, xSymbol }) => (
-              <tr key={locationId}>
-                <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
+              <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                >
+                  Department
+                </Typography>
+              </th>
+              <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                >
+                  Plant
+                </Typography>
+              </th>
+              {shifts.map(({ id, shift }) => (
+                <th
+                  key={id}
+                  className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100 text-center"
+                >
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className="font-normal leading-none opacity-70"
                   >
-                    {location.area}
+                    {shift}
                   </Typography>
-                </td>
-                <td className="bg-white p-4 border-b border-blue-gray-50">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {deparment.deptmBis}
-                  </Typography>
-                </td>
-                <td className="bg-white p-4 border-b border-blue-gray-50">
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map(
+              ({ id: locationId, deparment, location, plant, position, xSymbol }) => (
+                <tr key={locationId}>
+                  <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {plant.plantCode}
+                      {location.area}
                     </Typography>
                   </td>
-                {shifts.map(({ shiftId }) => (
-                  <td
-                    key={shiftId}
-                    className="text-center p-4 border-b border-blue-gray-50"
-                  >
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={inputValues[`${locationId}-${shiftId}`] || ""}
-                      onChange={(e) =>
-                        handleInputChange(locationId, shiftId, e.target.value)
-                      }
-                      disabled={!isActive}
-                    />
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {deparment.deptmBis}
+                    </Typography>
                   </td>
-                ))}
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-    </Card>
-  </div>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {plant.plantCode}
+                      </Typography>
+                    </td>
+                  {shifts.map(({ shiftId }) => (
+                    <td
+                      key={shiftId}
+                      className="text-center p-4 border-b border-blue-gray-50"
+                    >
+                      <input
+                        type="text"
+                        className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                        style={{ maxWidth: "100px" }}
+                        value={inputValues[`${locationId}-${shiftId}`] || ""}
+                        onChange={(e) =>
+                          handleInputChange(locationId, shiftId, e.target.value)
+                        }
+                        disabled={!isActive}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </Card>
+    </div>
   )
 }
 
-export default shift
+export default positionxlocation

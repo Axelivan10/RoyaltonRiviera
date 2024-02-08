@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import MasterRatios from '../components/manning.components/masterRatios';
 import TableSTD from '../components/manning.components/tableSTD';
-import { BuildingOfficeIcon, MapPinIcon, ClockIcon, TruckIcon, HomeIcon } from '@heroicons/react/20/solid';
+import { BuildingOfficeIcon, MapPinIcon, ClockIcon, TruckIcon, HomeIcon, BookmarkIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
 import { resetUser } from '../redux/slices/user';
 import NavbarApp from '../components/general.components/navbar-app';
 import { Dialog, Transition } from '@headlessui/react';
@@ -11,12 +11,15 @@ import  Location  from '../components/manningConfig.components/location';
 import Plant from '../components/manningConfig.components/plant';
 import Shift from '../components/manningConfig.components/shift';
 import ServiceType from '../components/manningConfig.components/serviceType';
+import Position from '../components/manningConfig.components/position';
+import { createRoute,  } from '../redux/slices/routes';
+import Positionxlocation from '../components/manningConfig.components/positionxlocation';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
 }
 
-function manningConfig() {
+function manningConfig(props:any) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [currentComponent, setCurrentComponent] = useState(<Location/>);
   const [active, setActive] = useState(1);
@@ -29,11 +32,24 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Plant', to: <Plant/>, icon: BuildingOfficeIcon, value:2, current: (active == 2 ? true :  false) },
   { name: 'Shift', to: <Shift/>, icon: ClockIcon, value:3, current: (active == 3 ? true :  false) },
   { name: 'ServiceType', to: <ServiceType/>, icon: TruckIcon, value:4, current: (active == 4 ? true :  false) },
+  { name: 'Position', to: <Position/>, icon: BookmarkIcon, value:5, current: (active == 5 ? true :  false) },
+  { name: 'PositionXLocation', to: <Positionxlocation/>, icon: ArchiveBoxIcon, value:6, current: (active == 6 ? true :  false) },
+
 ]
+
+const redirect = () => {
+  try {
+    const component = "DashboardCards";
+    dispatch(createRoute(component));
+    props.enviarDatoAlPadre(1);
+  } catch {
+    navigate("/dashboard")
+  }
+};
 
   const logOut = () =>{
     dispatch(resetUser());
-    navigate('/login')  
+    navigate('/')  
   }
 
   const actualizarEstado = (nuevoEstado:boolean) => {
@@ -43,6 +59,7 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   const handleComponentChange = (component: any, value:number) => {
     setCurrentComponent(component);
     setActive(value)
+    setSidebarOpen(false)
   };
 
   return (
@@ -54,7 +71,7 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 flex z-40 lg:hidden"
+          className="fixed inset-0 flex z-50 lg:hidden"
           onClose={setSidebarOpen}
         >
           <Transition.Child
@@ -112,7 +129,7 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
                     {navigation.map((item) => (
                       <a
                         key={item.name}
-                        // to={item.to}
+                        onClick={() => handleComponentChange(item.to, item.value)}
                         className={classNames(
                           item.current
                             ? "bg-gray-200 text-colorRoyalton font-semibold"
@@ -138,6 +155,7 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
               <div className='pb-4 p-2 border-t border-gray-400'>
                 <nav aria-label="Sidebar" className="space-y-1 flex">
                   <a 
+                    onClick={redirect}
                     className="text-colorRoyalton font-semibold border border-transparent
                   font-medium text-sm px-5 py-2.5 block w-full active:bg-gray-200"
                   >Home
@@ -153,7 +171,8 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
                   </a>
                 </nav>
                 <nav aria-label="Sidebar" className="space-y-1 flex">
-                  <a onChange={logOut}
+                  <a 
+                    onClick={logOut}
                     className="text-colorRoyalton font-semibold border border-transparent
                   font-medium text-sm px-5 py-2.5 block w-full active:bg-gray-200"
                   >

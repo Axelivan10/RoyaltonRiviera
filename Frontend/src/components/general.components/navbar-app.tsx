@@ -19,7 +19,8 @@ const NavbarApp = (props:any) => {
 
   const logOut = () =>{
     dispatch(resetUser());
-    navigate('/')  }
+    navigate('/')  
+  }
 
   const handleClick = () => {
     const nuevoEstado = !props.estado;
@@ -131,6 +132,7 @@ const NavbarApp = (props:any) => {
               </button>
             </a>
           </div>
+          
         </nav>
 
       {/* </div> */}
