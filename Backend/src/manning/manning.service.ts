@@ -16,6 +16,7 @@ import { dimShift } from './entities/dim/dim_shift.entity';
 import { serviceTypeConfig } from './entities/configuration/serviceType_config.entity';
 import { dimServiceType } from './entities/dim/dim_service_type.entity';
 import { positionConfig } from './entities/configuration/position_config.entity';
+import { position_locationConfig } from './entities/configuration/positionxLocation_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -45,6 +46,8 @@ export class ManningService {
     private serviceTypeConfigRepository: Repository<serviceTypeConfig>,
     @InjectRepository(positionConfig)
     private positionConfigRepository: Repository<positionConfig>,
+    @InjectRepository(position_locationConfig)
+    private posLocConfigRepository: Repository<position_locationConfig>,
   ) {}
 
   async createInfoManning(manning: ManningDto) {
@@ -211,6 +214,12 @@ export class ManningService {
   async relationsPositionConfig(): Promise<positionConfig[]> {
     return this.positionConfigRepository.find({
       relations: ['positiondim', 'location', 'deparment', 'plant'],
+    });
+  }
+
+  async relationsPosLocConfig(): Promise<position_locationConfig[]> {
+    return this.posLocConfigRepository.find({
+      relations: ['dimPosition', 'location', 'deparment', 'plant', 'shift'],
     });
   }
 
@@ -389,9 +398,28 @@ export class ManningService {
 
     return editInputs;
   }
-  
-  async createLocation(dataLocation) {
 
+  async updatePosLocConfig(editInputs) {
+    const updatedRecords = [];
+    for (const record of editInputs) {
+      const { position, xSymbol } = record;
+      try {
+        // Suponiendo que PlantService.update es asíncrono
+        const updatedRecord = await this.posLocConfigRepository.update(
+          { position },
+          { xSymbol },
+        );
+
+        updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record with ${position}: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async createLocation(dataLocation) {
     const location = await this.locationRepository.findOne({
       where: {
         areaCode: dataLocation.dataLocation.location,
@@ -400,27 +428,27 @@ export class ManningService {
 
     if (location) {
       throw new HttpException('Location already Exist', HttpStatus.BAD_REQUEST);
-    } 
+    }
 
     const newLocation = this.locationRepository.create({
       areaCode: dataLocation.dataLocation.location,
     });
-    
-    const {id} = await this.locationRepository.save(newLocation);
-    const stringPosition = String(id) +"-"+ String(dataLocation.dataLocation.departmentId)
-   
+
+    const { id } = await this.locationRepository.save(newLocation);
+    const stringPosition =
+      String(id) + '-' + String(dataLocation.dataLocation.departmentId);
+
     const saveDepartment = this.locationConfigRepository.create({
-    position:stringPosition,
-    xSymbol: "x",  
-    location: newLocation,
-    deparment: dataLocation.dataLocation.departmentId,
+      position: stringPosition,
+      xSymbol: 'x',
+      location: newLocation,
+      deparment: dataLocation.dataLocation.departmentId,
     });
 
     return this.locationConfigRepository.save(saveDepartment);
   }
 
   async createPlant(dataPlant) {
-    
     const plant = await this.plantRepository.findOne({
       where: [
         { plantCode: dataPlant.plantCode },
@@ -443,6 +471,43 @@ export class ManningService {
 
     return this.plantRepository.save(newLocation);
   }
+
+
+  async createServiceTypeConfig(dataValues) {
+    try {
+
+      // const serviceType = await this.serviceTypeConfigRepository.findOne({
+      //   where: {
+      //     location: dataValues.dataValues.location.id,
+      //     deparment: dataValues.dataValues.deparment.id,
+      //     plant: dataValues.dataValues.plant.id,
+      //     shift: dataValues.dataValues.shift.shiftId,
+      //     serviceType: dataValues.dataValues.serviceType.serviceTypeId,
+      //   },
+      // });
+
+      // if (serviceType) { 
+      //   throw new HttpException('Service already Exist', HttpStatus.BAD_REQUEST);
+      // }
+
+      const newServiceType = this.serviceTypeConfigRepository.create({
+        location: dataValues.dataValues.location.id,
+        deparment: dataValues.dataValues.deparment.id,
+        plant: dataValues.dataValues.plant.id,
+        shift: dataValues.dataValues.shift.shiftId,
+        serviceType: { serviceTypeId: 9999 },  
+        //ESTO ES LO QUE IBA ANTES ES UN PARCHE PARA QUE FUNCIONE  
+        //dataValues.dataValues.serviceType.serviceTypeId
+      });
+
+      return await this.serviceTypeConfigRepository.save(newServiceType);
+
+    } catch (error) {
+      console.error('Error al crear el ServiceTypeConfig:', error);
+      throw new HttpException('Error al crear el ServiceTypeConfig:', HttpStatus.BAD_REQUEST,
+      );
+    }
+
+  }
+
 }
-
-

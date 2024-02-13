@@ -80,14 +80,7 @@ function tableCurrentPlant() {
   };
 
   const activeInputById = (id:number) => {
-    // (isActivate ? setIsActivate(0): setIsActivate(id))
-    
-    // if(isActivate){
-    //     setIsActivate(0)
-    // } else{
-    //     setIsActivate(id)
-    // }
-    setIsActivate(id)
+    (isActivate === id ? setIsActivate(0) : setIsActivate(id))
   }
 
   const handleInputChange = (ids: number, fields: string, values: any) => {

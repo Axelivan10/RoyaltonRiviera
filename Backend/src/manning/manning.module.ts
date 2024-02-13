@@ -18,10 +18,11 @@ import { plantConfig } from './entities/configuration/plant_config.entity';
 import { shiftConfig } from './entities/configuration/shift_config.entity';
 import { serviceTypeConfig } from './entities/configuration/serviceType_config.entity';
 import { positionConfig } from './entities/configuration/position_config.entity';
+import { position_locationConfig } from './entities/configuration/positionxLocation_config.entity';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Manning, dimShift, dimServiceType, dimSalary, dimPosition, dimPlant, dimParameter, 
-    dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig, positionConfig])],
+    dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig, positionConfig, position_locationConfig])],
   providers: [ManningService],
   controllers: [ManningController]
 })

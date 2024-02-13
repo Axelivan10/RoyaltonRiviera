@@ -1,6 +1,7 @@
 import{Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm'
 import { shiftConfig } from '../configuration/shift_config.entity';
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
+import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 
 @Entity()
 export class dimShift{
@@ -22,4 +23,8 @@ export class dimShift{
 
     @OneToMany(() => serviceTypeConfig, (serviceType) => serviceType.shift)
     serviceTypeConfigShift: serviceTypeConfig[];
+
+    @OneToMany(() => position_locationConfig, (posloc) => posloc.shift)
+    posLocConfigShift: position_locationConfig[];
+
 }

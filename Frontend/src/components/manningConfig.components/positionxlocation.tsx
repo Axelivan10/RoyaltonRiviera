@@ -1,6 +1,6 @@
 import { Card, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
-import { getDepartment, getDivision, getHotels, getShift, getShiftConfig, relationsShiftConfig, updateShiftConfig } from '../../api/manning.api';
+import { getDepartment, getDivision, getHotels, getShift, getShiftConfig, getrelationsPosLocConfig, relationsShiftConfig, updatePosLocConfig, updateShiftConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
   interface InputValues {
@@ -21,6 +21,10 @@ import Swal from 'sweetalert2';
       id: number;
       deptmBis: string;
       divBis:string
+    };
+    dimPosition: {
+      positionId: number;
+      positionDescriptionES: string;
     };
     location: {
       id: number;
@@ -49,7 +53,7 @@ function positionxlocation() {
     const [country, setCountry] = useState("");
     const [departmentt, setDepartmentt] = useState("");
 
-    const [relationsPlant, setRelationsPlant] = useState<relationsAll[]>([]);
+    const [relationsPosLoc, setRelationsPosLoc] = useState<relationsAll[]>([]);
     const [initialValues, setinitialValues] = useState<InputValues>({});
     const [check, setCheck] = useState(0);
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
@@ -121,11 +125,11 @@ function positionxlocation() {
 
           const responseShift = await getShift();
           setShifts(responseShift.data)
-          console.log(responseShift.data)
+          // console.log(responseShift.data)
 
-          const responseRelationsShiftConfig = await relationsShiftConfig();
-          setRelationsPlant(responseRelationsShiftConfig.data)
-          console.log(responseRelationsShiftConfig.data)
+          const responseRelationsPosLocConfig = await getrelationsPosLocConfig();
+          setRelationsPosLoc(responseRelationsPosLocConfig.data)
+          console.log(responseRelationsPosLocConfig.data)
 
         } catch {
         throw new Error("Render Fail");
@@ -136,9 +140,9 @@ function positionxlocation() {
       setIsActive(!isActive);
     };
 
-    const handleInputChange = ( locationId: number, ShiftId: number, value: string ) => {
+    const handleInputChange = ( positionId: number, ShiftId: number, value: string ) => {
         if (value.toLowerCase() === "x" || value.toLowerCase() === "") {
-          const key = `${locationId}-${ShiftId}`;
+          const key = `${positionId}-${ShiftId}`;
           setInputValues((prevValues) => ({ ...prevValues, [key]: value }));
         }
       };
@@ -166,9 +170,9 @@ function positionxlocation() {
       };
 
       const renderInputs = async ()  =>{
-        const shiftConfig = await getShiftConfig();
-        console.log(shiftConfig.data)
-        shiftConfig.data.forEach((config:any) => {
+        const posLocConfig = await getrelationsPosLocConfig(); //aqui podemos llamar sin relaciones, pero pa ver si jala.
+        console.log(posLocConfig.data)
+        posLocConfig.data.forEach((config:any) => {
           if (config.xSymbol) {
             initialValues[config.position] = config.xSymbol;
           }
@@ -194,14 +198,14 @@ function positionxlocation() {
   
       const updateData = () => {
       try {
-        updateShiftConfig(valuesToSend);
+        updatePosLocConfig(valuesToSend);
       } catch (error) {
         throw new Error("Send Information Fail");
       }
       setCheck(generateAutoIncrementId);
       };
 
-      const filteredData = relationsPlant
+      const filteredData = relationsPosLoc
       .filter(({ deparment }) => deparment.divBis === division || division === "")
       .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
       .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
@@ -212,6 +216,7 @@ function positionxlocation() {
       
       const filteredHotels = plants
       .filter(({ countryCode }) => !country || countryCode === country);
+      
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
   
@@ -305,13 +310,22 @@ function positionxlocation() {
         <table className="w-full min-w-max table-auto text-left ">
           <thead className="bg-white">
             <tr>
+            <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                >
+                  Plant
+                </Typography>
+              </th>
               <th className="sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
                 <Typography
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
                 >
-                  Location
+                  Position
                 </Typography>
               </th>
               <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
@@ -329,7 +343,7 @@ function positionxlocation() {
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
                 >
-                  Plant
+                  Location
                 </Typography>
               </th>
               {shifts.map(({ id, shift }) => (
@@ -350,24 +364,24 @@ function positionxlocation() {
           </thead>
           <tbody>
             {filteredData.map(
-              ({ id: locationId, deparment, location, plant, position, xSymbol }) => (
-                <tr key={locationId}>
-                  <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {location.area}
-                    </Typography>
-                  </td>
+              ({ id: positionId, deparment, location, plant, dimPosition }) => (
+                <tr key={positionId}>
                   <td className="bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {deparment.deptmBis}
+                      {plant.plantDescription}
+                    </Typography>
+                  </td>
+                  <td className="sticky left-0 top-0 z-50 bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {dimPosition.positionDescriptionES}
                     </Typography>
                   </td>
                   <td className="bg-white p-4 border-b border-blue-gray-50">
@@ -376,7 +390,16 @@ function positionxlocation() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {plant.plantCode}
+                        {deparment.divBis}
+                      </Typography>
+                    </td>
+                    <td className="bg-white p-4 border-b border-blue-gray-50">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {location.area}
                       </Typography>
                     </td>
                   {shifts.map(({ shiftId }) => (
@@ -388,9 +411,9 @@ function positionxlocation() {
                         type="text"
                         className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
                         style={{ maxWidth: "100px" }}
-                        value={inputValues[`${locationId}-${shiftId}`] || ""}
+                        value={inputValues[`${positionId}-${shiftId}`] || ""}
                         onChange={(e) =>
-                          handleInputChange(locationId, shiftId, e.target.value)
+                          handleInputChange(positionId, shiftId, e.target.value)
                         }
                         disabled={!isActive}
                       />

@@ -125,7 +125,7 @@ const redirect = () => {
                   </p>
                 </div>
                 <nav aria-label="Sidebar" className="mt-5">
-                  <div className="px-2 space-y-1">
+                  <div className="px-2 space-y-1 cursor-pointer">
                     {navigation.map((item) => (
                       <a
                         key={item.name}
@@ -197,7 +197,7 @@ const redirect = () => {
                 <p className="font-semibold text-color-black">Tables</p>
               </div>
               <nav className="mt-5 flex-1" aria-label="Sidebar">
-                <div className="px-2 space-y-1">
+                <div className="px-2 space-y-1 cursor-pointer">
                   {navigation.map((item) => (
                     <a 
                       key={item.name}

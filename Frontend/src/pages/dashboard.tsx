@@ -94,7 +94,7 @@ const dashboard = () => {
   const handleComponentChange = (component: string) => {
     dispatch(createRoute(component))
     setChecker(1)
-    
+    setSidebarOpen(false)
   };
 
   const recibirDatoDelHijo = (dato: number) => {

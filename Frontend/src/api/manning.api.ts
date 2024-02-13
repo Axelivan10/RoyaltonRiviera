@@ -202,6 +202,18 @@ export const getRelationsPositionConfig = async () => {
   }
 }
 
+export const getrelationsPosLocConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsPosLocConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -310,6 +322,16 @@ export const updateServiceTypeConfig = async (inputValues: {}) => {
   }
 }
 
+export const updatePosLocConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updatePosLocConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update PositionLocationConfig Fail');
+  }
+}
+
 export const createLocation = async (dataLocation: {} ) => {
   try {
     const response = await axios.post(`${BASE_URL}/manning/createLocation`, {
@@ -339,6 +361,21 @@ export const createPlant = async (country:string, plantId: string, plantCode:str
   }
 
 }
+
+export const createServiceTypeConfig = async (dataValues : any) => {
+  
+  try {
+    const response = await axios.post(`${BASE_URL}/manning/createServiceTypeConfig`, {
+      dataValues,
+    });
+    return response;
+
+  } catch (error) {
+    throw new Error('Create Location Fail');
+  }
+
+}
+
 
 
 

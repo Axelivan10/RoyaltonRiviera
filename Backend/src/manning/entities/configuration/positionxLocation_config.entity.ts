@@ -3,12 +3,11 @@ import { dimLocation } from '../dim/dim_location.entity';
 import { dimDepartment } from '../dim/dim_department.entity';
 import { dimPlant } from '../dim/dim_plant.entity';
 import { dimShift } from '../dim/dim_shift.entity';
-import { dimServiceType } from '../dim/dim_service_type.entity';
 import { dimPosition } from '../dim/dim_position.entity';
 
 
 @Entity()
-export class positionConfig{
+export class position_locationConfig{
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -19,16 +18,18 @@ export class positionConfig{
     @Column({nullable: true})
     xSymbol: string;
 
-    @ManyToOne(() => dimPosition, position => position.positionConfig)
-    positiondim: dimPosition;
-
-    @ManyToOne(() => dimLocation, location => location.locationConfigLocation)
+    @ManyToOne(() => dimLocation, location => location.positionLlocationConfigLocation)
     location: dimLocation;
 
-    @ManyToOne(() => dimDepartment, department => department.positionConfigDepartment)
+    @ManyToOne(() => dimDepartment, department => department.posLocConfigDepartment)
     deparment: dimDepartment;
 
-    @ManyToOne(() => dimPlant, plant => plant.positionConfigPlant)
+    @ManyToOne(() => dimPlant, plant => plant.posLocConfigPlant)
     plant: dimPlant;
 
+    @ManyToOne(() => dimShift, shift => shift.posLocConfigShift) //opcional
+    shift: dimShift;
+
+    @ManyToOne(() => dimPosition, position => position.posLocConfigPosition)
+    dimPosition: dimPosition;
 }

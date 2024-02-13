@@ -5,6 +5,8 @@ import { Manning } from './entities/manning.entity';
 import { Public } from 'src/auth/auth.guard';
 import { dimLocationDto } from './dto/dim/dim_location.dto';
 import { dimPlant } from './entities/dim/dim_plant.entity';
+import { dimPlantDto } from './dto/dim/dim_plant.dto';
+import { serviceTypeConfigDto } from './dto/configuration/serviceType_config.dto';
 
 
 @Controller('manning')
@@ -102,6 +104,12 @@ export class ManningController {
     @Get('relationsPositionConfig')
     relationsPositionConfig(){
         return this.manningService.relationsPositionConfig();
+    }
+
+    @Public()
+    @Get('relationsPosLocConfig')
+    relationsPosLocConfig(){
+        return this.manningService.relationsPosLocConfig();
     }
 
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
@@ -207,6 +215,13 @@ export class ManningController {
     }
 
     @Public()
+    @Put('updatePosLocConfig')
+    updatePosLocConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updatePosLocConfig(editInputs);
+    }
+
+    @Public()
     @Post('createLocation')
     createLocation(@Body() dataLocation: dimLocationDto ) {
     return this.manningService.createLocation(dataLocation);
@@ -214,9 +229,15 @@ export class ManningController {
 
     @Public()
     @Post('createPlant')
-    createPlant(@Body() dataPlant: dimPlant ) {
+    createPlant(@Body() dataPlant: dimPlantDto ) {
         console.log(dataPlant)
         return this.manningService.createPlant(dataPlant);
+    }
+
+    @Public()
+    @Post('createServiceTypeConfig')
+    createServiceTypeConfig(@Body() dataValues: serviceTypeConfigDto ) {
+        return this.manningService.createServiceTypeConfig(dataValues);
     }
 
 }

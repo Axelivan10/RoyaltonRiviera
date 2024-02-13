@@ -107,7 +107,6 @@
     useEffect(()=>{
       handleList()
       RenderHotelsFilter()
-      // console.log(hotel) 
     }, [hotel, regions, country]) //THIS WORKS WHEN HOTEL AND REGIONsS IS UPDATED AND RENDER ALL DATA TABLE
 
     const redirect = () => {
@@ -131,7 +130,7 @@
       try {  
         const response = await getAllInfoManning(hotel, regions, country); 
         setListar(response.data)
-        // console.log(response.data)
+        console.log(response.data)
 
       } catch (error) {
           throw new Error('Login Fail');

@@ -2,6 +2,7 @@ import{Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'type
 import {dimDivision} from './dim_division.entity'
 import { dimDepartment } from './dim_department.entity';
 import { positionConfig } from '../configuration/position_config.entity';
+import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 
 @Entity()
 export class dimPosition{
@@ -22,7 +23,10 @@ export class dimPosition{
     deptmBis: dimDepartment;
 
     @ManyToOne(() => positionConfig, position => position.positiondim) 
-    positionConfig: positionConfig;
+    positionConfig: positionConfig[];
+
+    @ManyToOne(() => position_locationConfig, posloc => posloc.dimPosition) 
+    posLocConfigPosition: position_locationConfig[];
 
     @Column({nullable: true})
     divisionId: string;
