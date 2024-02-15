@@ -3,6 +3,7 @@ import {dimDivision} from './dim_division.entity'
 import { dimDepartment } from './dim_department.entity';
 import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
+import { standardTableConfig } from '../configuration/standardTable_config.entity';
 
 @Entity()
 export class dimPosition{
@@ -27,6 +28,9 @@ export class dimPosition{
 
     @ManyToOne(() => position_locationConfig, posloc => posloc.dimPosition) 
     posLocConfigPosition: position_locationConfig[];
+
+    @ManyToOne(() => standardTableConfig, standardTable => standardTable.dimPosition) 
+    standardTableConfigPosition: standardTableConfig[];
 
     @Column({nullable: true})
     divisionId: string;

@@ -59,11 +59,14 @@ function plant() {
     const [departmentt, setDepartmentt] = useState("");
     const [division, setDivision] = useState("");
     const [relationsPlant, setRelationsPlant] = useState<relationsAll[]>([]);
+    const [noDupicates, setNoDuplicates] = useState<relationsAll[]>([]);
+
+    const [locations, setLocation] = useState([]);
     const [initialValues, setinitialValues] = useState<InputValues>({});
     const [check, setCheck] = useState(0);
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
     const [isActive, setIsActive] = useState(false);
-    
+
     let autoIncrementId = 1;
     const generateAutoIncrementId = () => {
       return autoIncrementId++;
@@ -115,11 +118,59 @@ function plant() {
         console.log("No hay posiciones modificadas o isActive está activado");
       }
     }, [isActive, ]);
+ 
+    useEffect(() => {
+      console.log(noDupicates)
+      console.log(relationsPlant)
+     }, [noDupicates])
+ 
+     useEffect(() => {
+       // Filtrar duplicados en relationsPlant
+       const relacionesUnicas = eliminarDuplicados(relationsPlant);
+       setNoDuplicates(relacionesUnicas);
+     }, [relationsPlant]);
 
+    const eliminarDuplicados = (relationsPlant: relationsAll[]) => {
+      const uniqueEntries = new Set<string>();
+      const result: relationsAll[] = [];
+      let autoIncrementId = 1;
+    
+      relationsPlant.forEach(entry => {
+        const key = `${entry.deparment.id}-${entry.location.id}`;
+    
+        if (!uniqueEntries.has(key)) {
+          uniqueEntries.add(key);
+          result.push({
+            id: autoIncrementId++, // Asignar nuevo ID en orden
+            deparment: {
+              id: entry.deparment.id,
+              deptmBis: entry.deparment.deptmBis,
+              divBis: entry.deparment.divBis,
+            },
+            location: {
+              id: entry.location.id,
+              area: entry.location.area,
+            },
+            plant: {
+              id: entry.plant.id,
+              countryCode: entry.plant.countryCode,
+              plantCode: entry.plant.plantCode,
+              plantDescription: entry.plant.plantDescription,
+            },
+            position: entry.position,
+            xSymbol: entry.xSymbol,
+          });
+        }
+      });
+    
+      return result;
+    };
+ 
     const renderList = async () => {
       try {
           const responseDepartment = await getDepartment();
           setDepartments(responseDepartment.data)
+          // console.log(responseDepartment.data)
 
           const responsePlant = await getHotels();
           setPlants(responsePlant.data)
@@ -128,9 +179,9 @@ function plant() {
           const ResponseDivision = await getDivision();
           setDivisions(ResponseDivision.data)
 
-          const ResponseRelationsPlantConfig = await relationsPlantConfig();
-          setRelationsPlant(ResponseRelationsPlantConfig.data)
-          console.log(ResponseRelationsPlantConfig.data)
+          const responseRelationsPlantConfig = await relationsPlantConfig();
+          setRelationsPlant(responseRelationsPlantConfig.data)
+          // console.log(responseRelationsPlantConfig.data)  
 
         } catch {
         throw new Error("Render Fail");
@@ -206,12 +257,18 @@ function plant() {
     setCheck(generateAutoIncrementId);
   };
 
-  const filteredData = relationsPlant
-    .filter(({ deparment }) => deparment.divBis === division || division === "")
-    .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
-    .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
-    .filter(({ plant }) => plant.countryCode === country || country === "")
 
+  //ESTOS SIRVEN PARA FILTRAR LA INFORMACION EN LA TABLA
+  const filteredData = noDupicates
+    .filter(({ deparment }) => deparment.divBis === division || division === "")
+    .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "");
+
+    const filteredHeaderHotels = plants
+    .filter(({ countryCode }) => !country || countryCode === country)
+    .filter(({ plantCode }) => !plantt || plantCode === plantt);
+
+
+    //ESTOS FILTROS SON PARA LOS FILTROS QUE TENEMOS MAQUETADOS
     const filteredDepartments = departments
     .filter(({ divBis }) => !division || divBis === division);
     
@@ -334,20 +391,22 @@ function plant() {
                   Department
                 </Typography>
               </th>
-              {plants.map(({ id, plantCode, plantDescription }) => (
-                <th
-                  key={id}
-                  className="sticky top-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100 text-center"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+              {filteredHeaderHotels.map(
+                ({ id, plantCode, plantDescription }) => (
+                  <th
+                    key={id}
+                    className="sticky top-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100 text-center"
                   >
-                    {plantCode}
-                  </Typography>
-                </th>
-              ))}
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {plantCode}
+                    </Typography>
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody>
@@ -373,10 +432,10 @@ function plant() {
                     </Typography>
                   </td>
 
-                  {plants.map(({ id: plantId }) => (
+                  {filteredHeaderHotels.map(({ id: plantId }) => (
                     <td
                       key={plantId}
-                      className="p-4 border-b border-blue-gray-50"
+                      className="p-4 border-b border-blue-gray-50 text-center"
                     >
                       <input
                         type="text"

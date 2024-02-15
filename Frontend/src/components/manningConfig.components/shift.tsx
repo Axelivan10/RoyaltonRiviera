@@ -49,11 +49,13 @@ function shift() {
     const [country, setCountry] = useState("");
     const [departmentt, setDepartmentt] = useState("");
 
-    const [relationsPlant, setRelationsPlant] = useState<relationsAll[]>([]);
+    const [relationsShift, setRelationsShift] = useState<relationsAll[]>([]);
     const [initialValues, setinitialValues] = useState<InputValues>({});
     const [check, setCheck] = useState(0);
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
     const [isActive, setIsActive] = useState(false);
+    const [noDupicates, setNoDuplicates] = useState<relationsAll[]>([]);
+
 
     let autoIncrementId = 1;
     const generateAutoIncrementId = () => {
@@ -64,6 +66,10 @@ function shift() {
       renderList()
       renderInputs()
     },[])
+
+    useEffect(() => {
+      console.log(plantt)
+    }, [plantt]);
 
     useEffect(() => {
       setValuesToSend(sendInputValues.inputValues);
@@ -107,6 +113,53 @@ function shift() {
       }
     }, [isActive, ]);
 
+    useEffect(() => {
+      console.log(noDupicates)
+      console.log(relationsShift)
+     }, [noDupicates])
+ 
+     useEffect(() => {
+       // Filtrar duplicados en relationsPlant
+       const relacionesUnicas = eliminarDuplicados(relationsShift);
+       setNoDuplicates(relacionesUnicas);
+     }, [relationsShift]);
+
+    const eliminarDuplicados = (relationsShift: relationsAll[]) => {
+      const uniqueEntries = new Set<string>();
+      const result: relationsAll[] = [];
+      let autoIncrementId = 1;
+    
+      relationsShift.forEach(entry => {
+        const key = `${entry.deparment.id}-${entry.location.id}-${entry.plant.id}`;
+    
+        if (!uniqueEntries.has(key)) {
+          uniqueEntries.add(key);
+          result.push({
+            id: autoIncrementId++, // Asignar nuevo ID en orden
+            deparment: {
+              id: entry.deparment.id,
+              deptmBis: entry.deparment.deptmBis,
+              divBis: entry.deparment.divBis,
+            },
+            location: {
+              id: entry.location.id,
+              area: entry.location.area,
+            },
+            plant: {
+              id: entry.plant.id,
+              countryCode: entry.plant.countryCode,
+              plantCode: entry.plant.plantCode,
+              plantDescription: entry.plant.plantDescription,
+            },
+            position: entry.position,
+            xSymbol: entry.xSymbol,
+          });
+        }
+      });
+    
+      return result;
+    };
+
     const renderList = async () => {
       try {
           const responseDepartment = await getDepartment();
@@ -124,7 +177,7 @@ function shift() {
           console.log(responseShift.data)
 
           const responseRelationsShiftConfig = await relationsShiftConfig();
-          setRelationsPlant(responseRelationsShiftConfig.data)
+          setRelationsShift(responseRelationsShiftConfig.data)
           console.log(responseRelationsShiftConfig.data)
 
         } catch {
@@ -201,7 +254,7 @@ function shift() {
       setCheck(generateAutoIncrementId);
       };
 
-      const filteredData = relationsPlant
+      const filteredData = noDupicates
       .filter(({ deparment }) => deparment.divBis === division || division === "")
       .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
       .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
@@ -216,7 +269,7 @@ function shift() {
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
   
-  <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
+    <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
 
         <div>
           {isActive ? (

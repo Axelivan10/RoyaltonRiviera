@@ -17,6 +17,8 @@ import { serviceTypeConfig } from './entities/configuration/serviceType_config.e
 import { dimServiceType } from './entities/dim/dim_service_type.entity';
 import { positionConfig } from './entities/configuration/position_config.entity';
 import { position_locationConfig } from './entities/configuration/positionxLocation_config.entity';
+import { standardTableConfig } from './entities/configuration/standardTable_config.entity';
+import { sizeCriteriaConfig } from './entities/configuration/sizeCriteria_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -48,6 +50,10 @@ export class ManningService {
     private positionConfigRepository: Repository<positionConfig>,
     @InjectRepository(position_locationConfig)
     private posLocConfigRepository: Repository<position_locationConfig>,
+    @InjectRepository(standardTableConfig)
+    private standardTableConfigRepository: Repository<standardTableConfig>,
+    @InjectRepository(sizeCriteriaConfig)
+    private sizeCriteriaConfigRepository: Repository<sizeCriteriaConfig>,
   ) {}
 
   async createInfoManning(manning: ManningDto) {
@@ -220,6 +226,18 @@ export class ManningService {
   async relationsPosLocConfig(): Promise<position_locationConfig[]> {
     return this.posLocConfigRepository.find({
       relations: ['dimPosition', 'location', 'deparment', 'plant', 'shift'],
+    });
+  }
+
+  async relationsStandardTableConfig(): Promise<standardTableConfig[]> {
+    return this.standardTableConfigRepository.find({
+      relations: ['dimPosition', 'division', 'deparment', 'shift', 'serviceType', 'parameter'],
+    });
+  }
+
+  async relationsSizeCriteriaConfig(): Promise<sizeCriteriaConfig[]> {
+    return this.sizeCriteriaConfigRepository.find({
+      relations: ['parameter'],
     });
   }
 

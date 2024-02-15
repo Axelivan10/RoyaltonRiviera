@@ -112,6 +112,18 @@ export class ManningController {
         return this.manningService.relationsPosLocConfig();
     }
 
+    @Public()
+    @Get('relationsStandardTableConfig')
+    relationsStandardTableConfig(){
+        return this.manningService.relationsStandardTableConfig();
+    }
+
+    @Public()
+    @Get('relationsSizeCriteriaConfig')
+    relationsSizeCriteriaConfig(){
+        return this.manningService.relationsSizeCriteriaConfig();
+    }
+
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
     @Public()
     @Get('hotels')

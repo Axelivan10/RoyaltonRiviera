@@ -60,6 +60,7 @@ function position() {
     const [check, setCheck] = useState(0);
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
     const [isActive, setIsActive] = useState(false);
+    const [noDupicates, setNoDuplicates] = useState<relationsAll[]>([]);
 
     let autoIncrementId = 1;
     const generateAutoIncrementId = () => {
@@ -112,7 +113,60 @@ function position() {
           console.log("No hay posiciones modificadas o isActive está activado");
         }
       }, [isActive, ]);
+
+      useEffect(() => {
+        console.log(noDupicates)
+        console.log(relationsPosition)
+       }, [noDupicates])
+   
+       useEffect(() => {
+         // Filtrar duplicados en relationsPlant
+         const relacionesUnicas = eliminarDuplicados(relationsPosition);
+         setNoDuplicates(relacionesUnicas);
+       }, [relationsPosition]);
   
+      const eliminarDuplicados = (relationsPosition: relationsAll[]) => {
+        const uniqueEntries = new Set<string>();
+        const result: relationsAll[] = [];
+        let autoIncrementId = 1;
+      
+        relationsPosition.forEach(entry => {
+          const key = `${entry.deparment.id}-${entry.location.id}-${entry.plant.id}`;
+      
+          if (!uniqueEntries.has(key)) {
+            uniqueEntries.add(key);
+            result.push({
+              id: autoIncrementId++, // Asignar nuevo ID en orden
+              deparment: {
+                id: entry.deparment.id,
+                deptmBis: entry.deparment.deptmBis,
+                divBis: entry.deparment.divBis,
+              },
+              location: {
+                id: entry.location.id,
+                area: entry.location.area,
+              },
+              plant: {
+                id: entry.plant.id,
+                countryCode: entry.plant.countryCode,
+                plantCode: entry.plant.plantCode,
+                plantDescription: entry.plant.plantDescription,
+              },
+              positiondim:{
+                id: entry.positiondim.id,
+                positionDescriptionES: entry.positiondim.positionDescriptionES,
+                departmentCode: entry.positiondim.departmentCode,
+                divisionCode: entry.positiondim.divisionCode,
+              },
+              position: entry.position,
+              xSymbol: entry.xSymbol,
+            });
+          }
+        });
+      
+        return result;
+      };
+
       const renderList = async () => {
         try {
             const responseDepartment = await getDepartment();
@@ -204,7 +258,7 @@ function position() {
         setCheck(generateAutoIncrementId);
         };
   
-        const filteredData = relationsPosition
+        const filteredData = noDupicates
         .filter(({ deparment }) => deparment.divBis === division || division === "")
         .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
         .filter(({ plant }) => plant.plantCode === plantt || plantt === "")

@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import MasterRatios from '../components/manning.components/masterRatios';
 import TableSTD from '../components/manning.components/tableSTD';
-import { BuildingOfficeIcon, MapPinIcon, ClockIcon, TruckIcon, HomeIcon, BookmarkIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
+import { BuildingOfficeIcon, MapPinIcon, ClockIcon, TruckIcon, HomeIcon, BookmarkIcon, ArchiveBoxIcon, TableCellsIcon, PresentationChartBarIcon } from '@heroicons/react/20/solid';
 import { resetUser } from '../redux/slices/user';
 import NavbarApp from '../components/general.components/navbar-app';
 import { Dialog, Transition } from '@headlessui/react';
@@ -14,6 +14,8 @@ import ServiceType from '../components/manningConfig.components/serviceType';
 import Position from '../components/manningConfig.components/position';
 import { createRoute,  } from '../redux/slices/routes';
 import Positionxlocation from '../components/manningConfig.components/positionxlocation';
+import SizeCriteria from '../components/manningConfig.components/sizeCriteria';
+import StandardTable from '../components/manningConfig.components/standardTable';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
@@ -31,10 +33,11 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Location', to: <Location/>, icon: MapPinIcon, value:1, current: (active == 1 ? true :  false) },
   { name: 'Plant', to: <Plant/>, icon: BuildingOfficeIcon, value:2, current: (active == 2 ? true :  false) },
   { name: 'Shift', to: <Shift/>, icon: ClockIcon, value:3, current: (active == 3 ? true :  false) },
-  { name: 'ServiceType', to: <ServiceType/>, icon: TruckIcon, value:4, current: (active == 4 ? true :  false) },
+  { name: 'Service Type', to: <ServiceType/>, icon: TruckIcon, value:4, current: (active == 4 ? true :  false) },
   { name: 'Position', to: <Position/>, icon: BookmarkIcon, value:5, current: (active == 5 ? true :  false) },
-  { name: 'PositionXLocation', to: <Positionxlocation/>, icon: ArchiveBoxIcon, value:6, current: (active == 6 ? true :  false) },
-
+  { name: 'Position-Location', to: <Positionxlocation/>, icon: ArchiveBoxIcon, value:6, current: (active == 6 ? true :  false) },
+  { name: 'Standard Table', to: <StandardTable/>, icon: TableCellsIcon, value:7, current: (active == 7 ? true :  false) },
+  { name: 'Size Criteria', to: <SizeCriteria/>, icon: PresentationChartBarIcon, value:8, current: (active == 8 ? true :  false) },
 ]
 
 const redirect = () => {

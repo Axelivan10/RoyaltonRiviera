@@ -214,6 +214,18 @@ export const getrelationsPosLocConfig = async () => {
   }
 }
 
+export const getRelationsStandardTableConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsStandardTableConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);

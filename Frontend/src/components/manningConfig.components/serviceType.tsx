@@ -2,7 +2,7 @@ import { Card, Input, Typography, list } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
 import { createServiceTypeConfig, getDepartment, getDivision, getHotels, getServiceType, relationsServiceTypeConfig, updateServiceTypeConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
-import { PlusCircleIcon, PencilIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, PencilIcon, MagnifyingGlassIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const TABLE_HEAD = ["Location", "Department", "Plant", "Shift", "Service Type", ""];
 
@@ -433,6 +433,7 @@ function serviceType() {
                     <div className="flex flex-cols-2 gap-x-10">
                       <PlusCircleIcon onClick={ ()=> addNewInsert(locationId) } className="cursor-pointer w-6 h-6 hover:text-colorRoyalton hover:font-semibold"></PlusCircleIcon>
                       <PencilIcon onClick={ ()=> activeInputById(locationId) } className="cursor-pointer w-5 h-5 hover:text-colorRoyalton hover:font-semibold"></PencilIcon>
+                      <TrashIcon className="cursor-pointer w-5 h-5 hover:text-red-500 hover:font-semibold"></TrashIcon>
                     </div>
                   </td>
                 </tr>

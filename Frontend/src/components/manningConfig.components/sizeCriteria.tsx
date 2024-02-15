@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { getDepartment, getDivision, getHotels, getShift, getShiftConfig, getrelationsPosLocConfig, relationsShiftConfig, updatePosLocConfig, updateShiftConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
-  interface InputValues {
+interface InputValues {
     [key: string]: string;
   }
   
@@ -23,10 +23,8 @@ import Swal from 'sweetalert2';
       divBis:string
     };
     dimPosition: {
-      id: number;
+      positionId: number;
       positionDescriptionES: string;
-      departmentCode: string;
-      divisionCode: string;
     };
     location: {
       id: number;
@@ -42,7 +40,7 @@ import Swal from 'sweetalert2';
     xSymbol: string;
   }
 
-function positionxlocation() {
+function sizeCriteria() {
     const [inputValues, setInputValues] = useState<InputValues>({});
     const [valuesToSend, setValuesToSend] = useState<InputValue[]>([]);
 
@@ -60,8 +58,6 @@ function positionxlocation() {
     const [check, setCheck] = useState(0);
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
     const [isActive, setIsActive] = useState(false);
-    const [noDupicates, setNoDuplicates] = useState<relationsAll[]>([]);
-
 
     let autoIncrementId = 1;
     const generateAutoIncrementId = () => {
@@ -114,59 +110,6 @@ function positionxlocation() {
         console.log("No hay posiciones modificadas o isActive está activado");
       }
     }, [isActive, ]);
-
-  //  useEffect(() => {
-  //       console.log(noDupicates)
-  //       console.log(relationsPosLoc)
-  //      }, [noDupicates])
-   
-       useEffect(() => {
-         // Filtrar duplicados en relationsPlant
-         const relacionesUnicas = eliminarDuplicados(relationsPosLoc);
-         setNoDuplicates(relacionesUnicas);
-       }, [relationsPosLoc]);
-  
-      const eliminarDuplicados = (relationsPosLoc: relationsAll[]) => {
-        const uniqueEntries = new Set<string>();
-        const result: relationsAll[] = [];
-        let autoIncrementId = 1;
-      
-        relationsPosLoc.forEach(entry => {
-          const key = `${entry.deparment.id}-${entry.location.id}-${entry.plant.id}-${entry.dimPosition.id}`;
-      
-          if (!uniqueEntries.has(key)) {
-            uniqueEntries.add(key);
-            result.push({
-              id: autoIncrementId++, // Asignar nuevo ID en orden
-              deparment: {
-                id: entry.deparment.id,
-                deptmBis: entry.deparment.deptmBis,
-                divBis: entry.deparment.divBis,
-              },
-              location: {
-                id: entry.location.id,
-                area: entry.location.area,
-              },
-              plant: {
-                id: entry.plant.id,
-                countryCode: entry.plant.countryCode,
-                plantCode: entry.plant.plantCode,
-                plantDescription: entry.plant.plantDescription,
-              },
-              dimPosition:{
-                id: entry.dimPosition.id,
-                positionDescriptionES: entry.dimPosition.positionDescriptionES,
-                departmentCode: entry.dimPosition.departmentCode,
-                divisionCode: entry.dimPosition.divisionCode,
-              },
-              position: entry.position,
-              xSymbol: entry.xSymbol,
-            });
-          }
-        });
-      
-        return result;
-      };
 
     const renderList = async () => {
       try {
@@ -262,7 +205,7 @@ function positionxlocation() {
       setCheck(generateAutoIncrementId);
       };
 
-      const filteredData = noDupicates
+      const filteredData = relationsPosLoc
       .filter(({ deparment }) => deparment.divBis === division || division === "")
       .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
       .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
@@ -273,7 +216,6 @@ function positionxlocation() {
       
       const filteredHotels = plants
       .filter(({ countryCode }) => !country || countryCode === country);
-      
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
   
@@ -486,4 +428,4 @@ function positionxlocation() {
   )
 }
 
-export default positionxlocation
+export default sizeCriteria
