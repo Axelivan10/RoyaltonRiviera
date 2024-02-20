@@ -1,12 +1,10 @@
 import { Card, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
-import { getDepartment, getDivision, getHotels, getShift, getShiftConfig, getrelationsPosLocConfig, relationsShiftConfig, updatePosLocConfig, updateShiftConfig } from '../../api/manning.api';
+import { getDepartment, getDivision, getHotels, getRelationsSizeCriteriaConfig, getShift, getShiftConfig, getrelationsPosLocConfig, relationsShiftConfig, updatePosLocConfig, updateShiftConfig, updateSizeCriteriaConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
-interface InputValues {
-    [key: string]: string;
-  }
-  
+const TABLE_HEAD = ["Size Criteria", "Parameter" ,"XS (min)", "XS (max)", "S (min)", "S (max)", "M (min)", "M (max)", "L (min)", "L (max)", "XL (min)", "XL (max)" ];
+
   interface InputValue {
     id: number;
     position: string;
@@ -17,69 +15,42 @@ interface InputValues {
   
   interface relationsAll {
     id: number;
-    deparment: {
-      id: number;
-      deptmBis: string;
-      divBis:string
-    };
-    dimPosition: {
-      positionId: number;
-      positionDescriptionES: string;
-    };
-    location: {
-      id: number;
-      area: string;
-    };
-    plant: {
-      id: number;
-      countryCode: string;
-      plantCode: string;
-      plantDescription: string;
-    };
-    position: string;
-    xSymbol: string;
+    parameter: {
+      parameterId: number;
+      parameter: string;
+    }
+    sizeCriteria: string;
+    xSmallMinValue: number;
+    xSmallMaxValue: number;
+    smallMaxValue: number;
+    smallMinValue: number;
+    mediumMaxValue: number;
+    mediumMinValue: number;
+    largeMaxValue: number;
+    largeMinValue: number;
+    xlargeMaxValue: number; 
+    xlargeMinValue: number;
+
   }
 
 function sizeCriteria() {
-    const [inputValues, setInputValues] = useState<InputValues>({});
-    const [valuesToSend, setValuesToSend] = useState<InputValue[]>([]);
-
-    const [plants, setPlants] = useState([]);
-    const [divisions, setDivisions] = useState([]);
-    const [departments, setDepartments] = useState([]);
-    const [shifts, setShifts] = useState([]);
-    const [plantt, setPlantt] = useState("");
-    const [division, setDivision] = useState("");
-    const [country, setCountry] = useState("");
-    const [departmentt, setDepartmentt] = useState("");
-
-    const [relationsPosLoc, setRelationsPosLoc] = useState<relationsAll[]>([]);
-    const [initialValues, setinitialValues] = useState<InputValues>({});
-    const [check, setCheck] = useState(0);
-    const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
+    const [relationsSizeCriteria, setRelationsSizeCriteria] = useState<relationsAll[]>([]);
+    const [initialValues, setinitialValues] = useState<relationsAll[]>([]);
+    const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<relationsAll[]>([]);
+    const [nullList, setNullList] = useState<relationsAll[]>([]);
     const [isActive, setIsActive] = useState(false);
-
-    let autoIncrementId = 1;
-    const generateAutoIncrementId = () => {
-      return autoIncrementId++;
-    };
 
     useEffect(()=>{
       renderList()
-      renderInputs()
     },[])
 
     useEffect(() => {
-      setValuesToSend(sendInputValues.inputValues);
-    }, [inputValues]);
-
-    useEffect(() => {
-      const newModifiedPositions = Object.keys(inputValues).filter(
-        key => inputValues[key] !== initialValues[key]
-      );
-      setModifiedCurrentPositions(newModifiedPositions)
-      // console.log(newModifiedPositions)
-    }, [inputValues]);
+      const hasChanges = JSON.stringify(initialValues) !== JSON.stringify(relationsSizeCriteria);
+      if (hasChanges) {
+        setModifiedCurrentPositions(relationsSizeCriteria);
+      }
+      console.log(relationsSizeCriteria)
+    }, [relationsSizeCriteria]);  
 
     useEffect(() => {
       if (!isActive && modifiedCurrentPositions.length > 0) {
@@ -100,37 +71,24 @@ function sizeCriteria() {
               icon: "success",
             });
             updateData()
-            setinitialValues(inputValues)
+            setinitialValues(relationsSizeCriteria)
           } else {
-            setInputValues(initialValues)
+            setRelationsSizeCriteria(initialValues)
           }
         });
       } else {
         // Lógica para manejar cuando no hay posiciones modificadas o isActive está activado
         console.log("No hay posiciones modificadas o isActive está activado");
       }
+      setModifiedCurrentPositions(nullList)
     }, [isActive, ]);
 
     const renderList = async () => {
       try {
-          const responseDepartment = await getDepartment();
-          setDepartments(responseDepartment.data)
-
-          const responsePlant = await getHotels();
-          setPlants(responsePlant.data)
-          // console.log(responsePlant.data)
-
-          const responseDivision = await getDivision();
-          setDivisions(responseDivision.data)
-
-          const responseShift = await getShift();
-          setShifts(responseShift.data)
-          // console.log(responseShift.data)
-
-          const responseRelationsPosLocConfig = await getrelationsPosLocConfig();
-          setRelationsPosLoc(responseRelationsPosLocConfig.data)
-          console.log(responseRelationsPosLocConfig.data)
-
+          const responseRelationsSizeCriteriaConfig = await getRelationsSizeCriteriaConfig();
+          setRelationsSizeCriteria(responseRelationsSizeCriteriaConfig.data)
+          setinitialValues(responseRelationsSizeCriteriaConfig.data)
+          // console.log(responseRelationsSizeCriteriaConfig.data)
         } catch {
         throw new Error("Render Fail");
       }
@@ -140,86 +98,51 @@ function sizeCriteria() {
       setIsActive(!isActive);
     };
 
-    const handleInputChange = ( positionId: number, ShiftId: number, value: string ) => {
-        if (value.toLowerCase() === "x" || value.toLowerCase() === "") {
-          const key = `${positionId}-${ShiftId}`;
-          setInputValues((prevValues) => ({ ...prevValues, [key]: value }));
-        }
-      };
-
-    const handleDivisionChange = (e: any) => {
-        const selectedDivision = e.target.value;
-        (e.target.value == "" ? setDivision("") : setDivision(selectedDivision))
-        setDepartmentt("")
-      };
-  
-      const handleDepartmentChange = (e: any) => {
-        const selectedDepartment = e.target.value;
-        (e.target.value == "" ? setDepartmentt("") : setDepartmentt(selectedDepartment))
-      };
-  
-      const handleCountryChange = (e: any) => {
-        const selectedCountry = e.target.value;
-        (e.target.value === "" ? setCountry("") : setCountry(selectedCountry))   
-        setPlantt("")
-      };
-  
-      const handleHotelChange = (e: any) => {
-        const selectedHotel = e.target.value;
-        (e.target.value == "" ? setPlantt("") : setPlantt(selectedHotel))
-      };
-
-      const renderInputs = async ()  =>{
-        const posLocConfig = await getrelationsPosLocConfig(); //aqui podemos llamar sin relaciones, pero pa ver si jala.
-        console.log(posLocConfig.data)
-        posLocConfig.data.forEach((config:any) => {
-          if (config.xSymbol) {
-            initialValues[config.position] = config.xSymbol;
-          }
-        });
-        // Establecer los valores iniciales en el estado
-        setInputValues(initialValues);
-      }
+    const handleInputChange = (id: number, value: string, property: string) => {
+      if (!isNaN(Number(value))) {
+        const numberValue = Number(value);
     
-      const sendInputValues = {
-        inputValues: Object.entries(inputValues).map(([position, xSymbol]) => {
-        const [DepartmentId, locationId] = position.split('-').map(Number);
-        
-        return {
-          id: generateAutoIncrementId(),
-          position,
-          xSymbol,
-          // locationId: DepartmentId,
-          // deparmentId: locationId,
-        };
+        setRelationsSizeCriteria((prevRelations) =>
+          prevRelations.map((relation) => {
+            if (relation.id === id) {
+
+              const updatedRelation = { ...relation, [property]: numberValue || 0 };
   
-        }),
-      };
-  
-      const updateData = () => {
+              switch (property) {
+                case 'smallMaxValue':
+                  updatedRelation.mediumMinValue = (numberValue || 0) + 1;
+                  break;
+                case 'mediumMaxValue':
+                  updatedRelation.largeMinValue = (numberValue || 0) + 1;
+                  break;
+                case 'largeMaxValue':
+                  updatedRelation.xlargeMinValue = (numberValue || 0) + 1;
+                  break;    
+                default:
+                  break;
+              }
+              return updatedRelation;
+            }
+    
+            return relation;
+          })
+        );
+      }
+    };
+    
+    const updateData = () => {
       try {
-        updatePosLocConfig(valuesToSend);
+        updateSizeCriteriaConfig(relationsSizeCriteria);
       } catch (error) {
         throw new Error("Send Information Fail");
       }
-      setCheck(generateAutoIncrementId);
-      };
+      // setCheck(generateAutoIncrementId);
+    };
 
-      const filteredData = relationsPosLoc
-      .filter(({ deparment }) => deparment.divBis === division || division === "")
-      .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
-      .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
-      .filter(({ plant }) => plant.countryCode === country || country === "")
-  
-      const filteredDepartments = departments
-      .filter(({ divBis }) => !division || divBis === division);
-      
-      const filteredHotels = plants
-      .filter(({ countryCode }) => !country || countryCode === country);
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
   
-    <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4">
+    <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4 pb-6">
   
           <div>
             {isActive ? (
@@ -240,184 +163,166 @@ function sizeCriteria() {
           </div>
       </div>
   
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 px-2 lg:gap-2 xl:gap-4 pb-8 pt-2">
-        <div className="w-full">
-          <select
-            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-            onChange={handleDivisionChange}
-            value={division}
-          >
-            <option value="">All Divisions</option>
-            {divisions.map(({ id, divBis }) => (
-              <option key={id} value={divBis}>
-                {divBis}
-              </option>
-            ))}
-          </select>
-        </div>
-  
-        <div className="w-full">
-          <select
-            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-            onChange={handleDepartmentChange}
-            value={departmentt}
-          >
-            <option value="">All Departments</option>
-            {filteredDepartments.map(({ id, deptmBis }) => (
-              <option key={id} value={deptmBis}>
-                {deptmBis}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="w-full">
-          <select
-            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-            onChange={handleCountryChange}
-            value={country}
-          >
-            <option value="">All Countries</option>
-            <option value="MEX">Mexico</option>
-            <option value="CRI">Costa Rica</option>
-            <option value="DOM">Dominican Republic</option>
-            <option value="GRD">Granade</option>
-            <option value="ATG">Antigua</option>
-            <option value="JAM">Jamaica</option>
-          </select>
-        </div>
-        <div className="w-full">
-          <select
-            className="bg-gray-50 border border-gray-400 text-gray-900 text-sm rounded-lg focus:ring-gray-900 focus:border-gray-900 block w-full p-2.5"
-            onChange={handleHotelChange}
-            value={plantt}
-          >
-            <option value="">All Hotels</option>
-            {filteredHotels.map(({ id, plantCode, plantDescription }) => (
-              <option key={id} value={plantCode}>
-                {plantDescription}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-  
       <Card
         className="h-full w-full overflow-scroll"
         style={{ maxHeight: "650px" }}
       >
         <table className="w-full min-w-max table-auto text-left ">
           <thead className="bg-white">
-            <tr>
-            <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  Plant
-                </Typography>
-              </th>
-              <th className="sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  Position
-                </Typography>
-              </th>
-              <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  Department
-                </Typography>
-              </th>
-              <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  Location
-                </Typography>
-              </th>
-              {shifts.map(({ id, shift }) => (
+          {TABLE_HEAD.map((head) => (
                 <th
-                  key={id}
-                  className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100 text-center"
+                  key={head}
+                  className={
+                    head === "Size Criteria"
+                      ? "text-center sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
+                      : head === "Parameter"
+                        ? "text-center sticky top-0 left-20 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
+                        : "text-center sticky top-0 border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                  }
                 >
                   <Typography
                     variant="small"
                     color="blue-gray"
                     className="font-normal leading-none opacity-70"
                   >
-                    {shift}
+                    {head}
                   </Typography>
                 </th>
               ))}
-            </tr>
           </thead>
           <tbody>
-            {filteredData.map(
-              ({ id: positionId, deparment, location, plant, dimPosition }) => (
-                <tr key={positionId}>
-                  <td className="bg-white p-4 border-b border-blue-gray-50">
+            {relationsSizeCriteria.map(
+              ({ id, sizeCriteria, parameter, xSmallMinValue, xSmallMaxValue, smallMaxValue, smallMinValue,
+                mediumMaxValue, mediumMinValue, largeMaxValue, largeMinValue, xlargeMaxValue, xlargeMinValue}) => (
+                <tr key={id}>
+                  <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {plant.plantDescription}
+                      {sizeCriteria}
                     </Typography>
                   </td>
-                  <td className="sticky left-0 top-0 z-50 bg-white p-4 border-b border-blue-gray-50">
+                  <td className="sticky left-20 top-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {dimPosition.positionDescriptionES}
+                      {parameter.parameter}
                     </Typography>
                   </td>
-                  <td className="bg-white p-4 border-b border-blue-gray-50">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {deparment.divBis}
-                      </Typography>
-                    </td>
-                    <td className="bg-white p-4 border-b border-blue-gray-50">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {location.area}
-                      </Typography>
-                    </td>
-                  {shifts.map(({ shiftId }) => (
-                    <td
-                      key={shiftId}
-                      className="text-center p-4 border-b border-blue-gray-50"
-                    >
-                      <input
-                        type="text"
-                        className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                        style={{ maxWidth: "100px" }}
-                        value={inputValues[`${positionId}-${shiftId}`] || ""}
-                        onChange={(e) =>
-                          handleInputChange(positionId, shiftId, e.target.value)
-                        }
-                        disabled={!isActive}
-                      />
-                    </td>
-                  ))}
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.xSmallMinValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'xSmallMinValue')}
+                      disabled={true}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.xSmallMaxValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'xSmallMaxValue')}
+                      disabled={true}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.smallMinValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'smallMinValue')}
+                      disabled={!isActive}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.smallMaxValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'smallMaxValue')}
+                      disabled={!isActive}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsSizeCriteria.find((relation) => relation.id === id)?.mediumMinValue || 0) }
+                      onChange={(e) => handleInputChange(id, e.target.value, 'mediumMinValue')}
+                      disabled={true}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.mediumMaxValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'mediumMaxValue')}
+                      disabled={!isActive}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsSizeCriteria.find((relation) => relation.id === id)?.largeMinValue || 0) }
+                      onChange={(e) => handleInputChange(id, e.target.value, 'largeMinValue')}
+                      disabled={true}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.largeMaxValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'largeMaxValue')}
+                      disabled={!isActive}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsSizeCriteria.find((relation) => relation.id === id)?.largeMaxValue || 0) + 1 }
+                      onChange={(e) => handleInputChange(id, e.target.value, 'xlargeMinValue')}
+                      disabled={true}
+                      maxLength={5}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.xlargeMaxValue || ''}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'xlargeMaxValue')}
+                      disabled={!isActive}
+                      maxLength={5}
+                    />
+                  </td>
                 </tr>
               )
             )}

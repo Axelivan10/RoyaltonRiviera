@@ -82,6 +82,7 @@ function form_plant() {
                   title: "Oops...",
                   text: "Something went wrong! Try again",
                 });
+                console.log(error)
               }
 
             }

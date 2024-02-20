@@ -437,6 +437,47 @@ export class ManningService {
     return editInputs;
   }
 
+  async updateStandardTableConfig(editInputs) {
+    const updatedRecords = [];
+    for (const record of editInputs) {
+      const { position, xSymbol, numberValue } = record;
+      try {
+        // Suponiendo que PlantService.update es asíncrono
+        const updatedRecord = await this.standardTableConfigRepository.update(
+          { position },
+          { xSymbol, numberValue },
+          );
+
+        updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record with ${position}: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateSizeCriteriaConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.sizeCriteriaConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
   async createLocation(dataLocation) {
     const location = await this.locationRepository.findOne({
       where: {
@@ -490,7 +531,6 @@ export class ManningService {
     return this.plantRepository.save(newLocation);
   }
 
-
   async createServiceTypeConfig(dataValues) {
     try {
 
@@ -527,5 +567,23 @@ export class ManningService {
     }
 
   }
+
+  async deleteServiceTypeConfig(id: number) {
+    try {
+      const existingServiceType = await this.serviceTypeConfigRepository.findOne({where:{
+        id: id
+      }});
+  
+      if (!existingServiceType) {
+        throw new HttpException('ServiceTypeConfig not found', HttpStatus.NOT_FOUND);
+      }
+  
+      return await this.serviceTypeConfigRepository.delete(id);
+  
+    } catch (error) {
+      throw new HttpException('Error deleting ServiceTypeConfig', HttpStatus.BAD_REQUEST);
+    }
+  }
+  
 
 }

@@ -4,40 +4,40 @@ export class dimPlantDto {
 
   id:number;
 
-  @IsString()
+  // @IsString()
   region: string;
 
-  @IsString()
+  // @IsString()
   countryCode: string;
 
-  @IsString()
+  // @IsString()
   country: string;
 
-  @IsString()
+  // @IsString()
   brand: string;
 
-  @IsString()
+  // @IsString()
   brandCode: string;
 
-  @IsNumber()
+  // @IsNumber()
   plantId: number;
 
-  @IsString()
+  // @IsString()
   plantCode: string;
 
-  @IsString()
+  // @IsString()
   plantDescription: string;
 
-  @IsNumber()
+  // @IsNumber()
   rooms: number;
 
-  @IsString()
+  // @IsString()
   size: string;
 
-  @IsNumber()
+  // @IsNumber()
   sizeRank: number;
 
-  @IsNumber()
+  // @IsNumber()
   countryRank: number;
 
   editValues: {

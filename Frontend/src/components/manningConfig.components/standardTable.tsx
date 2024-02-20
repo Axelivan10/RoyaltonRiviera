@@ -1,9 +1,9 @@
 import { Card, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
-import { getDepartment, getDivision, getHotels, getRelationsStandardTableConfig, getShift, getShiftConfig, getrelationsPosLocConfig, relationsShiftConfig, updatePosLocConfig, updateShiftConfig } from '../../api/manning.api';
+import { getDepartment, getDivision, getHotels, getRelationsStandardTableConfig, getShift, getShiftConfig, getrelationsPosLocConfig, relationsShiftConfig, updatePosLocConfig, updateShiftConfig, updateStandardTableConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
-const TABLE_HEAD = ["Position ID","Position", "Division", "Department", "Level", "Shift", "Criteria", "Service Type", "Parameter", "Ratio" ];
+const TABLE_HEAD = ["Position ID", "Position" , "Division", "Department", "Level", "Shift", "Criteria", "Service Type", "Parameter", "Ratio" ];
 const TABLE_HEAD_FIELDS = [
     {id: 1, value: "XS"},
     {id: 2, value: "S"},
@@ -17,8 +17,6 @@ const TABLE_HEAD_FIELDS = [
     {id: 10, value: "Cover"}
 ]
 
-
-
 interface InputValues {
   [key: string]: string;
 }
@@ -27,6 +25,7 @@ interface InputValue {
   id: number;
   position: string;
   xSymbol: string;
+  // numberValue: string;
   // locationId: number;
   // deparmentId: number;
 }
@@ -54,18 +53,18 @@ interface relationsAll {
     divBis: string;
     id: number;
   };
+  parameter:{
+    parameterId:number;
+    parameter:string;
+    };
+
   level:string;
   numberValue:number;
   position: string;
   xSymbol: string;
-  param:string;
   ratio:number;
   criteria:string;
   positionId:number;
-  parameter:{
-  parameterId:number;
-  parameter:string;
-  };
 }
 
 function standardTable() {
@@ -86,7 +85,8 @@ function standardTable() {
   const [check, setCheck] = useState(0);
   const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
   const [isActive, setIsActive] = useState(false);
-
+  const [noDupicates, setNoDuplicates] = useState<relationsAll[]>([]);
+  
   let autoIncrementId = 1;
   const generateAutoIncrementId = () => {
     return autoIncrementId++;
@@ -99,6 +99,7 @@ function standardTable() {
 
   useEffect(() => {
     setValuesToSend(sendInputValues.inputValues);
+    // console.log(sendInputValues.inputValues)
   }, [inputValues]);
 
   useEffect(() => {
@@ -107,6 +108,7 @@ function standardTable() {
     );
     setModifiedCurrentPositions(newModifiedPositions)
     // console.log(newModifiedPositions)
+    //console.log(inputValues)
   }, [inputValues]);
 
   useEffect(() => {
@@ -139,6 +141,63 @@ function standardTable() {
     }
   }, [isActive, ]);
 
+  useEffect(() => {
+    // Filtrar duplicados en relationsPlant
+    const relacionesUnicas = eliminarDuplicados(relationsStandardTable);
+    setNoDuplicates(relacionesUnicas);
+  }, [relationsStandardTable]);
+
+ const eliminarDuplicados = (relationsPosition: relationsAll[]) => {
+   const uniqueEntries = new Set<string>();
+   const result: relationsAll[] = [];
+   let autoIncrementId = 1;
+ 
+   relationsPosition.forEach(entry => {
+     const key = `${entry.deparment.id}-${entry.division.id}-${entry.deparment.id}-${entry.shift.shiftId}-${entry.serviceType.serviceTypeId}-${entry.parameter.parameterId}`;
+ 
+     if (!uniqueEntries.has(key)) {
+       uniqueEntries.add(key);
+       result.push({
+         id: autoIncrementId++, // Asignar nuevo ID en orden
+         dimPosition:{
+          positionId: entry.dimPosition.positionId,
+          positionDescriptionES: entry.dimPosition.positionDescriptionES,
+        },
+         deparment: {
+           id: entry.deparment.id,
+           deptmBis: entry.deparment.deptmBis,
+           divBis: entry.deparment.divBis,
+         },
+         serviceType: {
+          serviceTypeId: entry.serviceType.serviceTypeId,
+          serviceTypeCode: entry.serviceType.serviceTypeCode,
+        },
+        shift: {
+          shiftId: entry.shift.shiftId,
+          shift: entry.shift.shift,
+        },
+        division: {
+          id: entry.division.id,
+          divBis: entry.division.divBis,
+        },
+        parameter:{
+          parameterId:entry.parameter.parameterId,
+          parameter:entry.parameter.parameter,
+          },
+        level:entry.level,
+        numberValue:entry.numberValue,
+        position: entry.position,
+        xSymbol: entry.xSymbol,
+        ratio:entry.ratio,
+        criteria:entry.criteria,
+        positionId:entry.positionId,
+       });
+     }
+   });
+ 
+   return result;
+ };
+
   const renderList = async () => {
     try {
         const responseDepartment = await getDepartment();
@@ -169,9 +228,9 @@ function standardTable() {
   };
 
   const handleInputChange = (positionId:number, fieldsId:number, value:string) => {
-    if (/^[x0-9 ]*$/.test(value)) {
-      const key = `${positionId}-${fieldsId}`;
-      setInputValues((prevValues) => ({ ...prevValues, [key]: value }));
+    const key = `${positionId}-${fieldsId}`;
+    if(value.toLowerCase() === "x" || /^[x0-9 ]*$/.test(value)){
+      setInputValues((prevValues) => ({ ...prevValues, [key]: value.toLocaleLowerCase() }));
     }
   };
 
@@ -213,29 +272,36 @@ function standardTable() {
   
     const sendInputValues = {
       inputValues: Object.entries(inputValues).map(([position, xSymbol]) => {
-      const [DepartmentId, locationId] = position.split('-').map(Number);
-      
-      return {
-        id: generateAutoIncrementId(),
-        position,
-        xSymbol,
-        // locationId: DepartmentId,
-        // deparmentId: locationId,
-      };
-
+        // const [DepartmentId, locationId] = position.split('-').map(Number);
+    
+        let numberValue;
+    
+        if (/^[0-9 ]*$/.test(xSymbol)) {
+          numberValue = Number(xSymbol)
+          xSymbol = ""
+        }
+    
+        return {
+          id: generateAutoIncrementId(),
+          position,
+          xSymbol,
+          numberValue,
+          // locationId: DepartmentId,
+          // deparmentId: locationId,
+        };
       }),
     };
 
     const updateData = () => {
     try {
-      updatePosLocConfig(valuesToSend);
+      updateStandardTableConfig(valuesToSend);
     } catch (error) {
       throw new Error("Send Information Fail");
     }
     setCheck(generateAutoIncrementId);
     };
 
-    const filteredData = relationsStandardTable
+    const filteredData = noDupicates
     .filter(({ deparment }) => deparment.divBis === division || division === "")
     .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
     // .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
@@ -387,7 +453,7 @@ function standardTable() {
                        {positionId}
                     </Typography>
                   </td>
-                  <td className="sticky left-0 top-0 z-50 bg-white p-4 border-b border-blue-gray-50">
+                  <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
@@ -482,6 +548,7 @@ function standardTable() {
                           handleInputChange(tableId, fieldsId, e.target.value)
                         }
                         disabled={!isActive}
+                        maxLength={3}
                       />
                     </td>
                   ))}

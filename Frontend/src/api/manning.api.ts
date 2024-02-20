@@ -226,6 +226,18 @@ export const getRelationsStandardTableConfig = async () => {
   }
 }
 
+export const getRelationsSizeCriteriaConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsSizeCriteriaConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -344,6 +356,26 @@ export const updatePosLocConfig = async (inputValues: {}) => {
   }
 }
 
+export const updateStandardTableConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateStandardTableConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update StandardTableConfig Fail');
+  }
+}
+
+export const updateSizeCriteriaConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateSizeCriteriaConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update sizeCriteriaConfig Fail');
+  }
+}
+
 export const createLocation = async (dataLocation: {} ) => {
   try {
     const response = await axios.post(`${BASE_URL}/manning/createLocation`, {
@@ -388,14 +420,13 @@ export const createServiceTypeConfig = async (dataValues : any) => {
 
 }
 
-
-
-
-
-
-
-
-
-
+export const deleteServiceTypeConfig = async (id: number) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/manning/deleteServiceTypeConfig/${id}`);
+    return response;
+  } catch (error) {
+    throw new Error('Delete Location Fail');
+  }
+};
 
 

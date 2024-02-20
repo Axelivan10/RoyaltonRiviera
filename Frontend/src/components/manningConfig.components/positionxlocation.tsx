@@ -126,7 +126,7 @@ function positionxlocation() {
          setNoDuplicates(relacionesUnicas);
        }, [relationsPosLoc]);
   
-      const eliminarDuplicados = (relationsPosLoc: relationsAll[]) => {
+    const eliminarDuplicados = (relationsPosLoc: relationsAll[]) => {
         const uniqueEntries = new Set<string>();
         const result: relationsAll[] = [];
         let autoIncrementId = 1;
@@ -166,7 +166,7 @@ function positionxlocation() {
         });
       
         return result;
-      };
+    };
 
     const renderList = async () => {
       try {
@@ -367,7 +367,7 @@ function positionxlocation() {
         <table className="w-full min-w-max table-auto text-left ">
           <thead className="bg-white">
             <tr>
-            <th className="sticky top-0 left-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
+            <th className="sticky top-0 bg-blue-gray-50 p-4 border-b border-blue-gray-100">
                 <Typography
                   variant="small"
                   color="blue-gray"
@@ -432,7 +432,7 @@ function positionxlocation() {
                       {plant.plantDescription}
                     </Typography>
                   </td>
-                  <td className="sticky left-0 top-0 z-50 bg-white p-4 border-b border-blue-gray-50">
+                  <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
@@ -447,7 +447,7 @@ function positionxlocation() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {deparment.divBis}
+                        {deparment.deptmBis}
                       </Typography>
                     </td>
                     <td className="bg-white p-4 border-b border-blue-gray-50">

@@ -1,6 +1,6 @@
 import { Card, Input, Typography, list } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react'
-import { createServiceTypeConfig, getDepartment, getDivision, getHotels, getServiceType, relationsServiceTypeConfig, updateServiceTypeConfig } from '../../api/manning.api';
+import { createServiceTypeConfig, deleteServiceTypeConfig, getDepartment, getDivision, getHotels, getServiceType, relationsServiceTypeConfig, updateServiceTypeConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 import { PlusCircleIcon, PencilIcon, MagnifyingGlassIcon, TrashIcon } from '@heroicons/react/24/outline';
 
@@ -88,6 +88,19 @@ function serviceType() {
       console.log(searchValue)      //testing
     },[searchValue])
 
+    const refresh = async () =>{
+      const RelationsServiceTypeConfig = await relationsServiceTypeConfig();
+          setRelationsServiceType(RelationsServiceTypeConfig.data)
+          console.log(RelationsServiceTypeConfig.data)
+
+          //ESTE ES PARA SETEAR LA LISTA INICIAL DE LOS SELECTS.
+          const formattedServiceTypes:Data = {};
+          RelationsServiceTypeConfig.data.forEach((item:any) => {
+            formattedServiceTypes[item.id] = item.serviceType.serviceTypeId;
+          });
+          setSelectedServiceTypes(formattedServiceTypes);
+    }
+
     const renderList = async () => {
       try {
 
@@ -161,7 +174,7 @@ function serviceType() {
     }
 
     const addNewInsert = async (id: number) => {
-      const dataSelectedId = relationsServiceType.find(data => data.id === id);
+      const dataSelectedId = relationsServiceType.find(data => data.id === id); //Estamos trayendo el ID del render y buscamos en mi lista para traer la info
       console.log(dataSelectedId);
       try {
           const result = await Swal.fire({
@@ -181,11 +194,39 @@ function serviceType() {
                   text: "You add a new insertion",
                   icon: "success",
               });
+              refresh()
           }
       } catch (error) {
           throw new Error("Send data Fail");
       }
   };
+
+  const DeleteInputById = async (id:number) =>{
+    console.log(id)
+   try {
+          const result = await Swal.fire({
+              title: "You are going to delete an insertion",
+              text: "Make sure you choose the correct service Type option",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Delete",
+          });
+  
+          if (result.isConfirmed) {
+              await deleteServiceTypeConfig(id);
+              await Swal.fire({
+                  title: "Success",
+                  text: "You delete an insertion",
+                  icon: "success",
+              });
+              refresh()
+          }
+      } catch (error) {
+          throw new Error("Delete data Fail");
+      }
+  }
     
     const sendValues = () => {
       if(isActivate === 0){
@@ -331,7 +372,9 @@ function serviceType() {
                   className={
                     head === "Location"
                       ? "sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
-                      : "sticky top-0 left-0 border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                      : head === "Service Type"
+                        ? "sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
+                        : "sticky top-0 border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                   }
                 >
                   <Typography
@@ -433,7 +476,7 @@ function serviceType() {
                     <div className="flex flex-cols-2 gap-x-10">
                       <PlusCircleIcon onClick={ ()=> addNewInsert(locationId) } className="cursor-pointer w-6 h-6 hover:text-colorRoyalton hover:font-semibold"></PlusCircleIcon>
                       <PencilIcon onClick={ ()=> activeInputById(locationId) } className="cursor-pointer w-5 h-5 hover:text-colorRoyalton hover:font-semibold"></PencilIcon>
-                      <TrashIcon className="cursor-pointer w-5 h-5 hover:text-red-500 hover:font-semibold"></TrashIcon>
+                      <TrashIcon onClick={ ()=> DeleteInputById(locationId) } className="cursor-pointer w-5 h-5 hover:text-red-500 hover:font-semibold"></TrashIcon>
                     </div>
                   </td>
                 </tr>
@@ -442,6 +485,7 @@ function serviceType() {
           </tbody>
         </table>
       </Card>
+      
     </div>
   );
 }

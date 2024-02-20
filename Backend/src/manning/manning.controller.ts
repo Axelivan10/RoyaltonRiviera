@@ -47,9 +47,6 @@ export class ManningController {
 
 
 
-
-
-
     //TEST FOR ALL THE RELATIONS IN DB
     @Public()
     @Get('testDivision')
@@ -234,6 +231,20 @@ export class ManningController {
     }
 
     @Public()
+    @Put('updateStandardTableConfig')
+    updateStandardTableConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateStandardTableConfig(editInputs);
+    }
+
+    @Public()
+    @Put('updateSizeCriteriaConfig')
+    updateSizeCriteriaConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateSizeCriteriaConfig(editInputs);
+    } 
+
+    @Public()
     @Post('createLocation')
     createLocation(@Body() dataLocation: dimLocationDto ) {
     return this.manningService.createLocation(dataLocation);
@@ -242,7 +253,6 @@ export class ManningController {
     @Public()
     @Post('createPlant')
     createPlant(@Body() dataPlant: dimPlantDto ) {
-        console.log(dataPlant)
         return this.manningService.createPlant(dataPlant);
     }
 
@@ -250,6 +260,12 @@ export class ManningController {
     @Post('createServiceTypeConfig')
     createServiceTypeConfig(@Body() dataValues: serviceTypeConfigDto ) {
         return this.manningService.createServiceTypeConfig(dataValues);
+    }
+
+    @Public()
+    @Delete('deleteServiceTypeConfig/:id')
+    deleteServiceTypeConfig(@Param('id', ParseIntPipe) id: number){
+        return this.manningService.deleteServiceTypeConfig(id)
     }
 
 }
