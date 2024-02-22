@@ -4,6 +4,7 @@ import { shiftConfig } from '../configuration/shift_config.entity';
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
+import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 
 @Entity()
 export class dimPlant{
@@ -64,5 +65,8 @@ export class dimPlant{
 
     @OneToMany(() => position_locationConfig, (posloc) => posloc.plant)
     posLocConfigPlant: position_locationConfig[];
+
+    @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.plant)
+    flowsRestConfigPlant: flowsRestConfig[];
     
 }

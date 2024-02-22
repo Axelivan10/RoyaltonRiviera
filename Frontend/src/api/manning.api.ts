@@ -238,6 +238,42 @@ export const getRelationsSizeCriteriaConfig = async () => {
   }
 }
 
+export const getRelationsFlowsRestConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsFlowsRestConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const getRelationsFlowsGrlConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsFlowsGrlConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const getRelationsKitchenGrlConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsKitchenGrlConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -373,6 +409,36 @@ export const updateSizeCriteriaConfig = async (inputValues: {}) => {
 
   } catch (error) {
     throw new Error('Update sizeCriteriaConfig Fail');
+  }
+}
+
+export const updateFlowsRestConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateFlowsRestConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update flowsRestConfig Fail');
+  }
+}
+
+export const updateFlowsGrlConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateFlowsGrlConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update flowsGrlConfig Fail');
+  }
+}
+
+export const updateKitchenGrlConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateKitchenGrlConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update kitchenGrlConfig Fail');
   }
 }
 

@@ -1,6 +1,8 @@
 import{Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm'
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
+import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
+import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 
 @Entity()
 export class dimServiceType{
@@ -25,5 +27,11 @@ export class dimServiceType{
 
     @OneToMany(() => standardTableConfig, (standardTable) => standardTable.serviceType)
     standardTableConfigServiceType: standardTableConfig[];
+
+    @OneToMany(() => kitchenGrlConfig, (kitchenGrl) => kitchenGrl.serviceType)
+    kitchenGrlConfigServiceType: kitchenGrlConfig[];
+
+    @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.serviceType)
+    flowsRestConfigServiceType: flowsRestConfig[];
 }
 

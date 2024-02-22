@@ -5,6 +5,7 @@ import { shiftConfig } from '../configuration/shift_config.entity';
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
+import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 
 @Entity()
 export class dimLocation{
@@ -50,4 +51,7 @@ export class dimLocation{
 
     @OneToMany(() => position_locationConfig, (location) => location.location)
     positionLlocationConfigLocation: position_locationConfig[];
+
+    @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.location)
+    flowsRestConfigLocation: flowsRestConfig[];
 }

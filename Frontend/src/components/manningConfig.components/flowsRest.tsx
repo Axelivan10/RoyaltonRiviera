@@ -1,32 +1,51 @@
 import { Card, Typography } from '@material-tailwind/react'
 import { useEffect, useState } from 'react'
-import { getRelationsSizeCriteriaConfig, updateSizeCriteriaConfig } from '../../api/manning.api';
+import { getRelationsFlowsRestConfig, getRelationsSizeCriteriaConfig, updateFlowsRestConfig, updateSizeCriteriaConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
-const TABLE_HEAD = ["Size Criteria", "Parameter" ,"XS (min)", "XS (max)", "S (min)", "S (max)", "M (min)", "M (max)", "L (min)", "L (max)", "XL (min)", "XL (max)" ];
+const TABLE_HEAD = ["Plant ID", "Location" ,"Outlet", "Department", "Criteria", "Service Type", "Capacity", "Shift", "20-30", "30-40", "40-50", "50-60",, "60-70", "70-80", "80-90", "90-100", "Rate" ];
   
   interface relationsAll {
     id: number;
-    parameter: {
-      parameterId: number;
-      parameter: string;
-    }
-    sizeCriteria: string;
-    xSmallMinValue: number;
-    xSmallMaxValue: number;
-    smallMaxValue: number;
-    smallMinValue: number;
-    mediumMaxValue: number;
-    mediumMinValue: number;
-    largeMaxValue: number;
-    largeMinValue: number;
-    xlargeMaxValue: number; 
-    xlargeMinValue: number;
-
+    department: {
+      id: number;
+      deptmBis: string;
+      divBis:string
+    },
+    location: {
+      id: number;
+      area: string;
+      areaCode:string;
+    },
+    plant: {
+      id: number;
+      countryCode: string;
+      plantCode: string;
+      plantDescription: string;
+    },
+    shift: {
+      id: number;
+      shift: string;
+    },
+    serviceType: {
+      serviceTypeId: number;
+      serviceTypeCode: string;
+    },
+    capacity: number;
+    criteria: string;
+    rate: number; 
+    twenty: number;
+    thirty: number;
+    forty: number;
+    fifty: number;
+    sixty: number;
+    seventy: number;
+    eighty: number;
+    ninety: number; 
   }
 
-function sizeCriteria() {
-    const [relationsSizeCriteria, setRelationsSizeCriteria] = useState<relationsAll[]>([]);
+function flowsRest() {
+  const [relationsFlowsRest, setRelationsFlowsRest] = useState<relationsAll[]>([]);
     const [initialValues, setinitialValues] = useState<relationsAll[]>([]);
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<relationsAll[]>([]);
     const [nullList, setNullList] = useState<relationsAll[]>([]);
@@ -37,12 +56,12 @@ function sizeCriteria() {
     },[])
 
     useEffect(() => {
-      const hasChanges = JSON.stringify(initialValues) !== JSON.stringify(relationsSizeCriteria);
+      const hasChanges = JSON.stringify(initialValues) !== JSON.stringify(relationsFlowsRest);
       if (hasChanges) {
-        setModifiedCurrentPositions(relationsSizeCriteria);
+        setModifiedCurrentPositions(relationsFlowsRest);
       }
-      console.log(relationsSizeCriteria)
-    }, [relationsSizeCriteria]);  
+      console.log(relationsFlowsRest)
+    }, [relationsFlowsRest]);  
 
     useEffect(() => {
       if (!isActive && modifiedCurrentPositions.length > 0) {
@@ -63,9 +82,9 @@ function sizeCriteria() {
               icon: "success",
             });
             updateData()
-            setinitialValues(relationsSizeCriteria)
+            setinitialValues(relationsFlowsRest)
           } else {
-            setRelationsSizeCriteria(initialValues)
+            setRelationsFlowsRest(initialValues)
           }
         });
       } else {
@@ -77,10 +96,10 @@ function sizeCriteria() {
 
     const renderList = async () => {
       try {
-          const responseRelationsSizeCriteriaConfig = await getRelationsSizeCriteriaConfig();
-          setRelationsSizeCriteria(responseRelationsSizeCriteriaConfig.data)
-          setinitialValues(responseRelationsSizeCriteriaConfig.data)
-          // console.log(responseRelationsSizeCriteriaConfig.data)
+          const responseRelationsFlowsRestConfig = await getRelationsFlowsRestConfig();
+          setRelationsFlowsRest(responseRelationsFlowsRestConfig.data)
+          setinitialValues(responseRelationsFlowsRestConfig.data)
+          // console.log(responseRelationsFlowsRestConfig.data)
         } catch {
         throw new Error("Render Fail");
       }
@@ -94,37 +113,42 @@ function sizeCriteria() {
       if (!isNaN(Number(value))) {
         const numberValue = Number(value);
     
-        setRelationsSizeCriteria((prevRelations) =>
-          prevRelations.map((relation) => {
-            if (relation.id === id) {
+        setRelationsFlowsRest((prevRelations) =>
+          prevRelations.map((item) => {
+            if (item.id === id) {
+              const updatedRelation = { ...item, [property]: numberValue || 0 };
+//probar if mañana 
+              updatedRelation.eighty = (updatedRelation.ninety || 0) - updatedRelation.rate;
+              updatedRelation.seventy = (updatedRelation.eighty || 0) - updatedRelation.rate;
+              updatedRelation.sixty = (updatedRelation.seventy || 0) - updatedRelation.rate;
+              updatedRelation.fifty = (updatedRelation.sixty || 0) - updatedRelation.rate;
+              updatedRelation.forty = (updatedRelation.fifty || 0) - updatedRelation.rate;
+              updatedRelation.thirty = (updatedRelation.forty || 0) - updatedRelation.rate;
+              updatedRelation.twenty = (updatedRelation.thirty || 0) - updatedRelation.rate;
 
-              const updatedRelation = { ...relation, [property]: numberValue || 0 };
-  
-              switch (property) {
-                case 'smallMaxValue':
-                  updatedRelation.mediumMinValue = (numberValue || 0) + 1;
-                  break;
-                case 'mediumMaxValue':
-                  updatedRelation.largeMinValue = (numberValue || 0) + 1;
-                  break;
-                case 'largeMaxValue':
-                  updatedRelation.xlargeMinValue = (numberValue || 0) + 1;
-                  break;    
-                default:
-                  break;
-              }
               return updatedRelation;
             }
     
-            return relation;
+            return item;
           })
         );
       }
     };
     
+    // const handleInputChange = ( id: number, value:string, property: string ) => {
+    //   if(!isNaN(Number(value))){
+    //     const numberValue = Number(value);  
+    //     setRelationsSizeCriteria((prevRelations) =>
+    //       prevRelations.map((relation) =>
+    //         relation.id === id ? { ...relation, [property]: numberValue || 0 } : relation
+    //       )
+    //     );
+    //   }
+    // };
+
     const updateData = () => {
       try {
-        updateSizeCriteriaConfig(relationsSizeCriteria);
+        updateFlowsRestConfig(relationsFlowsRest);
       } catch (error) {
         throw new Error("Send Information Fail");
       }
@@ -165,7 +189,7 @@ function sizeCriteria() {
                 <th
                   key={head}
                   className={
-                    head === "Size Criteria"
+                    head === "Location"
                       ? "text-center sticky top-0 left-0 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
                       : head === "Parameter"
                         ? "text-center sticky top-0 left-20 z-50 bg-blue-gray-50 p-4 border-b border-blue-gray-100"
@@ -183,26 +207,79 @@ function sizeCriteria() {
               ))}
           </thead>
           <tbody>
-            {relationsSizeCriteria.map(
-              ({ id, sizeCriteria, parameter/*  xSmallMinValue, xSmallMaxValue, smallMaxValue, smallMinValue,
-                mediumMaxValue, mediumMinValue, largeMaxValue, largeMinValue, xlargeMaxValue, xlargeMinValue*/}) => (
+            {relationsFlowsRest.map(
+              ({ id, department, location, plant, shift, criteria, serviceType, capacity, rate }) => (
                 <tr key={id}>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {plant.plantCode}
+                    </Typography>
+                  </td>
                   <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {sizeCriteria}
+                      {location.area}
                     </Typography>
                   </td>
-                  <td className="sticky left-20 top-0 bg-white p-4 border-b border-blue-gray-50">
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {parameter.parameter}
+                      {location.areaCode}
+                    </Typography>
+                  </td>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {department.deptmBis}
+                    </Typography>
+                  </td>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {criteria}
+                    </Typography>
+                  </td>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {serviceType.serviceTypeCode}
+                    </Typography>
+                  </td>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {capacity}
+                    </Typography>
+                  </td>
+                  <td className="bg-white p-4 border-b border-blue-gray-50">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {shift.shift}
                     </Typography>
                   </td>
                   <td className="p-4 border-b border-blue-gray-50">
@@ -210,54 +287,10 @@ function sizeCriteria() {
                       type="text"
                       className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
                       style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.xSmallMinValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'xSmallMinValue')}
-                      disabled={!isActive}
-                      maxLength={5}
-                    />
-                  </td>
-                  <td className="p-4 border-b border-blue-gray-50">
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.xSmallMaxValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'xSmallMaxValue')}
-                      disabled={!isActive}
-                      maxLength={5}
-                    />
-                  </td>
-                  <td className="p-4 border-b border-blue-gray-50">
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.smallMinValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'smallMinValue')}
-                      disabled={!isActive}
-                      maxLength={5}
-                    />
-                  </td>
-                  <td className="p-4 border-b border-blue-gray-50">
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.smallMaxValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'smallMaxValue')}
-                      disabled={!isActive}
-                      maxLength={5}
-                    />
-                  </td>
-                  <td className="p-4 border-b border-blue-gray-50">
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={ (relationsSizeCriteria.find((relation) => relation.id === id)?.mediumMinValue || 0) }
-                      onChange={(e) => handleInputChange(id, e.target.value, 'mediumMinValue')}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.twenty}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'twenty')}
                       disabled={true}
-                      maxLength={5}
+                      maxLength={3}
                     />
                   </td>
                   <td className="p-4 border-b border-blue-gray-50">
@@ -265,21 +298,10 @@ function sizeCriteria() {
                       type="text"
                       className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
                       style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.mediumMaxValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'mediumMaxValue')}
-                      disabled={!isActive}
-                      maxLength={5}
-                    />
-                  </td>
-                  <td className="p-4 border-b border-blue-gray-50">
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={ (relationsSizeCriteria.find((relation) => relation.id === id)?.largeMinValue || '') }
-                      onChange={(e) => handleInputChange(id, e.target.value, 'largeMinValue')}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.thirty}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'thirty')}
                       disabled={true}
-                      maxLength={5}
+                      maxLength={3}
                     />
                   </td>
                   <td className="p-4 border-b border-blue-gray-50">
@@ -287,21 +309,10 @@ function sizeCriteria() {
                       type="text"
                       className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
                       style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.largeMaxValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'largeMaxValue')}
-                      disabled={!isActive}
-                      maxLength={5}
-                    />
-                  </td>
-                  <td className="p-4 border-b border-blue-gray-50">
-                    <input
-                      type="text"
-                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                      style={{ maxWidth: "100px" }}
-                      value={ (relationsSizeCriteria.find((relation) => relation.id === id)?.xlargeMinValue || '') }
-                      onChange={(e) => handleInputChange(id, e.target.value, 'xlargeMinValue')}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.forty}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'forty')}
                       disabled={true}
-                      maxLength={5}
+                      maxLength={3}
                     />
                   </td>
                   <td className="p-4 border-b border-blue-gray-50">
@@ -309,10 +320,65 @@ function sizeCriteria() {
                       type="text"
                       className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
                       style={{ maxWidth: "100px" }}
-                      value={relationsSizeCriteria.find((relation) => relation.id === id)?.xlargeMaxValue || ''}
-                      onChange={(e) => handleInputChange(id, e.target.value, 'xlargeMaxValue')}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.fifty}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'fifty')}
+                      disabled={true}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsFlowsRest.find((relation) => relation.id === id)?.sixty) }
+                      onChange={(e) => handleInputChange(id, e.target.value, 'sixty')}
+                      disabled={true}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.seventy}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'seventy')}
+                      disabled={true}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsFlowsRest.find((relation) => relation.id === id)?.eighty) }
+                      onChange={(e) => handleInputChange(id, e.target.value, 'eighty')}
+                      disabled={true}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.ninety}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'ninety')}
                       disabled={!isActive}
-                      maxLength={5}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsFlowsRest.find((relation) => relation.id === id)?.rate}
+                      onChange={(e) => handleInputChange(id, e.target.value, 'rate')}
+                      disabled={!isActive}
+                      maxLength={3}
                     />
                   </td>
                 </tr>
@@ -325,4 +391,4 @@ function sizeCriteria() {
   )
 }
 
-export default sizeCriteria
+export default flowsRest

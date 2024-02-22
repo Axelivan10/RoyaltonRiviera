@@ -21,11 +21,14 @@ import { positionConfig } from './entities/configuration/position_config.entity'
 import { position_locationConfig } from './entities/configuration/positionxLocation_config.entity';
 import { standardTableConfig } from './entities/configuration/standardTable_config.entity';
 import { sizeCriteriaConfig } from './entities/configuration/sizeCriteria_config.entity';
+import { flowsRestConfig } from './entities/configuration/flowsRest_config.entity';
+import { flowsGrlConfig } from './entities/configuration/flowsGrl_config.entity';
+import { kitchenGrlConfig } from './entities/configuration/kitchenGrl_config.entity';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Manning, dimShift, dimServiceType, dimSalary, dimPosition, dimPlant, dimParameter, 
     dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig, positionConfig,
-     position_locationConfig, standardTableConfig, sizeCriteriaConfig])],
+     position_locationConfig, standardTableConfig, sizeCriteriaConfig, flowsRestConfig, flowsGrlConfig, kitchenGrlConfig])],
   providers: [ManningService],
   controllers: [ManningController]
 })

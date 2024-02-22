@@ -3,6 +3,8 @@ import { shiftConfig } from '../configuration/shift_config.entity';
 import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
+import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
+import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 
 @Entity()
 export class dimShift{
@@ -30,5 +32,11 @@ export class dimShift{
 
     @OneToMany(() => standardTableConfig, (standardTable) => standardTable.shift)
     standardTableConfigShift: standardTableConfig[];
+
+    @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.shift)
+    flowsRestConfigShift: flowsRestConfig[];
+
+    @OneToMany(() => kitchenGrlConfig, (kitchenGrl) => kitchenGrl.shift)
+    kitchenGrlConfigShift: kitchenGrlConfig[];
 
 }

@@ -7,6 +7,8 @@ import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
+import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
+import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
 
 @Entity()
 export class dimDepartment{
@@ -50,6 +52,10 @@ export class dimDepartment{
     @OneToMany(() => standardTableConfig, (standardTable) => standardTable.deparment)
     standardTableConfigDepartment: standardTableConfig[];
 
+    @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.department)
+    flowsRestConfigDepartment: flowsRestConfig[];
 
+    @OneToMany(() => flowsGrlConfig, (flowsGrl) => flowsGrl.department)
+    flowsGrlConfigDepartment: flowsGrlConfig[];
     
 }

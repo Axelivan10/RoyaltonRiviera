@@ -121,6 +121,24 @@ export class ManningController {
         return this.manningService.relationsSizeCriteriaConfig();
     }
 
+    @Public()
+    @Get('relationsFlowsRestConfig')
+    relationsFlowsRestConfig(){
+        return this.manningService.relationsFlowsRestConfig();
+    }
+
+    @Public()
+    @Get('relationsFlowsGrlConfig')
+    relationsFlowsGrlConfig(){
+        return this.manningService.relationsFlowsGrlConfig();
+    }
+
+    @Public()
+    @Get('relationsKitchenGrlConfig')
+    relationsKitchenGrlConfig(){
+        return this.manningService.relationsKitchenGrlConfig();
+    }
+
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
     @Public()
     @Get('hotels')
@@ -243,6 +261,28 @@ export class ManningController {
         console.log(editInputs)
         return this.manningService.updateSizeCriteriaConfig(editInputs);
     } 
+
+    @Public()
+    @Put('updateFlowsRestConfig')
+    updateFlowsRestConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateFlowsRestConfig(editInputs);
+    } 
+
+    @Public()
+    @Put('updateFlowsGrlConfig')
+    updateFlowsGrlConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateFlowsGrlConfig(editInputs);
+    } 
+
+    @Public()
+    @Put('updateKitchenGrlConfig')
+    updateKitchenGrlConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateKitchenGrlConfig(editInputs);
+    } 
+
 
     @Public()
     @Post('createLocation')

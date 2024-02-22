@@ -19,6 +19,9 @@ import { positionConfig } from './entities/configuration/position_config.entity'
 import { position_locationConfig } from './entities/configuration/positionxLocation_config.entity';
 import { standardTableConfig } from './entities/configuration/standardTable_config.entity';
 import { sizeCriteriaConfig } from './entities/configuration/sizeCriteria_config.entity';
+import { flowsRestConfig } from './entities/configuration/flowsRest_config.entity';
+import { flowsGrlConfig } from './entities/configuration/flowsGrl_config.entity';
+import { kitchenGrlConfig } from './entities/configuration/kitchenGrl_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -54,8 +57,14 @@ export class ManningService {
     private standardTableConfigRepository: Repository<standardTableConfig>,
     @InjectRepository(sizeCriteriaConfig)
     private sizeCriteriaConfigRepository: Repository<sizeCriteriaConfig>,
+    @InjectRepository(flowsRestConfig)
+    private flowsRestConfigRepository: Repository<flowsRestConfig>,
+    @InjectRepository(flowsGrlConfig)
+    private flowsGrlConfigRepository: Repository<flowsGrlConfig>,
+    @InjectRepository(kitchenGrlConfig)
+    private kitchenGrlConfigRepository: Repository<kitchenGrlConfig>,
   ) {}
-
+  
   async createInfoManning(manning: ManningDto) {
     const dataFound = await this.ManningRepository.findOne({
       where: {
@@ -238,6 +247,24 @@ export class ManningService {
   async relationsSizeCriteriaConfig(): Promise<sizeCriteriaConfig[]> {
     return this.sizeCriteriaConfigRepository.find({
       relations: ['parameter'],
+    });
+  }
+
+  async relationsFlowsRestConfig(): Promise<flowsRestConfig[]> {
+    return this.flowsRestConfigRepository.find({
+      relations: ['plant', 'location', 'department', 'shift', 'serviceType'],
+    });
+  }
+
+  async relationsFlowsGrlConfig(): Promise<flowsGrlConfig[]> {
+    return this.flowsGrlConfigRepository.find({
+      relations: ['positiondim', 'division', 'department', 'parameter', ],
+    });
+  }
+
+  async relationsKitchenGrlConfig(): Promise<kitchenGrlConfig[]> {
+    return this.kitchenGrlConfigRepository.find({
+      relations: ['parameter','serviceType', 'shift'],
     });
   }
 
@@ -478,6 +505,69 @@ export class ManningService {
     return editInputs;
   }
 
+  async updateFlowsRestConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.flowsRestConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateFlowsGrlConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.flowsGrlConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateKitchenGrlConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.kitchenGrlConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
   async createLocation(dataLocation) {
     const location = await this.locationRepository.findOne({
       where: {
@@ -585,5 +675,5 @@ export class ManningService {
     }
   }
   
-
+  
 }

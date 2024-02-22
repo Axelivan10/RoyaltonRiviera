@@ -1,6 +1,8 @@
 import{Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm'
 import { sizeCriteriaConfig } from '../configuration/sizeCriteria_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
+import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
+import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 
 @Entity()
 export class dimParameter{
@@ -20,6 +22,12 @@ export class dimParameter{
     @OneToMany(() => sizeCriteriaConfig, (sizeCriteria) => sizeCriteria.parameter)
     sizeCriteriaConfigParameter: sizeCriteriaConfig[];
     
+    @OneToMany(() => flowsGrlConfig, (flowsGrl) => flowsGrl.parameter)
+    flowsGrlConfigParameter: flowsGrlConfig[];
+
+    @OneToMany(() => kitchenGrlConfig, (kitchenGrl) => kitchenGrl.parameter)
+    kitchenGrlConfigParameter: kitchenGrlConfig[];
+
     @OneToMany(() => standardTableConfig, (standardTable) => standardTable.parameter)
     standardTableConfigParameter: standardTableConfig[];
 

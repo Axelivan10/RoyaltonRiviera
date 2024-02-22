@@ -16,6 +16,9 @@ import { createRoute,  } from '../redux/slices/routes';
 import Positionxlocation from '../components/manningConfig.components/positionxlocation';
 import SizeCriteria from '../components/manningConfig.components/sizeCriteria';
 import StandardTable from '../components/manningConfig.components/standardTable';
+import FlowsRest from '../components/manningConfig.components/flowsRest';
+import FlowsGrl from '../components/manningConfig.components/flowsGrl';
+import KitchenGrl from '../components/manningConfig.components/kitchenGrl';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
@@ -38,6 +41,9 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Position-Location', to: <Positionxlocation/>, icon: ArchiveBoxIcon, value:6, current: (active == 6 ? true :  false) },
   { name: 'Standard Table', to: <StandardTable/>, icon: TableCellsIcon, value:7, current: (active == 7 ? true :  false) },
   { name: 'Size Criteria', to: <SizeCriteria/>, icon: PresentationChartBarIcon, value:8, current: (active == 8 ? true :  false) },
+  { name: 'Flows Rest', to: <FlowsRest/>, icon: PresentationChartBarIcon, value:9, current: (active == 9 ? true :  false) },
+  { name: 'Flows Grl', to: <FlowsGrl/>, icon: PresentationChartBarIcon, value:10, current: (active == 10 ? true :  false) },
+  { name: 'Kitchen Grl', to: <KitchenGrl/>, icon: PresentationChartBarIcon, value:11, current: (active == 11 ? true :  false) },
 ]
 
 const redirect = () => {
