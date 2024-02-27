@@ -22,6 +22,10 @@ import { sizeCriteriaConfig } from './entities/configuration/sizeCriteria_config
 import { flowsRestConfig } from './entities/configuration/flowsRest_config.entity';
 import { flowsGrlConfig } from './entities/configuration/flowsGrl_config.entity';
 import { kitchenGrlConfig } from './entities/configuration/kitchenGrl_config.entity';
+import { kitchenBackConfig } from './entities/configuration/kitchenBack_config.entity';
+import { adaptedHConfig } from './entities/configuration/adaptedH_config.entity';
+import { adaptedRConfig } from './entities/configuration/adaptedR_config.entity';
+import { absentessiemConfig } from './entities/configuration/Absentessiem_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -63,8 +67,18 @@ export class ManningService {
     private flowsGrlConfigRepository: Repository<flowsGrlConfig>,
     @InjectRepository(kitchenGrlConfig)
     private kitchenGrlConfigRepository: Repository<kitchenGrlConfig>,
+    @InjectRepository(kitchenBackConfig)
+    private kitchenBackConfigRepository: Repository<kitchenBackConfig>,
+    @InjectRepository(adaptedHConfig)
+    private adaptedHConfigRepository: Repository<adaptedHConfig>,
+    @InjectRepository(adaptedRConfig)
+    private adaptedRConfigRepository: Repository<adaptedRConfig>,
+    @InjectRepository(absentessiemConfig)
+    private adsentessiemConfigRepository: Repository<absentessiemConfig>,
   ) {}
   
+  
+
   async createInfoManning(manning: ManningDto) {
     const dataFound = await this.ManningRepository.findOne({
       where: {
@@ -265,6 +279,30 @@ export class ManningService {
   async relationsKitchenGrlConfig(): Promise<kitchenGrlConfig[]> {
     return this.kitchenGrlConfigRepository.find({
       relations: ['parameter','serviceType', 'shift'],
+    });
+  }
+
+  async relationsKitchenBackConfig(): Promise<kitchenBackConfig[]> {
+    return this.kitchenBackConfigRepository.find({
+      relations: ['serviceType', 'shift', 'positiondim', 'plant'],
+    });
+  }
+
+  async relationsAdaptedHConfig(): Promise<adaptedHConfig[]> {
+    return this.adaptedHConfigRepository.find({
+      relations: ['plant','positiondim', 'location', 'serviceType'],
+    });
+  }
+
+  async relationsAdaptedRConfig(): Promise<adaptedRConfig[]> {
+    return this.adaptedRConfigRepository.find({
+      relations: ['division','department', 'positiondim', 'shift', 'serviceType', 'parameter'],
+    });
+  }
+
+  async relationsAbsentessiemConfig(): Promise<absentessiemConfig[]> {
+    return this.adsentessiemConfigRepository.find({
+      relations: ['plant',],
     });
   }
 
@@ -555,6 +593,67 @@ export class ManningService {
 
       try {
         const updatedRecord = await this.kitchenGrlConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateKitchenBackConfig(editInputs) {
+    const updatedRecords = [];
+    for (const record of editInputs) {
+      const { position, numberValue } = record;
+      try {
+        const updatedRecord = await this.kitchenBackConfigRepository.update(
+          { position },
+          { numberValue },
+        );
+
+        updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record with ${position}: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateAdaptedHConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.adaptedHConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateAdaptedRConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.adaptedRConfigRepository.update(
           id,
           restOfValues,
           );

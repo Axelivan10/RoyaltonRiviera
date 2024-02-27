@@ -18,7 +18,7 @@ const TABLE_HEAD = ["Criteria", "Parameter", "Service Type", "Serv/Shift", "Work
         serviceTypeCode: string;
       },
       shift: {
-        id: number;
+        shiftId: number;
         shift: string;
       },
       criteria: string;
@@ -142,6 +142,7 @@ function kitchenGrl() {
       throw new Error("Send Information Fail");
     }
   };
+  
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
     <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4 pb-6">

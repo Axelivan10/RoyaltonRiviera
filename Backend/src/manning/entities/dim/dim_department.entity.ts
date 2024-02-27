@@ -9,6 +9,7 @@ import { position_locationConfig } from '../configuration/positionxLocation_conf
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
 import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
+import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 
 @Entity()
 export class dimDepartment{
@@ -57,5 +58,8 @@ export class dimDepartment{
 
     @OneToMany(() => flowsGrlConfig, (flowsGrl) => flowsGrl.department)
     flowsGrlConfigDepartment: flowsGrlConfig[];
+
+    @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.department)
+    adaptedRConfigDepartment: adaptedRConfig[];
     
 }

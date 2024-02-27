@@ -274,6 +274,54 @@ export const getRelationsKitchenGrlConfig = async () => {
   }
 }
 
+export const getRelationsKitchenBackConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsKitchenBackConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const getRelationsAdaptedHConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsAdaptedHConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const getRelationsAdaptedRConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsAdaptedRConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const getRelationsAbsentessiemConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsKitchenGrlConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -439,6 +487,46 @@ export const updateKitchenGrlConfig = async (inputValues: {}) => {
 
   } catch (error) {
     throw new Error('Update kitchenGrlConfig Fail');
+  }
+}
+
+export const updateKitchenBackConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateKitchenBackConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update kitchenBackConfig Fail');
+  }
+}
+
+export const updateAdaptedHConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateAdaptedHConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update kitchenHConfig Fail');
+  }
+}
+
+export const updateAdaptedRConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateAdaptedRConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update kitchenRConfig Fail');
+  }
+}
+
+export const updateAbsentessiemConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateAbsentessiemConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update AbsentessiemConfig Fail');
   }
 }
 

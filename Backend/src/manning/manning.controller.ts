@@ -139,6 +139,30 @@ export class ManningController {
         return this.manningService.relationsKitchenGrlConfig();
     }
 
+    @Public()
+    @Get('relationsKitchenBackConfig')
+    relationsKitchenBackConfig(){
+        return this.manningService.relationsKitchenBackConfig();
+    }
+
+    @Public()
+    @Get('relationsAdaptedHConfig')
+    relationsAdaptedHConfig(){
+        return this.manningService.relationsAdaptedHConfig();
+    }
+
+    @Public()
+    @Get('relationsAdaptedRConfig')
+    relationsAdaptedRConfig(){
+        return this.manningService.relationsAdaptedRConfig();
+    }
+
+    @Public()
+    @Get('relationsAbsentessiemConfig')
+    relationsAbsentessiemConfig(){
+        return this.manningService.relationsAbsentessiemConfig();
+    }
+
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
     @Public()
     @Get('hotels')
@@ -283,6 +307,26 @@ export class ManningController {
         return this.manningService.updateKitchenGrlConfig(editInputs);
     } 
 
+    @Public()
+    @Put('updateKitchenBackConfig')
+    updateKitchenBackConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateKitchenBackConfig(editInputs);
+    }
+    
+    @Public()
+    @Put('updateAdaptedHConfig')
+    updateAdaptedHConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateAdaptedHConfig(editInputs);
+    } 
+
+    @Public()
+    @Put('updateAdaptedRConfig')
+    updateAdaptedRConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateAdaptedRConfig(editInputs);
+    } 
 
     @Public()
     @Post('createLocation')

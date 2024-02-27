@@ -5,6 +5,9 @@ import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
+import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
+import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
+import { absentessiemConfig } from '../configuration/Absentessiem_config.entity';
 
 @Entity()
 export class dimPlant{
@@ -68,5 +71,13 @@ export class dimPlant{
 
     @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.plant)
     flowsRestConfigPlant: flowsRestConfig[];
+
+    @OneToMany(() => kitchenBackConfig, (kitchenBack) => kitchenBack.plant)
+    kitchenBackConfigPlant: kitchenBackConfig[];
+
+    @OneToMany(() => adaptedHConfig, (adaptedH) => adaptedH.plant)
+    adaptedHConfigPlant: adaptedHConfig[];
     
+    @OneToMany(() => absentessiemConfig, (absentessiem) => absentessiem.plant)
+    absentessiemConfigPlant: absentessiemConfig[];
 }

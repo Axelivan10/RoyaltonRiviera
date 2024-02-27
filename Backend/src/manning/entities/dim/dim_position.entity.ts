@@ -5,6 +5,9 @@ import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
 import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
+import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
+import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
+import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 
 @Entity()
 export class dimPosition{
@@ -35,6 +38,15 @@ export class dimPosition{
 
     @ManyToOne(() => flowsGrlConfig, flowsGrl => flowsGrl.positiondim) 
     flowsGrlConfigPosition: flowsGrlConfig[];
+
+    @ManyToOne(() => kitchenBackConfig, kitchenBack => kitchenBack.positiondim) 
+    kitchenBackConfigPosition: kitchenBackConfig[];
+
+    @ManyToOne(() => adaptedHConfig, adaptedH => adaptedH.positiondim) 
+    adaptedHConfigPosition: adaptedHConfig[];
+
+    @ManyToOne(() => adaptedRConfig, adaptedR => adaptedR.positiondim) 
+    adaptedRConfigPosition: adaptedRConfig[];
 
     @Column({nullable: true})
     divisionId: string;

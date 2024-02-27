@@ -24,11 +24,16 @@ import { sizeCriteriaConfig } from './entities/configuration/sizeCriteria_config
 import { flowsRestConfig } from './entities/configuration/flowsRest_config.entity';
 import { flowsGrlConfig } from './entities/configuration/flowsGrl_config.entity';
 import { kitchenGrlConfig } from './entities/configuration/kitchenGrl_config.entity';
+import { kitchenBackConfig } from './entities/configuration/kitchenBack_config.entity';
+import { adaptedHConfig } from './entities/configuration/adaptedH_config.entity';
+import { adaptedRConfig } from './entities/configuration/adaptedR_config.entity';
+import { absentessiemConfig } from './entities/configuration/Absentessiem_config.entity';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Manning, dimShift, dimServiceType, dimSalary, dimPosition, dimPlant, dimParameter, 
     dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig, positionConfig,
-     position_locationConfig, standardTableConfig, sizeCriteriaConfig, flowsRestConfig, flowsGrlConfig, kitchenGrlConfig])],
+    position_locationConfig, standardTableConfig, sizeCriteriaConfig, flowsRestConfig, flowsGrlConfig, kitchenGrlConfig,
+    kitchenBackConfig, adaptedHConfig, adaptedRConfig, absentessiemConfig])],
   providers: [ManningService],
   controllers: [ManningController]
 })

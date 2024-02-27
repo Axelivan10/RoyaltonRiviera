@@ -5,6 +5,9 @@ import { position_locationConfig } from '../configuration/positionxLocation_conf
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
 import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
+import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
+import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
+import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 
 @Entity()
 export class dimShift{
@@ -39,4 +42,9 @@ export class dimShift{
     @OneToMany(() => kitchenGrlConfig, (kitchenGrl) => kitchenGrl.shift)
     kitchenGrlConfigShift: kitchenGrlConfig[];
 
+    @OneToMany(() => kitchenBackConfig, (kitchenBack) => kitchenBack.shift)
+    kitchenBackConfigShift: kitchenBackConfig[];
+
+    @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.shift)
+    adaptedRConfigShift: adaptedRConfig[];
 }

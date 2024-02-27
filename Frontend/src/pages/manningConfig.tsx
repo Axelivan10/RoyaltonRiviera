@@ -19,6 +19,10 @@ import StandardTable from '../components/manningConfig.components/standardTable'
 import FlowsRest from '../components/manningConfig.components/flowsRest';
 import FlowsGrl from '../components/manningConfig.components/flowsGrl';
 import KitchenGrl from '../components/manningConfig.components/kitchenGrl';
+import KitchenBack from '../components/manningConfig.components/kitchenBack';
+import AdaptedH from '../components/manningConfig.components/adaptedH';
+import AdaptedR from '../components/manningConfig.components/adaptedR';
+import Absentessiem from '../components/manningConfig.components/absentessiem';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
@@ -44,6 +48,10 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Flows Rest', to: <FlowsRest/>, icon: PresentationChartBarIcon, value:9, current: (active == 9 ? true :  false) },
   { name: 'Flows Grl', to: <FlowsGrl/>, icon: PresentationChartBarIcon, value:10, current: (active == 10 ? true :  false) },
   { name: 'Kitchen Grl', to: <KitchenGrl/>, icon: PresentationChartBarIcon, value:11, current: (active == 11 ? true :  false) },
+  { name: 'Kitchen Back', to: <KitchenBack/>, icon: PresentationChartBarIcon, value:12, current: (active == 12 ? true :  false) },
+  { name: 'AdaptedH', to: <AdaptedH/>, icon: PresentationChartBarIcon, value:13, current: (active == 13 ? true :  false) },
+  { name: 'AdaptedR', to: <AdaptedR/>, icon: PresentationChartBarIcon, value:14, current: (active == 14 ? true :  false) },
+  { name: 'Absentessiem', to: <Absentessiem/>, icon: PresentationChartBarIcon, value:15, current: (active == 15 ? true :  false) },
 ]
 
 const redirect = () => {
@@ -127,7 +135,7 @@ const redirect = () => {
                   </button>
                 </div>
               </Transition.Child>
-              <div className="flex-1 h-0 pt-5 pb-4">
+              <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                 <div className="flex-shrink-0 flex items-center px-4">
                   <p className="font-semibold text-colorRoyalton">
                     Main modules

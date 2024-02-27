@@ -3,6 +3,9 @@ import { serviceTypeConfig } from '../configuration/serviceType_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
 import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
+import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
+import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
+import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 
 @Entity()
 export class dimServiceType{
@@ -33,5 +36,14 @@ export class dimServiceType{
 
     @OneToMany(() => flowsRestConfig, (flowsRest) => flowsRest.serviceType)
     flowsRestConfigServiceType: flowsRestConfig[];
+
+    @OneToMany(() => kitchenBackConfig, (kitchenBack) => kitchenBack.serviceType)
+    kitchenBackConfigServiceType: kitchenBackConfig[];
+
+    @OneToMany(() => adaptedHConfig, (adaptedH) => adaptedH.serviceType)
+    adaptedHConfigServiceType: adaptedHConfig[];
+
+    @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.serviceType)
+    adaptedRConfigServiceType: adaptedRConfig[];
 }
 
