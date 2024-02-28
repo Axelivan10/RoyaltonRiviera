@@ -667,6 +667,27 @@ export class ManningService {
     return editInputs;
   }
 
+  async updateAbsentessiemConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.adsentessiemConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
   async createLocation(dataLocation) {
     const location = await this.locationRepository.findOne({
       where: {

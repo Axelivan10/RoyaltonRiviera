@@ -322,6 +322,13 @@ export class ManningController {
     } 
 
     @Public()
+    @Put('updateAbsentessiemConfig')
+    updateAbsentessiemConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateAbsentessiemConfig(editInputs);
+    } 
+
+    @Public()
     @Put('updateAdaptedRConfig')
     updateAdaptedRConfig(@Body() editInputs: {}){
         console.log(editInputs)

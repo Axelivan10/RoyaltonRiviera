@@ -1,10 +1,10 @@
-import { Card, Radio, Typography } from '@material-tailwind/react'
+import { Card, Checkbox, Radio, Typography } from '@material-tailwind/react'
 import { useEffect, useState } from 'react'
 import { getRelationsFlowsGrlConfig, getRelationsFlowsRestConfig, getRelationsSizeCriteriaConfig, updateFlowsGrlConfig, updateFlowsRestConfig, updateSizeCriteriaConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
 const TABLE_HEAD = ["Position ID", "Position", "Division", "Division Code","Department","Department Code",
- "Parameter", "20-30", "30-40", "40-50", "50-60", "60-70", "70-80", "80-90", "90-100", "Rate", /*"Custom"*/ ];
+ "Parameter", "20-30", "30-40", "40-50", "50-60", "60-70", "70-80", "80-90", "90-100", "Rate", "Custom" ];
   
   interface relationsAll {
     id: number;
@@ -416,16 +416,24 @@ function flowsGrl() {
                       maxLength={3}
                     />
                   </td>
-                  {/* <td className="p-4 border-b border-blue-gray-50">
-                    <input
+                  <td className="p-4 border-b border-blue-gray-50">
+                  <Checkbox
+                          onChange={(e) =>
+                            handleInputChange(id, e.target.value, "radio")
+                          }
+                          className="h-5 w-5 rounded-full checked:bg-colorRoyalton border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0 "
+                          crossOrigin={undefined}
+                          disabled={(isActiveRadio === 0 ? false : id !== id)}
+                        />
+                    {/* <input
                       type="radio"
                       name="type"
                       checked={isActiveRadio === id}
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "radio")
                       }
-                    />
-                  </td> */}
+                    /> */}
+                  </td>
                 </tr>
               )
             )}

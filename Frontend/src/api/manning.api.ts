@@ -312,7 +312,7 @@ export const getRelationsAdaptedRConfig = async () => {
 
 export const getRelationsAbsentessiemConfig = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/manning/relationsKitchenGrlConfig`, {
+    const response = await axios.get(`${BASE_URL}/manning/relationsAbsentessiemConfig`, {
     });
     
     return response;

@@ -11,9 +11,9 @@ export class absentessiemConfig {
     @Column({nullable: true})
     position: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, type: 'decimal', precision: 10, scale: 2})
     numberValue: number;
-
+    
     @Column({nullable: true})
     level: string;
 
@@ -22,6 +22,5 @@ export class absentessiemConfig {
 
     @ManyToOne(() => dimPlant, plant => plant.absentessiemConfigPlant)
     plant: dimPlant;
-
-    
+   
 }
