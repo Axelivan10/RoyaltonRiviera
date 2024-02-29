@@ -45,7 +45,7 @@ function flowsGrl() {
     const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<relationsAll[]>([]);
     const [nullList, setNullList] = useState<relationsAll[]>([]);
     const [isActive, setIsActive] = useState(false);
-    const [isActiveRadio, setIsActiveRadio] = useState<number | null>(0);
+    const [isActiveRadio, setIsActiveRadio] = useState(0);
 
     useEffect(()=>{
       renderList()
@@ -103,42 +103,57 @@ function flowsGrl() {
 
     const activeInputs = () => {
       setIsActive(!isActive);
+      setIsActiveRadio(0)
     };
 
-    const handleInputChange = (id: number, value: string, property: string) => {
-      
-      // if (property === 'radio') {
-      //   setIsActiveRadio((prevSelectedRadio) =>
-      //     prevSelectedRadio === id ? null : id
-      //   );
-      //   setIsActive(true)
-      // }
-      //else
-
-       if (!isNaN(Number(value))) { 
-        //|| (value === "custom" && property === "rate")
-        const numberValue = Number(value);
+    const handleInputChangeCheckbox = (id: number) => {
+        isActiveRadio === id ? setIsActiveRadio(0) : setIsActiveRadio(id);
+    };
     
+    const handleInputChange = (id: number, value: string, property: string) => {
+        
+      if (!isNaN(Number(value)) && isActive) {
+        const numberValue = Number(value);
+
         setRelationsFlowsGrl((prevRelations) =>
           prevRelations.map((item) => {
             if (item.id === id) {
               const updatedRelation = { ...item, [property]: numberValue || 0 };
-//probar if mañana 
-              updatedRelation.eighty = (updatedRelation.ninety || 0) - updatedRelation.rate;
-              updatedRelation.seventy = (updatedRelation.eighty || 0) - updatedRelation.rate;
-              updatedRelation.sixty = (updatedRelation.seventy || 0) - updatedRelation.rate;
-              updatedRelation.fifty = (updatedRelation.sixty || 0) - updatedRelation.rate;
-              updatedRelation.forty = (updatedRelation.fifty || 0) - updatedRelation.rate;
-              updatedRelation.thirty = (updatedRelation.forty || 0) - updatedRelation.rate;
-              updatedRelation.twenty = (updatedRelation.thirty || 0) - updatedRelation.rate;
+              //probar if mañana
+              updatedRelation.eighty =
+                (updatedRelation.ninety || 0) - updatedRelation.rate;
+              updatedRelation.seventy =
+                (updatedRelation.eighty || 0) - updatedRelation.rate;
+              updatedRelation.sixty =
+                (updatedRelation.seventy || 0) - updatedRelation.rate;
+              updatedRelation.fifty =
+                (updatedRelation.sixty || 0) - updatedRelation.rate;
+              updatedRelation.forty =
+                (updatedRelation.fifty || 0) - updatedRelation.rate;
+              updatedRelation.thirty =
+                (updatedRelation.forty || 0) - updatedRelation.rate;
+              updatedRelation.twenty =
+                (updatedRelation.thirty || 0) - updatedRelation.rate;
 
               return updatedRelation;
             }
-    
+
             return item;
           })
         );
       }
+       else{
+        //HACER QUE ESTE ELSE TENGA UN RETURN PARA QUE LO TOME MI SEND DATA
+        if(!isNaN(Number(value))){
+          const numberValue = Number(value);  
+          setRelationsFlowsGrl((prevRelations) =>
+            prevRelations.map((items) =>
+            items.id === id ? { ...items, [property]: numberValue || 0 } : items
+            )
+          );
+        }
+      }
+      
     };
     
     const updateData = () => {
@@ -284,7 +299,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "twenty")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -300,7 +315,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "thirty")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -316,7 +331,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "forty")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -332,7 +347,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "fifty")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -348,7 +363,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "sixty")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -364,7 +379,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "seventy")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -380,7 +395,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "eighty")
                       }
-                      disabled={true}
+                      disabled={id !== isActiveRadio}
                       maxLength={3}
                     />
                   </td>
@@ -396,7 +411,7 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "ninety")
                       }
-                      disabled={!isActive}
+                      disabled={(id !== isActiveRadio ? !isActive : id !== isActiveRadio)}
                       maxLength={3}
                     />
                   </td>
@@ -412,27 +427,20 @@ function flowsGrl() {
                       onChange={(e) =>
                         handleInputChange(id, e.target.value, "rate")
                       }
-                      disabled={!isActive}
+                      disabled={ (id !== isActiveRadio ? !isActive : id !== isActiveRadio) }
                       maxLength={3}
                     />
                   </td>
                   <td className="p-4 border-b border-blue-gray-50">
                   <Checkbox
                           onChange={(e) =>
-                            handleInputChange(id, e.target.value, "radio")
+                            handleInputChangeCheckbox(id)
                           }
+                          checked={isActiveRadio === 0 ? false : isActiveRadio === id}
                           className="h-5 w-5 rounded-full checked:bg-colorRoyalton border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0 "
                           crossOrigin={undefined}
-                          disabled={(isActiveRadio === 0 ? false : id !== id)}
+                          disabled={(isActiveRadio === 0 ? false : id !== isActiveRadio)}
                         />
-                    {/* <input
-                      type="radio"
-                      name="type"
-                      checked={isActiveRadio === id}
-                      onChange={(e) =>
-                        handleInputChange(id, e.target.value, "radio")
-                      }
-                    /> */}
                   </td>
                 </tr>
               )
@@ -443,5 +451,6 @@ function flowsGrl() {
     </div>
   );
 }
+
 export default flowsGrl
 

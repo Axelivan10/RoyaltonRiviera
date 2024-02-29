@@ -168,7 +168,7 @@ function absentessiem() {
 
   const activeInputs = () => {
     setIsActive(!isActive);
-  };
+  }; 
 
   const handleDivisionChange = (e: any) => {
     const selectedDivision = e.target.value;
