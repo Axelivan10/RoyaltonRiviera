@@ -8,6 +8,8 @@ import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
 import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
 import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
+import { operations } from '../operations.entity';
+import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
 
 @Entity()
 export class dimPosition{
@@ -47,6 +49,12 @@ export class dimPosition{
 
     @ManyToOne(() => adaptedRConfig, adaptedR => adaptedR.positiondim) 
     adaptedRConfigPosition: adaptedRConfig[];
+
+    @ManyToOne(() => operations, operations => operations.positiondim) 
+    operationsPosition: operations[];
+
+    @ManyToOne(() => masterRatiosConfig, masterRatios => masterRatios.positiondim) 
+    masterRatiosConfigPosition: masterRatiosConfig[];
 
     @Column({nullable: true})
     divisionId: string;

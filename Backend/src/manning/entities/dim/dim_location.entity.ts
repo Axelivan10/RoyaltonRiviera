@@ -7,6 +7,7 @@ import { positionConfig } from '../configuration/position_config.entity';
 import { position_locationConfig } from '../configuration/positionxLocation_config.entity';
 import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
+import { operations } from '../operations.entity';
 
 @Entity()
 export class dimLocation{
@@ -58,4 +59,7 @@ export class dimLocation{
 
     @OneToMany(() => adaptedHConfig, (adaptedH) => adaptedH.location)
     adaptedHConfigLocation: adaptedHConfig[];
+
+    @OneToMany(() => operations, (operations) => operations.location)
+    operationsLocation: operations[];
 }

@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 
 const TABLE_HEAD = ["Position ID", "Position", "Division", "Division Code","Department","Department Code",
  "Parameter", "20-30", "30-40", "40-50", "50-60", "60-70", "70-80", "80-90", "90-100", "Rate", "Custom" ];
-  
+
   interface relationsAll {
     id: number;
     positionID:string;
@@ -28,7 +28,7 @@ const TABLE_HEAD = ["Position ID", "Position", "Division", "Division Code","Depa
       positionId: number;
       positionDescriptionES: string;
     };
-    rate: number; 
+    rate: number;
     twenty: number;
     thirty: number;
     forty: number;
@@ -36,16 +36,16 @@ const TABLE_HEAD = ["Position ID", "Position", "Division", "Division Code","Depa
     sixty: number;
     seventy: number;
     eighty: number;
-    ninety: number; 
+    ninety: number;
   }
 
 function flowsGrl() {
     const [relationsFlowsGrl, setRelationsFlowsGrl] = useState<relationsAll[]>([]);
     const [initialValues, setinitialValues] = useState<relationsAll[]>([]);
-    const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<relationsAll[]>([]);
-    const [nullList, setNullList] = useState<relationsAll[]>([]);
+    const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [isActiveRadio, setIsActiveRadio] = useState(0);
+    const [isActiveButton, setIsActiveButton] = useState(false);
 
     useEffect(()=>{
       renderList()
@@ -53,14 +53,12 @@ function flowsGrl() {
 
     useEffect(() => {
       const hasChanges = JSON.stringify(initialValues) !== JSON.stringify(relationsFlowsGrl);
-      if (hasChanges) {
-        setModifiedCurrentPositions(relationsFlowsGrl);
-      }
-      console.log(relationsFlowsGrl)
-    }, [relationsFlowsGrl]);  
+      setModifiedCurrentPositions(hasChanges)
+    }, [relationsFlowsGrl]);
 
-    useEffect(() => {
-      if (!isActive && modifiedCurrentPositions.length > 0) {
+    const saveInputData = () => {
+
+      if(modifiedCurrentPositions){
         Swal.fire({
           title: "Are you sure?",
           text: "You won't be able to revert this!",
@@ -79,16 +77,13 @@ function flowsGrl() {
             });
             updateData()
             setinitialValues(relationsFlowsGrl)
-          } else {
-            setRelationsFlowsGrl(initialValues)
+          }  else {
+             setRelationsFlowsGrl(initialValues)
           }
         });
-      } else {
-        // Lógica para manejar cuando no hay posiciones modificadas o isActive está activado
-        console.log("No hay posiciones modificadas o isActive está activado");
       }
-      setModifiedCurrentPositions(nullList)
-    }, [isActive, ]);
+      activeInputs()
+    }
 
     const renderList = async () => {
       try {
@@ -108,13 +103,21 @@ function flowsGrl() {
 
     const handleInputChangeCheckbox = (id: number) => {
         isActiveRadio === id ? setIsActiveRadio(0) : setIsActiveRadio(id);
+    //     if (isActiveRadio === id) {
+    //     setIsActiveRadio(0);
+    //       if(!modifiedCurrentPositions){
+    //         setIsActive(false);
+    //       }
+    // } else {
+    //     setIsActiveRadio(id);
+    //     // setIsActive(true);
+    // }
     };
-    
-    const handleInputChange = (id: number, value: string, property: string) => {
-        
-      if (!isNaN(Number(value)) && isActive) {
-        const numberValue = Number(value);
 
+    const handleInputChange = (id: number, value: string, property: string) => {
+
+      if (!isNaN(Number(value)) && isActiveRadio === 0) {
+        const numberValue = Number(value);
         setRelationsFlowsGrl((prevRelations) =>
           prevRelations.map((item) => {
             if (item.id === id) {
@@ -145,17 +148,17 @@ function flowsGrl() {
        else{
         //HACER QUE ESTE ELSE TENGA UN RETURN PARA QUE LO TOME MI SEND DATA
         if(!isNaN(Number(value))){
-          const numberValue = Number(value);  
+          const numberValue = Number(value);
           setRelationsFlowsGrl((prevRelations) =>
-            prevRelations.map((items) =>
-            items.id === id ? { ...items, [property]: numberValue || 0 } : items
+            prevRelations.map((item) =>
+            item.id === id ? { ...item, [property]: numberValue || 0 } : item
             )
           );
         }
       }
-      
+
     };
-    
+
     const updateData = () => {
       try {
         updateFlowsGrlConfig(relationsFlowsGrl);
@@ -166,23 +169,26 @@ function flowsGrl() {
 
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
+      
       <div className="flex flex-col-1 gap-8 ml-auto pr-4 pt-0.5 justify-end p-4 pb-6">
         <div>
-          {isActive ? (
+          {modifiedCurrentPositions && !isActiveRadio && !isActive ? (
             <p
-              onClick={activeInputs}
+              onClick={saveInputData}
               className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
             >
-              Guardar cambios
+              Save Changes
             </p>
-          ) : (
-            <p
-              onClick={activeInputs}
-              className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
-            >
-              Habilitar campos
-            </p>
-          )}
+          ) : null}
+        </div>
+
+        <div>
+          <p
+            onClick={activeInputs}
+            className="cursor-pointer hover:text-colorRoyalton hover:font-semibold"
+          >
+            {!isActive ? "Activate Rate" : "Disable Rate"}
+          </p>
         </div>
       </div>
 

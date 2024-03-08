@@ -4,6 +4,7 @@ import { locationConfig } from '../configuration/location_config.entity';
 import { standardTableConfig } from '../configuration/standardTable_config.entity';
 import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
+import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
 
 @Entity()
 export class dimDivision{
@@ -29,5 +30,8 @@ export class dimDivision{
 
     @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.division)
     adaptedRConfigDivision: adaptedRConfig[];
+
+    @OneToMany(() => masterRatiosConfig, (masterRatios) => masterRatios.division)
+    masterRatiosConfigDivision: masterRatiosConfig[];
 
 }

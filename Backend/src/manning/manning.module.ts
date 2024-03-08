@@ -28,12 +28,15 @@ import { kitchenBackConfig } from './entities/configuration/kitchenBack_config.e
 import { adaptedHConfig } from './entities/configuration/adaptedH_config.entity';
 import { adaptedRConfig } from './entities/configuration/adaptedR_config.entity';
 import { absentessiemConfig } from './entities/configuration/Absentessiem_config.entity';
+import { operations } from './entities/operations.entity';
+import { masterRatiosConfig } from './entities/configuration/masterRatios_config.entity';
+import { masterParameter } from './entities/configuration/masterParameter.entity';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Manning, dimShift, dimServiceType, dimSalary, dimPosition, dimPlant, dimParameter, 
     dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig, positionConfig,
     position_locationConfig, standardTableConfig, sizeCriteriaConfig, flowsRestConfig, flowsGrlConfig, kitchenGrlConfig,
-    kitchenBackConfig, adaptedHConfig, adaptedRConfig, absentessiemConfig])],
+    kitchenBackConfig, adaptedHConfig, adaptedRConfig, absentessiemConfig, operations, masterRatiosConfig, masterParameter])],
   providers: [ManningService],
   controllers: [ManningController]
 })

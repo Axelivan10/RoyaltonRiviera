@@ -8,6 +8,7 @@ import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
 import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
+import { operations } from '../operations.entity';
 
 @Entity()
 export class dimShift{
@@ -47,4 +48,7 @@ export class dimShift{
 
     @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.shift)
     adaptedRConfigShift: adaptedRConfig[];
+
+    @OneToMany(() => operations, (operations) => operations.shift)
+    operationsShift: operations[];
 }

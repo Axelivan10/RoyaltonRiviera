@@ -14,21 +14,9 @@ const TABLE_HEAD_FIELDS = [
     {id: 7, value: "Ratio"},
     {id: 8, value: "Other"},
     {id: 9, value: "KIT"},
-    {id: 10, value: "Cover"}
+    {id: 10, value: "Cover"},
+    {id: 11, value: "Rev"}
 ]
-
-interface InputValues {
-  [key: string]: string;
-}
-
-interface InputValue {
-  id: number;
-  position: string;
-  xSymbol: string;
-  // numberValue: string;
-  // locationId: number;
-  // deparmentId: number;
-}
 
 interface relationsAll {
   id: number;
@@ -59,18 +47,23 @@ interface relationsAll {
     };
 
   level:string;
-  numberValue:number;
-  position: string;
-  xSymbol: string;
   ratio:number;
   criteria:string;
-  positionId:number;
+  xs:number;
+  x:number;
+  m:number;
+  l:number;
+  xl:number;
+  std:string;
+  rt:string;
+  other:string;
+  kit:string;
+  cubre:string;
+  rev:string;
 }
 
-function standardTable() {
-  const [inputValues, setInputValues] = useState<InputValues>({});
-  const [valuesToSend, setValuesToSend] = useState<InputValue[]>([]);
 
+function standardTable() {
   const [plants, setPlants] = useState([]);
   const [divisions, setDivisions] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -81,35 +74,23 @@ function standardTable() {
   const [departmentt, setDepartmentt] = useState("");
 
   const [relationsStandardTable, setRelationsStandardTable] = useState<relationsAll[]>([]);
-  const [initialValues, setinitialValues] = useState<InputValues>({});
-  const [check, setCheck] = useState(0);
-  const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<string[]>([]);
+  const [initialValues, setinitialValues] = useState<relationsAll[]>([]);
+  const [modifiedCurrentPositions, setModifiedCurrentPositions] = useState<relationsAll[]>([]);
+  const [nullList, setNullList] = useState<relationsAll[]>([]);
   const [isActive, setIsActive] = useState(false);
-  const [noDupicates, setNoDuplicates] = useState<relationsAll[]>([]);
-  
-  let autoIncrementId = 1;
-  const generateAutoIncrementId = () => {
-    return autoIncrementId++;
-  };
-
-  useEffect(()=>{
-    renderList()
-    renderInputs()
-  },[])
 
   useEffect(() => {
-    setValuesToSend(sendInputValues.inputValues);
-    // console.log(sendInputValues.inputValues)
-  }, [inputValues]);
+    renderList();
+  }, []);
 
   useEffect(() => {
-    const newModifiedPositions = Object.keys(inputValues).filter(
-      key => inputValues[key] !== initialValues[key]
-    );
-    setModifiedCurrentPositions(newModifiedPositions)
-    // console.log(newModifiedPositions)
-    //console.log(inputValues)
-  }, [inputValues]);
+    const hasChanges =
+      JSON.stringify(initialValues) !== JSON.stringify(relationsStandardTable);
+    if (hasChanges) {
+      setModifiedCurrentPositions(relationsStandardTable);
+    }
+    console.log(relationsStandardTable);
+  }, [relationsStandardTable]);
 
   useEffect(() => {
     if (!isActive && modifiedCurrentPositions.length > 0) {
@@ -121,7 +102,7 @@ function standardTable() {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Save changes",
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           // Lógica para manejar la confirmación
           Swal.fire({
@@ -129,189 +110,122 @@ function standardTable() {
             text: "Your request will be checked by an administrator.",
             icon: "success",
           });
-          updateData()
-          setinitialValues(inputValues)
+          updateData();
+          setinitialValues(relationsStandardTable);
         } else {
-          setInputValues(initialValues)
+          setRelationsStandardTable(initialValues);
         }
       });
     } else {
       // Lógica para manejar cuando no hay posiciones modificadas o isActive está activado
       console.log("No hay posiciones modificadas o isActive está activado");
     }
-  }, [isActive, ]);
-
-  useEffect(() => {
-    // Filtrar duplicados en relationsPlant
-    const relacionesUnicas = eliminarDuplicados(relationsStandardTable);
-    setNoDuplicates(relacionesUnicas);
-  }, [relationsStandardTable]);
-
- const eliminarDuplicados = (relationsPosition: relationsAll[]) => {
-   const uniqueEntries = new Set<string>();
-   const result: relationsAll[] = [];
-   let autoIncrementId = 1;
- 
-   relationsPosition.forEach(entry => {
-     const key = `${entry.deparment.id}-${entry.division.id}-${entry.deparment.id}-${entry.shift.shiftId}-${entry.serviceType.serviceTypeId}-${entry.parameter.parameterId}`;
- 
-     if (!uniqueEntries.has(key)) {
-       uniqueEntries.add(key);
-       result.push({
-         id: autoIncrementId++, // Asignar nuevo ID en orden
-         dimPosition:{
-          positionId: entry.dimPosition.positionId,
-          positionDescriptionES: entry.dimPosition.positionDescriptionES,
-        },
-         deparment: {
-           id: entry.deparment.id,
-           deptmBis: entry.deparment.deptmBis,
-           divBis: entry.deparment.divBis,
-         },
-         serviceType: {
-          serviceTypeId: entry.serviceType.serviceTypeId,
-          serviceTypeCode: entry.serviceType.serviceTypeCode,
-        },
-        shift: {
-          shiftId: entry.shift.shiftId,
-          shift: entry.shift.shift,
-        },
-        division: {
-          id: entry.division.id,
-          divBis: entry.division.divBis,
-        },
-        parameter:{
-          parameterId:entry.parameter.parameterId,
-          parameter:entry.parameter.parameter,
-          },
-        level:entry.level,
-        numberValue:entry.numberValue,
-        position: entry.position,
-        xSymbol: entry.xSymbol,
-        ratio:entry.ratio,
-        criteria:entry.criteria,
-        positionId:entry.positionId,
-       });
-     }
-   });
- 
-   return result;
- };
-
-  const renderList = async () => {
-    try {
-        const responseDepartment = await getDepartment();
-        setDepartments(responseDepartment.data)
-        
-        const responsePlant = await getHotels();
-        setPlants(responsePlant.data)
-        // console.log(responsePlant.data)
-
-        const responseDivision = await getDivision();
-        setDivisions(responseDivision.data)
-
-        const responseShift = await getShift();
-        setShifts(responseShift.data)
-        // console.log(responseShift.data)
-
-        const responseRelationsStandardTableConfig = await getRelationsStandardTableConfig();
-        setRelationsStandardTable(responseRelationsStandardTableConfig.data)
-        console.log(responseRelationsStandardTableConfig.data)
-
-      } catch {
-      throw new Error("Render Fail");
-    }
-  };
+    setModifiedCurrentPositions(nullList);
+  }, [isActive]);
 
   const activeInputs = () => {
     setIsActive(!isActive);
   };
 
-  const handleInputChange = (positionId:number, fieldsId:number, value:string) => {
-    const key = `${positionId}-${fieldsId}`;
-    if(value.toLowerCase() === "x" || /^[x0-9 ]*$/.test(value)){
-      setInputValues((prevValues) => ({ ...prevValues, [key]: value.toLocaleLowerCase() }));
+  const handleInputChangeNumber = (id: number, value: string, property: string) => {
+    if (!isNaN(Number(value))) {
+      const numberValue = Number(value);
+      setRelationsStandardTable((prevRelations) =>
+        prevRelations.map((relation) =>
+          relation.id === id
+            ? { ...relation, [property]: numberValue || 0 }
+            : relation
+        )
+      );
+    }
+  };
+
+  const handleInputChangeString = (id: number, value: string, property: string) => {0 
+    if (value === "x" || value.toLowerCase() === "") {
+      const stringValue = value;
+      setRelationsStandardTable((prevRelations) =>
+        prevRelations.map((relation) =>
+          relation.id === id
+            ? { ...relation, [property]: stringValue || "" }
+            : relation
+        )
+      );
+    }
+  };
+
+  const updateData = () => {
+    try {
+      updateStandardTableConfig(relationsStandardTable);
+    } catch (error) {
+      throw new Error("Send Information Fail");
+    }
+  };
+
+  const renderList = async () => {
+    try {
+      const responseDepartment = await getDepartment();
+      setDepartments(responseDepartment.data);
+
+      const responsePlant = await getHotels();
+      setPlants(responsePlant.data);
+      // console.log(responsePlant.data)
+
+      const responseDivision = await getDivision();
+      setDivisions(responseDivision.data);
+
+      const responseShift = await getShift();
+      setShifts(responseShift.data);
+      // console.log(responseShift.data)
+
+      const responseRelationsStandardTableConfig =
+        await getRelationsStandardTableConfig();
+      setRelationsStandardTable(responseRelationsStandardTableConfig.data);
+      setinitialValues(responseRelationsStandardTableConfig.data);
+    } catch {
+      throw new Error("Render Fail");
     }
   };
 
   const handleDivisionChange = (e: any) => {
-      const selectedDivision = e.target.value;
-      (e.target.value == "" ? setDivision("") : setDivision(selectedDivision))
-      setDepartmentt("")
-    };
+    const selectedDivision = e.target.value;
+    e.target.value == "" ? setDivision("") : setDivision(selectedDivision);
+    setDepartmentt("");
+  };
 
-    const handleDepartmentChange = (e: any) => {
-      const selectedDepartment = e.target.value;
-      (e.target.value == "" ? setDepartmentt("") : setDepartmentt(selectedDepartment))
-    };
+  const handleDepartmentChange = (e: any) => {
+    const selectedDepartment = e.target.value;
+    e.target.value == ""
+      ? setDepartmentt("")
+      : setDepartmentt(selectedDepartment);
+  };
 
-    const handleCountryChange = (e: any) => {
-      const selectedCountry = e.target.value;
-      (e.target.value === "" ? setCountry("") : setCountry(selectedCountry))   
-      setPlantt("")
-    };
+  const handleCountryChange = (e: any) => {
+    const selectedCountry = e.target.value;
+    e.target.value === "" ? setCountry("") : setCountry(selectedCountry);
+    setPlantt("");
+  };
 
-    const handleHotelChange = (e: any) => {
-      const selectedHotel = e.target.value;
-      (e.target.value == "" ? setPlantt("") : setPlantt(selectedHotel))
-    };
+  const handleHotelChange = (e: any) => {
+    const selectedHotel = e.target.value;
+    e.target.value == "" ? setPlantt("") : setPlantt(selectedHotel);
+  };
 
-    const renderInputs = async ()  =>{
-      const standardTableConfig = await getRelationsStandardTableConfig(); //aqui podemos llamar sin relaciones, pero pa ver si jala.
-      // console.log(posLocConfig.data)
-      standardTableConfig.data.forEach((config:any) => {
-        if (config.xSymbol) {
-          initialValues[config.position] = config.xSymbol;
-        } else if(config.numberValue){
-          initialValues[config.position] = config.numberValue;
-        }
-      });
-      // Establecer los valores iniciales en el estado
-      setInputValues(initialValues);
-    }
-  
-    const sendInputValues = {
-      inputValues: Object.entries(inputValues).map(([position, xSymbol]) => {
-        // const [DepartmentId, locationId] = position.split('-').map(Number);
-    
-        let numberValue;
-    
-        if (/^[0-9 ]*$/.test(xSymbol)) {
-          numberValue = Number(xSymbol)
-          xSymbol = ""
-        }
-    
-        return {
-          id: generateAutoIncrementId(),
-          position,
-          xSymbol,
-          numberValue,
-          // locationId: DepartmentId,
-          // deparmentId: locationId,
-        };
-      }),
-    };
-
-    const updateData = () => {
-    try {
-      updateStandardTableConfig(valuesToSend);
-    } catch (error) {
-      throw new Error("Send Information Fail");
-    }
-    setCheck(generateAutoIncrementId);
-    };
-
-    const filteredData = noDupicates
+  const filteredData = relationsStandardTable
     .filter(({ deparment }) => deparment.divBis === division || division === "")
-    .filter(({ deparment }) => deparment.deptmBis === departmentt || departmentt === "")
-    // .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
-    // .filter(({ plant }) => plant.countryCode === country || country === "")
+    .filter(
+      ({ deparment }) =>
+        deparment.deptmBis === departmentt || departmentt === ""
+    );
+  // .filter(({ plant }) => plant.plantCode === plantt || plantt === "")
+  // .filter(({ plant }) => plant.countryCode === country || country === "")
 
-    const filteredDepartments = departments
-    .filter(({ divBis }) => !division || divBis === division);
-    
-    const filteredHotels = plants
-    .filter(({ countryCode }) => !country || countryCode === country);
+  const filteredDepartments = departments.filter(
+    ({ divBis }) => !division || divBis === division
+  );
+
+  const filteredHotels = plants.filter(
+    ({ countryCode }) => !country || countryCode === country
+  );
 
   return (
     <div className="flex flex-col h-screen w-screen md:p-6 p-2 xl:w-10/12 xl:pl-20 pt-10">
@@ -442,15 +356,15 @@ function standardTable() {
           </thead>
           <tbody>
             {filteredData.map(
-              ({id: tableId, positionId, dimPosition, division, deparment, level, shift, criteria, serviceType, parameter, ratio, }) => (
-                <tr key={tableId}>
+              ({id, dimPosition, division, deparment, level, shift, criteria, serviceType, parameter, ratio, }) => (
+                <tr key={id}>
                   <td className="sticky top-0 left-0 bg-white p-4 border-b border-blue-gray-50">
                     <Typography
                       variant="small"
                       color="blue-gray"
                       className="font-normal"
                     >
-                       {positionId}
+                       {dimPosition.positionId}
                     </Typography>
                   </td>
                   <td className="sticky left-0 top-0 bg-white p-4 border-b border-blue-gray-50">
@@ -534,24 +448,127 @@ function standardTable() {
                       {ratio}
                     </Typography>
                   </td>
-                  {TABLE_HEAD_FIELDS.map(({ id: fieldsId }) => (
-                    <td
-                      key={fieldsId}
-                      className="text-center p-4 border-b border-blue-gray-50"
-                    >
-                      <input
-                        type="text"
-                        className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
-                        style={{ maxWidth: "100px" }}
-                        value={inputValues[`${tableId}-${fieldsId}`] || ""}
-                        onChange={(e) =>
-                          handleInputChange(tableId, fieldsId, e.target.value)
-                        }
-                        disabled={!isActive}
-                        maxLength={3}
-                      />
-                    </td>
-                  ))}
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsStandardTable.find((relation) => relation.id === id)?.xs || 0}
+                      onChange={(e) => handleInputChangeNumber(id, e.target.value, 'xs')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsStandardTable.find((relation) => relation.id === id)?.x || 0}
+                      onChange={(e) => handleInputChangeNumber(id, e.target.value, 'x')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsStandardTable.find((relation) => relation.id === id)?.m || 0}
+                      onChange={(e) => handleInputChangeNumber(id, e.target.value, 'm')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={relationsStandardTable.find((relation) => relation.id === id)?.l || 0}
+                      onChange={(e) => handleInputChangeNumber(id, e.target.value, 'l')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.xl || 0) }
+                      onChange={(e) => handleInputChangeNumber(id, e.target.value, 'xl')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.std || '') }
+                      onChange={(e) => handleInputChangeString(id, e.target.value, 'std')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.rt || '') }
+                      onChange={(e) => handleInputChangeString(id, e.target.value, 'rt')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.other || '') }
+                      onChange={(e) => handleInputChangeString(id, e.target.value, 'other')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.kit || '') }
+                      onChange={(e) => handleInputChangeString(id, e.target.value, 'kit')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.cubre || '') }
+                      onChange={(e) => handleInputChangeString(id, e.target.value, 'cubre')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
+                  <td className="p-4 border-b border-blue-gray-50">
+                    <input
+                      type="text"
+                      className="text-center border border-gray-300 px-2 py-1 rounded-lg focus:outline-none focus:border-gray-900"
+                      style={{ maxWidth: "100px" }}
+                      value={ (relationsStandardTable.find((relation) => relation.id === id)?.rev || '') }
+                      onChange={(e) => handleInputChangeString(id, e.target.value, 'rev')}
+                      disabled={!isActive}
+                      maxLength={3}
+                    />
+                  </td>
                 </tr>
               )
             )}

@@ -26,6 +26,8 @@ import { kitchenBackConfig } from './entities/configuration/kitchenBack_config.e
 import { adaptedHConfig } from './entities/configuration/adaptedH_config.entity';
 import { adaptedRConfig } from './entities/configuration/adaptedR_config.entity';
 import { absentessiemConfig } from './entities/configuration/Absentessiem_config.entity';
+import { operations } from './entities/operations.entity';
+import { masterRatiosConfig } from './entities/configuration/masterRatios_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -75,6 +77,10 @@ export class ManningService {
     private adaptedRConfigRepository: Repository<adaptedRConfig>,
     @InjectRepository(absentessiemConfig)
     private adsentessiemConfigRepository: Repository<absentessiemConfig>,
+    @InjectRepository(operations)
+    private operationsRepository: Repository<operations>,
+    @InjectRepository(masterRatiosConfig)
+    private masterRatiosConfigRepository: Repository<masterRatiosConfig>,
   ) {}
   
   
@@ -306,6 +312,18 @@ export class ManningService {
     });
   }
 
+  async relationsOperations(): Promise<operations[]> {
+    return this.operationsRepository.find({
+      relations: ['plant', 'positiondim', 'shift', 'serviceType', 'parameter'],
+    });
+  }
+
+  async relationsMasterRatios(): Promise<masterRatiosConfig[]> {
+    return this.masterRatiosConfigRepository.find({
+        relations: ['positiondim', 'division', 'department', 'serviceType', 'parameter', 'standardTableConfig'],
+    });
+  }
+
   async getHotels() {
     return this.plantRepository.find();
   }
@@ -504,18 +522,19 @@ export class ManningService {
 
   async updateStandardTableConfig(editInputs) {
     const updatedRecords = [];
+    
     for (const record of editInputs) {
-      const { position, xSymbol, numberValue } = record;
+      const {  id, ...restOfValues  } = record;
+
       try {
-        // Suponiendo que PlantService.update es asíncrono
         const updatedRecord = await this.standardTableConfigRepository.update(
-          { position },
-          { xSymbol, numberValue },
+          id,
+          restOfValues,
           );
 
-        updatedRecords.push(updatedRecord);
+         updatedRecords.push(updatedRecord);
       } catch (error) {
-        Error(`Error updating record with ${position}: ${error.message}`);
+        Error(`Error updating record: ${error.message}`);
       }
     }
 
@@ -675,6 +694,27 @@ export class ManningService {
 
       try {
         const updatedRecord = await this.adsentessiemConfigRepository.update(
+          id,
+          restOfValues,
+          );
+
+         updatedRecords.push(updatedRecord);
+      } catch (error) {
+        Error(`Error updating record: ${error.message}`);
+      }
+    }
+
+    return editInputs;
+  }
+
+  async updateMasterRatiosConfig(editInputs) {
+    const updatedRecords = [];
+    
+    for (const record of editInputs) {
+      const {  id, ...restOfValues  } = record;
+
+      try {
+        const updatedRecord = await this.masterRatiosConfigRepository.update(
           id,
           restOfValues,
           );

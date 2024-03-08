@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router-dom';
-import MasterRatios from '../components/manning.components/masterRatios';
+import MasterRatios from '../components/manningConfig.components/masterRatios';
 import TableSTD from '../components/manning.components/tableSTD';
 import { BuildingOfficeIcon, MapPinIcon, ClockIcon, TruckIcon, HomeIcon, BookmarkIcon, ArchiveBoxIcon, TableCellsIcon, PresentationChartBarIcon } from '@heroicons/react/20/solid';
 import { resetUser } from '../redux/slices/user';
@@ -23,9 +23,16 @@ import KitchenBack from '../components/manningConfig.components/kitchenBack';
 import AdaptedH from '../components/manningConfig.components/adaptedH';
 import AdaptedR from '../components/manningConfig.components/adaptedR';
 import Absentessiem from '../components/manningConfig.components/absentessiem';
+import { getRelationsMasterRatiosConfig, getRelationsStandardTableConfig } from '../api/manning.api';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
+}
+
+interface DataItem {
+  rt?: number;
+  std?: number;
+  ratio?: number;
 }
 
 function manningConfig(props:any) {
@@ -36,7 +43,9 @@ function manningConfig(props:any) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
  
-const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
+  const [ratioValue, setRatioValue] = useState<Array<{ id: number, valueRatio: number }>>([]);
+
+  const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Location', to: <Location/>, icon: MapPinIcon, value:1, current: (active == 1 ? true :  false) },
   { name: 'Plant', to: <Plant/>, icon: BuildingOfficeIcon, value:2, current: (active == 2 ? true :  false) },
   { name: 'Shift', to: <Shift/>, icon: ClockIcon, value:3, current: (active == 3 ? true :  false) },
@@ -44,17 +53,27 @@ const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Position', to: <Position/>, icon: BookmarkIcon, value:5, current: (active == 5 ? true :  false) },
   { name: 'Position-Location', to: <Positionxlocation/>, icon: ArchiveBoxIcon, value:6, current: (active == 6 ? true :  false) },
   { name: 'Standard Table', to: <StandardTable/>, icon: TableCellsIcon, value:7, current: (active == 7 ? true :  false) },
-  { name: 'Size Criteria', to: <SizeCriteria/>, icon: PresentationChartBarIcon, value:8, current: (active == 8 ? true :  false) },
-  { name: 'Flows Rest', to: <FlowsRest/>, icon: PresentationChartBarIcon, value:9, current: (active == 9 ? true :  false) },
-  { name: 'Flows Grl', to: <FlowsGrl/>, icon: PresentationChartBarIcon, value:10, current: (active == 10 ? true :  false) },
-  { name: 'Kitchen Grl', to: <KitchenGrl/>, icon: PresentationChartBarIcon, value:11, current: (active == 11 ? true :  false) },
-  { name: 'Kitchen Back', to: <KitchenBack/>, icon: PresentationChartBarIcon, value:12, current: (active == 12 ? true :  false) },
-  { name: 'AdaptedH', to: <AdaptedH/>, icon: PresentationChartBarIcon, value:13, current: (active == 13 ? true :  false) },
-  { name: 'AdaptedR', to: <AdaptedR/>, icon: PresentationChartBarIcon, value:14, current: (active == 14 ? true :  false) },
-  { name: 'Absentessiem', to: <Absentessiem/>, icon: PresentationChartBarIcon, value:15, current: (active == 15 ? true :  false) },
+  { name: 'Master Ratios', to: <MasterRatios/>, icon: PresentationChartBarIcon, value:8, current: (active == 8 ? true :  false) },
+  { name: 'Size Criteria', to: <SizeCriteria/>, icon: PresentationChartBarIcon, value:9, current: (active == 9 ? true :  false) },
+  { name: 'Flows Rest', to: <FlowsRest/>, icon: PresentationChartBarIcon, value:10, current: (active == 10 ? true :  false) },
+  { name: 'Flows Grl', to: <FlowsGrl/>, icon: PresentationChartBarIcon, value:11, current: (active == 11 ? true :  false) },
+  { name: 'Kitchen Grl', to: <KitchenGrl/>, icon: PresentationChartBarIcon, value:12, current: (active == 12 ? true :  false) },
+  { name: 'Kitchen Back', to: <KitchenBack/>, icon: PresentationChartBarIcon, value:13, current: (active == 13 ? true :  false) },
+  { name: 'AdaptedH', to: <AdaptedH/>, icon: PresentationChartBarIcon, value:14, current: (active == 14 ? true :  false) },
+  { name: 'AdaptedR', to: <AdaptedR/>, icon: PresentationChartBarIcon, value:15, current: (active == 15 ? true :  false) },
+  { name: 'Absentessiem', to: <Absentessiem/>, icon: PresentationChartBarIcon, value:16, current: (active == 16 ? true :  false) },
 ]
 
-const redirect = () => {
+
+  useEffect(()=>{
+    resultsCalculate()
+  }, [])
+
+  useEffect(()=>{
+    console.log(ratioValue)
+  }, [ratioValue])
+
+  const redirect = () => {
   try {
     const component = "DashboardCards";
     dispatch(createRoute(component));
@@ -62,7 +81,7 @@ const redirect = () => {
   } catch {
     navigate("/dashboard")
   }
-};
+  };
 
   const logOut = () =>{
     dispatch(resetUser());
@@ -78,6 +97,47 @@ const redirect = () => {
     setActive(value)
     setSidebarOpen(false)
   };
+
+  const resultsCalculate = async () =>{
+    try {
+      const resultStandardTable = await getRelationsStandardTableConfig()
+      console.log(resultStandardTable.data)
+
+      const resultMasterRatio = await getRelationsMasterRatiosConfig()
+      console.log(resultMasterRatio.data)
+
+      const dataStandardTable = resultStandardTable.data;
+      const dataMasterRatios = resultMasterRatio.data;
+
+      const updatedList = dataStandardTable.map((item:any, id:any) => {
+        
+        const idCorrect = (id + 1)
+        if(item.rt && item.std){
+          console.log("ambos" +  id)
+        }
+
+        else if(item.rt){
+          const valueRatio = item.ratio
+          return {idCorrect, valueRatio};
+        }
+
+        else if(item.std){
+          console.log("solo std" +  id)
+        }
+        
+        console.log("rt" +  idCorrect)
+        return { idCorrect };
+      });
+
+      setRatioValue(updatedList);
+
+    } catch (error) {
+      throw new Error("Something wrong");
+    }
+  
+  
+  }
+
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 "> 

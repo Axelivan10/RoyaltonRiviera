@@ -6,6 +6,8 @@ import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
 import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
+import { operations } from '../operations.entity';
+import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
 
 @Entity()
 export class dimServiceType{
@@ -45,5 +47,11 @@ export class dimServiceType{
 
     @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.serviceType)
     adaptedRConfigServiceType: adaptedRConfig[];
+
+    @OneToMany(() => operations, (operations) => operations.serviceType)
+    operationsServiceType: operations[];
+
+    @OneToMany(() => masterRatiosConfig, (masterRatios) => masterRatios.serviceType)
+    masterRatiosConfigServiceType: masterRatiosConfig[];
 }
 

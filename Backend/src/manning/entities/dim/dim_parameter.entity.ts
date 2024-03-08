@@ -4,6 +4,8 @@ import { standardTableConfig } from '../configuration/standardTable_config.entit
 import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
 import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
+import { operations } from '../operations.entity';
+import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
 
 @Entity()
 export class dimParameter{
@@ -34,5 +36,11 @@ export class dimParameter{
 
     @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.parameter)
     adaptedRConfigParameter: adaptedRConfig[];
+
+    @OneToMany(() => operations, (operations) => operations.parameter)
+    operationsParameter: operations[];
+    
+    @OneToMany(() => masterRatiosConfig, (masterRatios) => masterRatios.parameter)
+    masterRatiosConfigParameter: masterRatiosConfig[];
 
 }

@@ -1,4 +1,4 @@
-import{Entity, Column, PrimaryGeneratedColumn, ManyToOne} from 'typeorm'
+import{Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, OneToOne, JoinColumn} from 'typeorm'
 import { dimLocation } from '../dim/dim_location.entity';
 import { dimDepartment } from '../dim/dim_department.entity';
 import { dimPlant } from '../dim/dim_plant.entity';
@@ -7,6 +7,7 @@ import { dimDivision } from '../dim/dim_division.entity';
 import { dimPosition } from '../dim/dim_position.entity';
 import { dimServiceType } from '../dim/dim_service_type.entity';
 import { dimParameter } from '../dim/dim_parameter.entity';
+import { masterRatiosConfig } from './masterRatios_config.entity';
 
 
 @Entity()
@@ -17,15 +18,6 @@ export class standardTableConfig{
 
     @Column({nullable: true})
     positionId: string;
-
-    @Column({nullable: true})
-    position: string;
-
-    @Column({nullable: true})
-    xSymbol: string;
-
-    @Column({nullable: true})
-    numberValue: number;
 
     @ManyToOne(() => dimPosition, position => position.standardTableConfigPosition)
     dimPosition: dimPosition;
@@ -51,7 +43,42 @@ export class standardTableConfig{
     @ManyToOne(() => dimParameter, parameter => parameter.standardTableConfigParameter)
     parameter: dimParameter;
 
+    @OneToMany(() => masterRatiosConfig, masterRatiosConfig => masterRatiosConfig.standardTableConfig)
+    masterRatiosConfig: masterRatiosConfig;
+
     @Column({nullable: true})
     ratio: number;
+
+    @Column({nullable: true})
+    xs: number;
+
+    @Column({nullable: true})
+    x: number;
+
+    @Column({nullable: true})
+    m: number;
+
+    @Column({nullable: true})
+    l: number;
+
+    @Column({nullable: true})
+    xl: number;
+
+    @Column({nullable: true})
+    std: string;
+
+    @Column({nullable: true})
+    rt: string;
     
+    @Column({nullable: true})
+    other: string;
+
+    @Column({nullable: true})
+    kit: string;
+
+    @Column({nullable: true})
+    cubre: string;
+
+    @Column({nullable: true})
+    rev: string;
 }

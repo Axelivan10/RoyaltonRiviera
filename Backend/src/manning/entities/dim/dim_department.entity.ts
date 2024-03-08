@@ -10,6 +10,7 @@ import { standardTableConfig } from '../configuration/standardTable_config.entit
 import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
+import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
 
 @Entity()
 export class dimDepartment{
@@ -61,5 +62,8 @@ export class dimDepartment{
 
     @OneToMany(() => adaptedRConfig, (adaptedR) => adaptedR.department)
     adaptedRConfigDepartment: adaptedRConfig[];
+
+    @OneToMany(() => masterRatiosConfig, (masterRatios) => masterRatios.department)
+    masterRatiosConfigDepartment: masterRatiosConfig[];
     
 }

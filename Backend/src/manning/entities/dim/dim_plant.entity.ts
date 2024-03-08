@@ -8,6 +8,7 @@ import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { kitchenBackConfig } from '../configuration/kitchenBack_config.entity';
 import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
 import { absentessiemConfig } from '../configuration/Absentessiem_config.entity';
+import { operations } from '../operations.entity';
 
 @Entity()
 export class dimPlant{
@@ -80,4 +81,7 @@ export class dimPlant{
     
     @OneToMany(() => absentessiemConfig, (absentessiem) => absentessiem.plant)
     absentessiemConfigPlant: absentessiemConfig[];
+
+    @OneToMany(() => operations, (operations) => operations.plant)
+    operationsPlant: operations[];
 }

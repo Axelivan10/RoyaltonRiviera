@@ -163,6 +163,18 @@ export class ManningController {
         return this.manningService.relationsAbsentessiemConfig();
     }
 
+    @Public()
+    @Get('relationsOperations')
+    relationsOperations(){
+        return this.manningService.relationsOperations();
+    }
+
+    @Public()
+    @Get('relationsMasterRatios')
+    relationsMasterRatios(){
+        return this.manningService.relationsMasterRatios();
+    }
+
     // THIS PART IS FOR ALL THE FILTERS THAT NEED A REQUEST FROM THE DB
     @Public()
     @Get('hotels')
@@ -231,6 +243,12 @@ export class ManningController {
     serviceTypeConfig(){
         return this.manningService.serviceTypeConfig();
     }
+
+    // @Public()
+    // @Get('getMasterRatios')
+    // getMasterRatios(){
+    //     return this.manningService.getMasterRatios();
+    // }
 
     
     @Public()
@@ -333,6 +351,13 @@ export class ManningController {
     updateAdaptedRConfig(@Body() editInputs: {}){
         console.log(editInputs)
         return this.manningService.updateAdaptedRConfig(editInputs);
+    } 
+
+    @Public()
+    @Put('updateMasterRatiosConfig')
+    updateMasterRatiosConfig(@Body() editInputs: {}){
+        console.log(editInputs)
+        return this.manningService.updateMasterRatiosConfig(editInputs);
     } 
 
     @Public()

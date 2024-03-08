@@ -322,6 +322,18 @@ export const getRelationsAbsentessiemConfig = async () => {
   }
 }
 
+export const getRelationsMasterRatiosConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsMasterRatios`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const updateHotelInfo = async (editValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateHotels`, editValues);
@@ -523,6 +535,16 @@ export const updateAdaptedRConfig = async (inputValues: {}) => {
 export const updateAbsentessiemConfig = async (inputValues: {}) => {
   try {
     const response = await axios.put(`${BASE_URL}/manning/updateAbsentessiemConfig`, inputValues);
+    return response;
+
+  } catch (error) {
+    throw new Error('Update AbsentessiemConfig Fail');
+  }
+}
+
+export const updateMasterRatiosConfig = async (inputValues: {}) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/manning/updateMasterRatiosConfig`, inputValues);
     return response;
 
   } catch (error) {
