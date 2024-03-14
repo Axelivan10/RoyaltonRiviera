@@ -6,6 +6,7 @@ import { kitchenGrlConfig } from '../configuration/kitchenGrl_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 import { operations } from '../operations.entity';
 import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
+import { sizeCriteriaOrderConfig } from '../configuration/sizeCriteriaOrder_config.entity';
 
 @Entity()
 export class dimParameter{
@@ -43,4 +44,6 @@ export class dimParameter{
     @OneToMany(() => masterRatiosConfig, (masterRatios) => masterRatios.parameter)
     masterRatiosConfigParameter: masterRatiosConfig[];
 
+    @OneToMany(() => sizeCriteriaOrderConfig, (sizeCriteriaOrder) => sizeCriteriaOrder.parameter)
+    sizeCriteriaOrderConfigParameter: sizeCriteriaOrderConfig[];
 }

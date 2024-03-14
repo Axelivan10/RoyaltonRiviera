@@ -23,7 +23,7 @@ import KitchenBack from '../components/manningConfig.components/kitchenBack';
 import AdaptedH from '../components/manningConfig.components/adaptedH';
 import AdaptedR from '../components/manningConfig.components/adaptedR';
 import Absentessiem from '../components/manningConfig.components/absentessiem';
-import { getRelationsMasterRatiosConfig, getRelationsStandardTableConfig } from '../api/manning.api';
+import { getMasterParameter, getRelationsMasterRatiosConfig, getRelationsOperations, getRelationsSizeCriteriaConfig, getRelationsSizeCriteriaOrderConfig, getRelationsStandardTableConfig } from '../api/manning.api';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
@@ -43,7 +43,7 @@ function manningConfig(props:any) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
  
-  const [ratioValue, setRatioValue] = useState<Array<{ id: number, valueRatio: number }>>([]);
+  // const [ratioValue, setRatioValue] = useState<Array<{ id: number, valueRatio: number }>>([]);
 
   const navigation = [   //ESTE ES EL TITULO DEL SIDEBAR DEJAR
   { name: 'Location', to: <Location/>, icon: MapPinIcon, value:1, current: (active == 1 ? true :  false) },
@@ -69,9 +69,8 @@ function manningConfig(props:any) {
     resultsCalculate()
   }, [])
 
-  useEffect(()=>{
-    console.log(ratioValue)
-  }, [ratioValue])
+  // useEffect(()=>{
+  // }, [])
 
   const redirect = () => {
   try {
@@ -104,38 +103,123 @@ function manningConfig(props:any) {
       console.log(resultStandardTable.data)
 
       const resultMasterRatio = await getRelationsMasterRatiosConfig()
-      console.log(resultMasterRatio.data)
+      // console.log(resultMasterRatio.data)
+
+      const resultMasterParameter = await getMasterParameter()
+      // console.log(resultMasterParameter.data)
+
+      const resultTable = await getRelationsOperations()
+      //console.log(resultTable.data)
+
+      const sizeCriteriaOrder = await getRelationsSizeCriteriaOrderConfig()
+      // console.log(sizeCriteriaOrder.data)
 
       const dataStandardTable = resultStandardTable.data;
       const dataMasterRatios = resultMasterRatio.data;
+      const dataMasterParameter = resultMasterParameter.data
+      const dataResultTable = resultTable.data
+      const dataSizeCriteriaOrder = sizeCriteriaOrder.data
 
-      const updatedList = dataStandardTable.map((item:any, id:any) => {
+
+      dataResultTable.map((item: any, id: number) => {
         
-        const idCorrect = (id + 1)
-        if(item.rt && item.std){
-          console.log("ambos" +  id)
+        const resultado = dataStandardTable.find((standardItem: any) => {
+          console.log(item.id)
+          return (
+            item.positiondim.positionId === standardItem.dimPosition.positionId &&
+            item.parameter.parameterId === standardItem.parameter.parameterId &&
+            item.shift.shiftId === standardItem.shift.shiftId
+          );
+
+        });
+
+          console.log(resultado)
+
+        if(resultado.std && resultado.rt){
+          console.log("estoy en std y rt")
         }
 
-        else if(item.rt){
-          const valueRatio = item.ratio
-          return {idCorrect, valueRatio};
+        else if(resultado.std){
+          console.log("estoy en std")
+          item.ratio = resultado.ratio;
+
+          const resultadoSizeCriteria = dataSizeCriteriaOrder.find((SizeItem: any) => {
+            return (
+              resultado.criteria === SizeItem.sizeCriteria &&
+
+              item.plant.rooms >= SizeItem.min && item.plant.rooms <= SizeItem.max
+            );
+          });
+
+
+        //dataMasterParameter AQUI VA MASTER PARAMETER
+
+          console.log(resultadoSizeCriteria)
+
+          switch (resultadoSizeCriteria.size) {
+
+            case "XS":
+              item.parameterValue = (resultado.xs ? resultado.xs : ""); //ESTA MANERA ESTA MEJOR
+              break;
+            case "X":
+              item.parameterValue = resultado.s;
+              break;
+            case "M":
+              item.parameterValue = resultado.m;
+              break;
+            case "L":
+              item.parameterValue = resultado.l;
+              break;
+            case "XL":
+              console.log("xl", resultado.ratio, resultado.xl)
+              item.parameterValue = resultado.xl;
+              break;
+            default:
+              console.log("Opción no válida");
+          }
+
+          item.paxResult = (item.parameterValue / item.ratio);
+          // item.paxResult = (item.parameterValue > (item.parameterValue / item.ratio)) ? item.parameterValue : item.ratio / item.parameterValue;
+
         }
 
-        else if(item.std){
-          console.log("solo std" +  id)
+        else if(resultado.rt){
+          console.log("estoy en rt")
+          // console.log(resultado.ratio, "ratio", id);
+          item.ratio = resultado.ratio;
+
+          const resultadoParameter = dataMasterParameter.find((parameterItem: any) => {
+            return (
+              item.location.area === parameterItem.location
+              &&
+              item.plant.plantCode === parameterItem.hotel
+              // && 
+              // item.parameter.parameter === parameterItem.parameter
+            );
+          });
+
+          if(resultadoParameter){
+            // console.log(resultadoParameter.parameterValue, "parameter", id)
+            item.parameterValue = resultadoParameter.parameterValue;
+            item.paxResult = ((item.parameterValue ? item.parameterValue : 0) / item.ratio);
+          }
+
+          // console.log(item.ratio, item.parameterValue)
+
+        } 
+
+        else{
+          console.log("otro")
         }
-        
-        console.log("rt" +  idCorrect)
-        return { idCorrect };
+
+        return item;
       });
 
-      setRatioValue(updatedList);
+      console.log(dataResultTable)
 
     } catch (error) {
       throw new Error("Something wrong");
     }
-  
-  
   }
 
 

@@ -28,6 +28,8 @@ import { adaptedRConfig } from './entities/configuration/adaptedR_config.entity'
 import { absentessiemConfig } from './entities/configuration/Absentessiem_config.entity';
 import { operations } from './entities/operations.entity';
 import { masterRatiosConfig } from './entities/configuration/masterRatios_config.entity';
+import { masterParameter } from './entities/configuration/masterParameter.entity';
+import { sizeCriteriaOrderConfig } from './entities/configuration/sizeCriteriaOrder_config.entity';
 
 @Injectable()
 export class ManningService {
@@ -63,6 +65,8 @@ export class ManningService {
     private standardTableConfigRepository: Repository<standardTableConfig>,
     @InjectRepository(sizeCriteriaConfig)
     private sizeCriteriaConfigRepository: Repository<sizeCriteriaConfig>,
+    @InjectRepository(sizeCriteriaOrderConfig)
+    private sizeCriteriaOrderConfigRepository: Repository<sizeCriteriaOrderConfig>,
     @InjectRepository(flowsRestConfig)
     private flowsRestConfigRepository: Repository<flowsRestConfig>,
     @InjectRepository(flowsGrlConfig)
@@ -81,6 +85,8 @@ export class ManningService {
     private operationsRepository: Repository<operations>,
     @InjectRepository(masterRatiosConfig)
     private masterRatiosConfigRepository: Repository<masterRatiosConfig>,
+    @InjectRepository(masterParameter)
+    private masterParameterRepository: Repository<masterParameter>,
   ) {}
   
   
@@ -200,6 +206,10 @@ export class ManningService {
 
   deleteInfoManning(id: number) {}
 
+  async getMasterParameter(): Promise<masterParameter[]> {
+    return this.masterParameterRepository.find();
+  }
+
   async testDivision(): Promise<dimDivision[]> {
     return this.divisionRepository.find({ relations: ['positionsDivision'] });
   }
@@ -270,6 +280,12 @@ export class ManningService {
     });
   }
 
+  async relationsSizeCriteriaOrderConfig(): Promise<sizeCriteriaOrderConfig[]> {
+    return this.sizeCriteriaOrderConfigRepository.find({
+      relations: ['parameter'],
+    });
+  }
+
   async relationsFlowsRestConfig(): Promise<flowsRestConfig[]> {
     return this.flowsRestConfigRepository.find({
       relations: ['plant', 'location', 'department', 'shift', 'serviceType'],
@@ -314,7 +330,7 @@ export class ManningService {
 
   async relationsOperations(): Promise<operations[]> {
     return this.operationsRepository.find({
-      relations: ['plant', 'positiondim', 'shift', 'serviceType', 'parameter'],
+      relations: ['plant', 'positiondim', 'shift', 'serviceType', 'parameter','location'],
     });
   }
 

@@ -122,6 +122,12 @@ export class ManningController {
     }
 
     @Public()
+    @Get('relationsSizeCriteriaOrderConfig')
+    relationsSizeCriteriaOrderConfig(){
+        return this.manningService.relationsSizeCriteriaOrderConfig();
+    }
+
+    @Public()
     @Get('relationsFlowsRestConfig')
     relationsFlowsRestConfig(){
         return this.manningService.relationsFlowsRestConfig();
@@ -244,13 +250,12 @@ export class ManningController {
         return this.manningService.serviceTypeConfig();
     }
 
-    // @Public()
-    // @Get('getMasterRatios')
-    // getMasterRatios(){
-    //     return this.manningService.getMasterRatios();
-    // }
+    @Public()
+    @Get('masterParameter')
+    getParameter(){
+        return this.manningService.getMasterParameter();
+    }
 
-    
     @Public()
     @Put('updateLocationsConfig')
     updateLocationsConfig(@Body() editInputs: {}){

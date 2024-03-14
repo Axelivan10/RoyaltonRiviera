@@ -118,6 +118,18 @@ export const getServiceType = async () => {
   }
 }
 
+export const getMasterParameter = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/masterParameter`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Parameter Fail');
+  }
+}
+
 export const getRelationsDepartment = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/manning/testLocationConfigDepartment`, {
@@ -238,6 +250,18 @@ export const getRelationsSizeCriteriaConfig = async () => {
   }
 }
 
+export const getRelationsSizeCriteriaOrderConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsSizeCriteriaOrderConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
 export const getRelationsFlowsRestConfig = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/manning/relationsFlowsRestConfig`, {
@@ -325,6 +349,18 @@ export const getRelationsAbsentessiemConfig = async () => {
 export const getRelationsMasterRatiosConfig = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/manning/relationsMasterRatios`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Relation Fail');
+  }
+}
+
+export const getRelationsOperations = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/relationsOperations`, {
     });
     
     return response;

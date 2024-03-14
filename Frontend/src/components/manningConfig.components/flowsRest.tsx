@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { getRelationsFlowsRestConfig, getRelationsSizeCriteriaConfig, updateFlowsRestConfig, updateSizeCriteriaConfig } from '../../api/manning.api';
 import Swal from 'sweetalert2';
 
-const TABLE_HEAD = ["Plant ID", "Location" ,"Outlet", "Department", "Criteria", "Service Type", "Capacity", "Shift", "20-30", "30-40", "40-50", "50-60",, "60-70", "70-80", "80-90", "90-100", "Rate", "" ];
+const TABLE_HEAD = ["Plant ID", "Location" ,"Outlet", "Department", "Criteria", "Service Type", "Capacity", "Shift", "20-30", "30-40", "40-50", "50-60",, "60-70", "70-80", "80-90", "90-100", "Rate", "Custom" ];
   
   interface relationsAll {
     id: number;

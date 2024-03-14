@@ -12,9 +12,6 @@ import { dimParameter } from '../dim/dim_parameter.entity';
     
         @ManyToOne(() => dimParameter, parameter => parameter.sizeCriteriaConfigParameter)
         parameter: dimParameter;
-
-        // @Column({nullable: true})
-        // position: string;
     
         @Column({nullable: true})
         xSmallMinValue: number;
