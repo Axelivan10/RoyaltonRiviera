@@ -23,7 +23,7 @@ import KitchenBack from '../components/manningConfig.components/kitchenBack';
 import AdaptedH from '../components/manningConfig.components/adaptedH';
 import AdaptedR from '../components/manningConfig.components/adaptedR';
 import Absentessiem from '../components/manningConfig.components/absentessiem';
-import { getMasterParameter, getRelationsMasterRatiosConfig, getRelationsOperations, getRelationsSizeCriteriaConfig, getRelationsSizeCriteriaOrderConfig, getRelationsStandardTableConfig } from '../api/manning.api';
+import { getMasterParameter, getMasterRatiosOrderConfig, getRelationsMasterRatiosConfig, getRelationsOperations, getRelationsSizeCriteriaConfig, getRelationsSizeCriteriaOrderConfig, getRelationsStandardTableConfig } from '../api/manning.api';
 
 function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
@@ -100,10 +100,10 @@ function manningConfig(props:any) {
   const resultsCalculate = async () =>{
     try {
       const resultStandardTable = await getRelationsStandardTableConfig()
-      console.log(resultStandardTable.data)
+      //console.log(resultStandardTable.data)
 
-      const resultMasterRatio = await getRelationsMasterRatiosConfig()
-      // console.log(resultMasterRatio.data)
+      const resultMasterOrderRatio = await getMasterRatiosOrderConfig()
+      //console.log(resultMasterOrderRatio.data)
 
       const resultMasterParameter = await getMasterParameter()
       // console.log(resultMasterParameter.data)
@@ -115,7 +115,7 @@ function manningConfig(props:any) {
       // console.log(sizeCriteriaOrder.data)
 
       const dataStandardTable = resultStandardTable.data;
-      const dataMasterRatios = resultMasterRatio.data;
+      const dataMasterRatios = resultMasterOrderRatio.data;
       const dataMasterParameter = resultMasterParameter.data
       const dataResultTable = resultTable.data
       const dataSizeCriteriaOrder = sizeCriteriaOrder.data
@@ -123,7 +123,7 @@ function manningConfig(props:any) {
 
       dataResultTable.map((item: any, id: number) => {
         
-        const resultado = dataStandardTable.find((standardItem: any) => {
+        const resultadoTableStandard = dataStandardTable.find((standardItem: any) => {
           console.log(item.id)
           return (
             item.positiondim.positionId === standardItem.dimPosition.positionId &&
@@ -132,20 +132,100 @@ function manningConfig(props:any) {
           );
 
         });
+          // console.log(resultadoTableStandard)
 
-          console.log(resultado)
 
-        if(resultado.std && resultado.rt){
-          console.log("estoy en std y rt")
+      if(resultadoTableStandard.std && resultadoTableStandard.rt){
+
+          let ratioMaster = 0 ;
+          let ratioStd = resultadoTableStandard.ratio;
+          let parameterMaster = 0 ;
+          let parameterStd = 0;
+          let ratiosResult = 0;
+          let stdResult = 0;
+          const resultadoSizeCriteria = dataSizeCriteriaOrder.find((SizeItem: any) => {
+            return (
+              resultadoTableStandard.criteria === SizeItem.sizeCriteria &&
+
+              item.plant.rooms >= SizeItem.min && item.plant.rooms <= SizeItem.max
+            );
+          });
+
+          switch (resultadoSizeCriteria.size) {
+
+            case "XS":
+              parameterStd = (resultadoTableStandard.xs ? resultadoTableStandard.xs : ""); //ESTA MANERA ESTA MEJOR
+              break;
+            case "X":
+              parameterStd = resultadoTableStandard.s;
+              break;
+            case "M":
+              parameterStd = resultadoTableStandard.m;
+              break;
+            case "L":
+              parameterStd = resultadoTableStandard.l;
+              break;
+            case "XL":
+              parameterStd = resultadoTableStandard.xl;
+              break;
+            default:
+              console.log("Opción no válida");
+          }
+
+          stdResult = (parameterStd / ratioStd);
+
+
+
+
+
+          const resultadoMasterRatios = dataMasterRatios.find((RatiosItem: any) => {
+            return (
+              item.positiondim.positionDescriptionES === RatiosItem.positionDescription
+              &&
+              item.serviceType.serviceTypeCode=== RatiosItem.serviceType
+              &&
+              item.parameter.parameter === RatiosItem.parameter
+              &&
+              item.plant.countryCode=== RatiosItem.country
+            );  
+          });
+
+          // console.log(resultadoMasterRatios)
+
+          ratioMaster = resultadoMasterRatios.value;
+
+          const resultadoParameter = dataMasterParameter.find((parameterItem: any) => {
+            return (
+              item.location.area === parameterItem.location
+              &&
+              item.plant.plantCode === parameterItem.hotel
+              // && 
+              // item.parameter.parameter === parameterItem.parameter
+            );  
+          });
+
+          if(resultadoParameter){
+            // console.log(resultadoParameter.parameterValue, "parameter", id)
+            parameterMaster = resultadoParameter.parameterValue;
+            ratiosResult = ((ratioMaster ? parameterMaster : 0) / ratioMaster);
+          }
+
+          item.paxResult = (stdResult > ratiosResult? stdResult : ratiosResult)
+
+
         }
 
-        else if(resultado.std){
+
+
+
+        
+        else if(resultadoTableStandard.std){
           console.log("estoy en std")
-          item.ratio = resultado.ratio;
+          item.ratio = resultadoTableStandard.ratio;
 
           const resultadoSizeCriteria = dataSizeCriteriaOrder.find((SizeItem: any) => {
             return (
-              resultado.criteria === SizeItem.sizeCriteria &&
+              resultadoTableStandard.criteria === SizeItem.sizeCriteria &&
 
               item.plant.rooms >= SizeItem.min && item.plant.rooms <= SizeItem.max
             );
@@ -159,20 +239,20 @@ function manningConfig(props:any) {
           switch (resultadoSizeCriteria.size) {
 
             case "XS":
-              item.parameterValue = (resultado.xs ? resultado.xs : ""); //ESTA MANERA ESTA MEJOR
+              item.parameterValue = (resultadoTableStandard.xs ? resultadoTableStandard.xs : ""); //ESTA MANERA ESTA MEJOR
               break;
             case "X":
-              item.parameterValue = resultado.s;
+              item.parameterValue = resultadoTableStandard.s;
               break;
             case "M":
-              item.parameterValue = resultado.m;
+              item.parameterValue = resultadoTableStandard.m;
               break;
             case "L":
-              item.parameterValue = resultado.l;
+              item.parameterValue = resultadoTableStandard.l;
               break;
             case "XL":
-              console.log("xl", resultado.ratio, resultado.xl)
-              item.parameterValue = resultado.xl;
+              console.log("xl", resultadoTableStandard.ratio, resultadoTableStandard.xl)
+              item.parameterValue = resultadoTableStandard.xl;
               break;
             default:
               console.log("Opción no válida");
@@ -183,10 +263,25 @@ function manningConfig(props:any) {
 
         }
 
-        else if(resultado.rt){
+        else if(resultadoTableStandard.rt){
           console.log("estoy en rt")
           // console.log(resultado.ratio, "ratio", id);
-          item.ratio = resultado.ratio;
+
+          const resultadoMasterRatios = dataMasterRatios.find((RatiosItem: any) => {
+            return (
+              item.positiondim.positionDescriptionES === RatiosItem.positionDescription
+              &&
+              item.serviceType.serviceTypeCode=== RatiosItem.serviceType
+              &&
+              item.parameter.parameter === RatiosItem.parameter
+              &&
+              item.plant.countryCode=== RatiosItem.country
+            );  
+          });
+
+          // console.log(resultadoMasterRatios)
+
+          item.ratio = resultadoMasterRatios.value;
 
           const resultadoParameter = dataMasterParameter.find((parameterItem: any) => {
             return (
@@ -195,7 +290,7 @@ function manningConfig(props:any) {
               item.plant.plantCode === parameterItem.hotel
               // && 
               // item.parameter.parameter === parameterItem.parameter
-            );
+            );  
           });
 
           if(resultadoParameter){
@@ -207,6 +302,7 @@ function manningConfig(props:any) {
           // console.log(item.ratio, item.parameterValue)
 
         } 
+
 
         else{
           console.log("otro")

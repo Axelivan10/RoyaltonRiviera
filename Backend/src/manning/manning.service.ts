@@ -30,6 +30,7 @@ import { operations } from './entities/operations.entity';
 import { masterRatiosConfig } from './entities/configuration/masterRatios_config.entity';
 import { masterParameter } from './entities/configuration/masterParameter.entity';
 import { sizeCriteriaOrderConfig } from './entities/configuration/sizeCriteriaOrder_config.entity';
+import { masterRatiosOrderConfig } from './entities/configuration/masterRatiosOrder.entity';
 
 @Injectable()
 export class ManningService {
@@ -87,6 +88,8 @@ export class ManningService {
     private masterRatiosConfigRepository: Repository<masterRatiosConfig>,
     @InjectRepository(masterParameter)
     private masterParameterRepository: Repository<masterParameter>,
+    @InjectRepository(masterRatiosOrderConfig)
+    private masterRatiosOrderConfigRepository: Repository<masterRatiosOrderConfig>,
   ) {}
   
   
@@ -208,6 +211,10 @@ export class ManningService {
 
   async getMasterParameter(): Promise<masterParameter[]> {
     return this.masterParameterRepository.find();
+  }
+
+  async getMasterRatiosOrderConfig(): Promise<masterRatiosOrderConfig[]> {
+    return this.masterRatiosOrderConfigRepository.find();
   }
 
   async testDivision(): Promise<dimDivision[]> {

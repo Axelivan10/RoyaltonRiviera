@@ -106,6 +106,18 @@ export const getShift = async () => {
   }
 }
 
+export const getMasterRatiosOrderConfig = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/manning/getMasterRatiosOrderConfig`, {
+    });
+    
+    return response;
+
+  } catch (error) {
+    throw new Error('Get Master Ratios Order Fail');
+  }
+}
+
 export const getServiceType = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/manning/serviceType`, {

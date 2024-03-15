@@ -32,13 +32,14 @@ import { operations } from './entities/operations.entity';
 import { masterRatiosConfig } from './entities/configuration/masterRatios_config.entity';
 import { masterParameter } from './entities/configuration/masterParameter.entity';
 import { sizeCriteriaOrderConfig } from './entities/configuration/sizeCriteriaOrder_config.entity';
+import { masterRatiosOrderConfig } from './entities/configuration/masterRatiosOrder.entity';
 
 @Module({
   imports:[TypeOrmModule.forFeature([Manning, dimShift, dimServiceType, dimSalary, dimPosition, dimPlant, dimParameter, 
     dimOcc, dimDepartment, dimLocation, dimDivision, locationConfig, plantConfig, shiftConfig, serviceTypeConfig, positionConfig,
     position_locationConfig, standardTableConfig, sizeCriteriaConfig, flowsRestConfig, flowsGrlConfig, kitchenGrlConfig,
     kitchenBackConfig, adaptedHConfig, adaptedRConfig, absentessiemConfig, operations, masterRatiosConfig, masterParameter,
-    sizeCriteriaOrderConfig])],
+    sizeCriteriaOrderConfig, masterRatiosOrderConfig])],
   providers: [ManningService],
   controllers: [ManningController]
 })

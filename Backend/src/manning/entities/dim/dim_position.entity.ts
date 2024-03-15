@@ -10,6 +10,7 @@ import { adaptedHConfig } from '../configuration/adaptedH_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 import { operations } from '../operations.entity';
 import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
+import { masterRatiosOrderConfig } from '../configuration/masterRatiosOrder.entity';
 
 @Entity()
 export class dimPosition{

@@ -7,6 +7,7 @@ import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 import { operations } from '../operations.entity';
 import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
 import { sizeCriteriaOrderConfig } from '../configuration/sizeCriteriaOrder_config.entity';
+import { masterRatiosOrderConfig } from '../configuration/masterRatiosOrder.entity';
 
 @Entity()
 export class dimParameter{
@@ -46,4 +47,5 @@ export class dimParameter{
 
     @OneToMany(() => sizeCriteriaOrderConfig, (sizeCriteriaOrder) => sizeCriteriaOrder.parameter)
     sizeCriteriaOrderConfigParameter: sizeCriteriaOrderConfig[];
+
 }

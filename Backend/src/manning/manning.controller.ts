@@ -33,7 +33,8 @@ export class ManningController {
         console.log(manningDto)
         return this.manningService.getAllInfoManning(manningDto);
     }
-    
+
+
     @Patch(':id')
     UpdateInfoManning(@Param('id', ParseIntPipe) id: number, @Body() manning: ManningDto){
         return this.manningService.updateInfoManning(id, manning);
@@ -45,6 +46,12 @@ export class ManningController {
         return this.manningService.deleteInfoManning(id)
     }
 
+
+    @Public()
+    @Get('getMasterRatiosOrderConfig')
+    getMasterRatiosOrderConfig(){
+        return this.manningService.getMasterRatiosOrderConfig();
+    }
 
 
     //TEST FOR ALL THE RELATIONS IN DB

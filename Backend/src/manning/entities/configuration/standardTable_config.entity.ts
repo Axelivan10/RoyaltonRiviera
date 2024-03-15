@@ -8,6 +8,7 @@ import { dimPosition } from '../dim/dim_position.entity';
 import { dimServiceType } from '../dim/dim_service_type.entity';
 import { dimParameter } from '../dim/dim_parameter.entity';
 import { masterRatiosConfig } from './masterRatios_config.entity';
+import { masterRatiosOrderConfig } from './masterRatiosOrder.entity';
 
 
 @Entity()

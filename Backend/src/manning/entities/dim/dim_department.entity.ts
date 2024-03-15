@@ -11,6 +11,7 @@ import { flowsRestConfig } from '../configuration/flowsRest_config.entity';
 import { flowsGrlConfig } from '../configuration/flowsGrl_config.entity';
 import { adaptedRConfig } from '../configuration/adaptedR_config.entity';
 import { masterRatiosConfig } from '../configuration/masterRatios_config.entity';
+import { masterRatiosOrderConfig } from '../configuration/masterRatiosOrder.entity';
 
 @Entity()
 export class dimDepartment{
